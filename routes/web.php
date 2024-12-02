@@ -33,3 +33,7 @@ Route::get('/schedules/{id}/edit', [ScheduleController::class, 'edit']);
 Route::put('/schedules/{id}', [ScheduleController::class, 'update']);
 Route::delete('/schedules/{id}', [ScheduleController::class, 'destroy']);
 
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
