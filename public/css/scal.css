@@ -1,0 +1,111 @@
+/* scal.css */
+
+/* 基本設定 */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+body {
+    width: 375px; /* スマホの幅に固定 */
+    margin: 0 auto; /* 中央寄せ */
+    overflow-x: hidden; /* 横スクロールを無効化 */
+}
+
+/* カードのデザイン */
+.card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 20px;
+}
+
+/* ヘッダー */
+.card-header {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* フォームの要素 */
+label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+.ID{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+/* ボタン */
+.btn {
+    display: block;
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    padding: 10px;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+/* リンク */
+.btn-link {
+    font-size: 14px;
+    color: #007bff;
+    text-decoration: none;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}
+
+/* スマホのレスポンシブ対応 */
+@media (max-width: 600px) {
+    .card {
+        margin: 10px;
+    }
+
+    .card-header {
+        font-size: 18px;
+    }
+
+    .btn {
+        font-size: 14px;
+    }
+
+    .btn-link {
+        font-size: 12px;
+    }
+}

@@ -1,0 +1,96 @@
+html, body{
+    height: 100%;
+    overflow-y: hidden;
+}
+
+header{
+    width: 375px;
+    height: 70px;
+    background-image: url('../img/frame.png');
+}
+
+header .rogo{
+    height: 80px;
+    width: 170px;
+    object-fit: cover;
+}
+
+.container{
+    background-image: url('../img/frame.png'), url('../img/CorkBoard.jpg'), url('../img/frame.png');
+    background-position: left top, center top ,right top; /* 上部から左右に配置 */
+    background-size: 20px 100%, 340px 100%, 20px 100%; /* 画面の高さいっぱいに */
+    background-repeat: no-repeat;
+    padding: 10px 30px;
+    min-height: 100%; /* コンテンツ自体も高さいっぱいに */
+}
+
+footer{
+    position: fixed;
+    bottom: 0;
+}
+
+footer ul{
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+}
+
+footer li{
+    list-style: none;
+    background-color: #ffffff;
+}
+
+footer .profile{
+    padding: 0px 10px;
+    border: solid 1px hsl(0, 0%, 0%);
+    border-width: 1.5px 0px 1.5px 1.5px;
+}
+
+footer .timeline{
+    padding: 0px 10px;
+    border: solid 1px #000;
+    border-width: 1.5px 0.5px 1.5px 1px;
+}
+
+footer .search{
+    padding: 0px 10px;
+    border: solid 1px #000;
+    border-width: 1.5px 0px 1.5px 0.5px;
+}
+
+footer .shop{
+    padding: 0px 10px;
+    border: solid 1px #000;
+    border-width: 1.5px 1.5px 1.5px 1px;
+}
+
+footer .schedule{
+    padding: 15px 32px 0px 32px;
+    border: solid 1px #000;
+    border-width: 1.5px 0.5px 1.5px 0.5px;
+    border-radius: 50% 50% 0 0;
+}
+
+footer .profile img , footer .timeline img , footer .search img, footer .shop img{
+    height: 40px;
+    width: 40px;
+}
+
+footer .schedule img{
+    height: 60px;
+    width: 60px;
+}
+
+footer .profile p, footer .timeline p, footer .search p, footer .shop p{
+    font-size: 7px;
+    text-align: center;
+    margin: 3px 0px 0px 0px;
+}
+
+footer .schedule p{
+    font-size: 7px;
+    text-align: center;
+    margin: 5px 0px 3px 0px;
+}

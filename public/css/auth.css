@@ -1,0 +1,33 @@
+html, body{
+    height: 100%;
+    overflow-y: hidden;
+}
+
+header{
+    width: 375px;
+    height: 70px;
+    background-image: url('../img/frame.png');
+}
+
+header .rogo{
+    height: 80px;
+    width: 170px;
+    object-fit: cover;
+}
+
+.container{
+    background-image: url('../img/frame.png'), url('../img/CorkBoard.jpg'), url('../img/frame.png');
+    background-position: left top, center top ,right top; /* 上部から左右に配置 */
+    background-size: 20px 100%, 340px 100%, 20px 100%; /* 画面の高さいっぱいに */
+    background-repeat: no-repeat;
+    padding: 10px 30px;
+    min-height: 100%; /* コンテンツ自体も高さいっぱいに */
+}
+
+footer{
+    width: 375px;
+    height: 50px;
+    background-image: url('../img/frame.png');
+    position: fixed;
+    bottom: 0;
+}
