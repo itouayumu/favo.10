@@ -97,6 +97,7 @@
     </style>
 </head>
 <body>
+    <a href="/users/profile_edit"><img src="" alt="アイコン"></a>
     <h1>スケジュール管理</h1>
 
     <!-- カレンダー表示 -->
