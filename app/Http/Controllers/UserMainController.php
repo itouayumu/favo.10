@@ -11,4 +11,9 @@ class UserMainController extends Controller
     {
         return view('auth.index');
     }
+
+    public function register()
+    {
+        return view('auth.register');
+    }
 }
