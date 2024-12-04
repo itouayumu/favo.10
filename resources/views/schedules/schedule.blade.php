@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ asset('css/callender.css') }}">
 </head>
 <body>
+    <a href="/users/profile_edit"><img src="" alt="アイコン"></a>
     <h1>スケジュール管理</h1>
 
     <!-- 月の範囲表示 -->

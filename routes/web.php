@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\UserMainController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\UsersController;
 
 
 Route::get('/', function () {
@@ -33,6 +34,8 @@ Route::get('/schedules/{id}/edit', [ScheduleController::class, 'edit']);
 Route::put('/schedules/{id}', [ScheduleController::class, 'update']);
 Route::delete('/schedules/{id}', [ScheduleController::class, 'destroy']);
 
+
+Route::get('/users/profile_edit', [UsersController::class, 'profile_edit']);
 
 Auth::routes();
 
