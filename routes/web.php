@@ -35,7 +35,8 @@ Route::post('/schedules', [ScheduleController::class, 'store']);
 Route::get('/schedules/{id}', [ScheduleController::class, 'show']);
 Route::get('/schedules/{id}/edit', [ScheduleController::class, 'edit']);
 Route::put('/schedules/{id}', [ScheduleController::class, 'update']);
-Route::delete('/schedules/{id}', [ScheduleController::class, 'destroy']);
+Route::delete('/schedules/{id}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
+
 Route::get('/recommends', [RecommendController::class, 'index']);
 
 

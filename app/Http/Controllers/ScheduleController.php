@@ -106,12 +106,15 @@ class ScheduleController extends Controller
     public function destroy($id)
     {
         $schedule = Schedule::findOrFail($id);
-
+    
         if ($schedule->image) {
             Storage::delete('public/' . $schedule->image);
         }
-
+    
         $schedule->delete();
-        return redirect('/schedules');
+    
+        // JSONレスポンスを返す
+        return response()->json(['message' => '予定が削除されました']);
     }
+    
 }

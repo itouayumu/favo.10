@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>スケジュール一覧</title>
+
+
+
     <link rel="stylesheet" href="{{ asset('css/callender.css') }}">
-</head>
-<body>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <a href="/users/profile_edit"><img src="" alt="アイコン"></a>
     <h1>スケジュール管理</h1>
 
@@ -53,13 +50,18 @@
     <div id="schedule-modal">
         <h2 id="modal-title"></h2>
         <p id="modal-content"></p>
-        <button onclick="closeModal()">閉じる</button>
+        <div class="modal-actions">
+            <button id="delete-schedule-btn" onclick="deleteSchedule()">削除</button>
+            <button id="edit-schedule-btn" onclick="editSchedule()">更新</button>
+            <button onclick="closeModal()">閉じる</button>
+        </div>
     </div>
     <div id="modal-overlay" onclick="closeModal()"></div>
 
     <script>
         let currentDate = new Date();
         let schedules = @json($schedules); // サーバーから受け取ったスケジュールデータ
+        let selectedSchedule = null; // 選択中のスケジュールを保存
         let selectedDateElement = null;
 
         function formatDate(date) {
@@ -88,7 +90,6 @@
                 }
             });
 
-            // 予定がある場合、緑の丸を表示
             return hasSchedule ? '<div class="has-schedule"></div>' : ''; // 予定なしの場合は空
         }
 
@@ -99,7 +100,7 @@
             const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
             const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
             const startDay = startOfMonth.getDay();
-            
+
             let currentDay = 1;
             for (let i = 0; i < 6; i++) {
                 let row = '<tr>';
@@ -150,12 +151,45 @@
         }
 
         function showModal(schedule) {
+            selectedSchedule = schedule; // 選択されたスケジュールを保存
             document.getElementById('modal-title').textContent = `${schedule.oshiname}: ${schedule.title}`;
             document.getElementById('modal-content').innerHTML = `
                 <p>日付: ${schedule.start_date}</p>
-                ${schedule.thumbnail ? `<img src="/storage/${schedule.thumbnail}" alt="サムネイル" style="width: 100%;">` : ''}`;
+                ${schedule.thumbnail ? `<img src="/storage/${schedule.thumbnail}" alt="サムネイル" style="width: 100%;">` : ''}
+            `;
             document.getElementById('schedule-modal').style.display = 'block';
             document.getElementById('modal-overlay').style.display = 'block';
+        }
+
+        function deleteSchedule() {
+    if (selectedSchedule) {
+        if (confirm('本当にこの予定を削除しますか？')) {
+            fetch(`/schedules/${selectedSchedule.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('予定が削除されました');
+                    closeModal();
+                    location.reload(); // ページをリロードして予定を更新
+                } else {
+                    alert('削除に失敗しました');
+                }
+            });
+        }
+    }
+}
+
+
+        function editSchedule() {
+            if (selectedSchedule) {
+                // 更新ページへの遷移
+                window.location.href = `/schedules/${selectedSchedule.id}/edit`;
+            }
         }
 
         function closeModal() {
@@ -192,5 +226,4 @@
             displaySchedules(currentDate); // 初期表示で今日の日付の予定を表示
         });
     </script>
-</body>
-</html>
+
