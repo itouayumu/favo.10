@@ -29,6 +29,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 
 Route::get('/', [UserMainController::class, 'index']);
+Route::get('/register', [UserMainController::class, 'register']);
 Route::get('/schedules', [ScheduleController::class, 'schedule']);
 Route::get('/schedules/create', [ScheduleController::class, 'create']);
 Route::post('/schedules', [ScheduleController::class, 'store']);
