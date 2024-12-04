@@ -7,21 +7,17 @@
 @section('content')
     <img src="{{ asset('img/fs11.png') }}" alt="husen">
 
-<div class="background-container">
-    <img src="{{ asset('img/me09.png') }}" alt="background" class="backgroung-image">
     <div class="form-container">
         <form action="#" method="post">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required><br>
+                <label for="name">ユーザーID</label>
+                <input type="text" id="name" name="name" required>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required><br>
+                <label for="email">パスワード</label>
+                <input type="password" id="password" name="password" required>
 
-            <label for="message">Message:</label>
-            <textarea id="message" name="message" rows="4" required></textarea><br>
-
-            <button type="submit">Submit</button>
+                <button type="submit">ログイン</button>
+                <button type="submit">新規登録</button>
+                <button type="submit">パスワードを忘れた方はこちら</button>
         </form>
     </div>
-</div>
 @endsection

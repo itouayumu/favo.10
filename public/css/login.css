@@ -1,57 +1,36 @@
-.background-container {
-    width: 100%;
-    height: 100vh; /* ビューポート全体を使う */
-    position: relative;
-}
-
-.background-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: -1; /* 背景画像がフォームの後ろに配置される */
-}
-
 .form-container {
-    position: relative;
-    width: 300px; /* フォームの幅を設定 */
-    margin: 100px auto; /* 画面中央に配置 */
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.8); /* 半透明の背景 */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background-image: url('../img/me09.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 350px;
 }
 
-form {
+.form-container form {
     display: flex;
     flex-direction: column;
+    padding: 10px;
 }
 
-label {
-    margin-bottom: 8px;
+.form-container label {
+    margin-bottom: 10px;
     font-weight: bold;
 }
 
-input, textarea {
+.form-container input{
+    border: none;
+    border-bottom: solid 1px #000000;
     margin-bottom: 12px;
     padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%;
 }
 
-button {
+.form-container button {
     padding: 10px;
+    margin: 8px;
     border: none;
-    background-color: #007bff;
-    color: white;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
     font-size: 16px;
+    border: solid 1px #000000;;
     border-radius: 4px;
     cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
 }

@@ -4,100 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>スケジュール一覧</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-
-        table {
-            width: 70%;
-            margin: 20px auto;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #ddd;
-            height: 100px;
-            width: 100px;
-            box-sizing: border-box;
-            cursor: pointer;
-        }
-
-        th {
-            background-color: #f4f4f4;
-        }
-
-        td {
-            vertical-align: top;
-            word-wrap: break-word;
-        }
-
-        .today {
-            background-color: #f2f2f2;
-        }
-
-        .schedule-list {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #fff3e6;
-            width: 80%;
-            margin: 0 auto;
-        }
-
-        .schedule-item {
-            padding: 15px;
-            background-color: #fefefe;
-            margin: 10px 0;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .arrow-buttons {
-            display: flex;
-            justify-content: center;
-            margin-top: 15px;
-        }
-
-        .arrow-buttons button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 5px 10px;
-            font-size: 18px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .arrow-buttons button:hover {
-            background-color: #45a049;
-        }
-
-        .add-schedule-btn {
-            background-color: #007bff;
-            color: white;
-            padding: 15px 25px;
-            font-size: 18px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .add-schedule-btn:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/callender.css') }}">
 </head>
 <body>
+    <a href="/users/profile_edit"><img src="" alt="アイコン"></a>
     <h1>スケジュール管理</h1>
+
+    <!-- 月の範囲表示 -->
+    <p id="month-info"></p>
 
     <!-- カレンダー表示 -->
     <div>
@@ -129,15 +43,24 @@
     </div>
 
     <div class="arrow-buttons">
-        <button onclick="moveDate(-1)">◀ 前の日</button>
-        <button onclick="moveDate(1)">次の日 ▶</button>
+        <button onclick="changeMonth(-1)">◀ 前の日</button>
+        <button onclick="changeMonth(+1)">次の日 ▶</button>
     </div>
 
     <button class="add-schedule-btn" onclick="window.location.href='/schedules/create'">予定を追加</button>
 
+    <!-- モーダル -->
+    <div id="schedule-modal">
+        <h2 id="modal-title"></h2>
+        <p id="modal-content"></p>
+        <button onclick="closeModal()">閉じる</button>
+    </div>
+    <div id="modal-overlay" onclick="closeModal()"></div>
+
     <script>
         let currentDate = new Date();
         let schedules = @json($schedules); // サーバーから受け取ったスケジュールデータ
+        let selectedDateElement = null;
 
         function formatDate(date) {
             const year = date.getFullYear();
@@ -149,7 +72,24 @@
         function updateMonthDisplay() {
             const monthDisplay = document.getElementById('current-month');
             const monthName = currentDate.toLocaleString('default', { month: 'long' });
+            const firstDay = formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
+            const lastDay = formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
+
             monthDisplay.textContent = `${currentDate.getFullYear()}年${monthName}のスケジュール`;
+            document.getElementById('month-info').textContent = `この月の範囲: ${firstDay} 〜 ${lastDay}`;
+        }
+
+        function displaySchedulesForDate(date) {
+            let hasSchedule = false;
+
+            schedules.forEach(schedule => {
+                if (schedule.start_date === date) {
+                    hasSchedule = true;
+                }
+            });
+
+            // 予定がある場合、緑の丸を表示
+            return hasSchedule ? '<div class="has-schedule"></div>' : ''; // 予定なしの場合は空
         }
 
         function updateCalendar() {
@@ -169,9 +109,10 @@
                     } else {
                         const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDay);
                         const formattedDate = formatDate(date);
+                        const scheduleIndicator = displaySchedulesForDate(formattedDate); // 予定の丸
                         row += `<td class="${date.toDateString() === new Date().toDateString() ? 'today' : ''}" onclick="selectDate(${currentDay})">
                             <strong>${currentDay}</strong>
-                            <div>${displaySchedulesForDate(formattedDate)}</div>
+                            ${scheduleIndicator} <!-- 予定があれば緑の丸 -->
                         </td>`;
                         currentDay++;
                     }
@@ -181,16 +122,6 @@
             }
         }
 
-        function displaySchedulesForDate(date) {
-            let scheduleHTML = '';
-            schedules.forEach(schedule => {
-                if (schedule.start_date === date) {
-                    scheduleHTML += `<div><a href="/schedules/${schedule.id}">${schedule.oshiname}: ${schedule.title}</a></div>`;
-                }
-            });
-            return scheduleHTML; // 予定なしの場合は空文字列
-        }
-
         function changeMonth(offset) {
             currentDate.setMonth(currentDate.getMonth() + offset);
             updateMonthDisplay();
@@ -198,15 +129,38 @@
             displaySchedules(currentDate); // 月変更時に今日の日付の予定を表示
         }
 
-        function moveDate(offset) {
-            currentDate.setDate(currentDate.getDate() + offset);
-            displaySchedules(currentDate);
-            updateCalendar();
-        }
-
         function selectDate(day) {
             const selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+
+            // 以前の選択をクリア
+            if (selectedDateElement) {
+                selectedDateElement.classList.remove('selected-date');
+            }
+
+            // 新しく選択された日付を強調
+            const cells = document.querySelectorAll('#calendar-body td');
+            cells.forEach(cell => {
+                if (cell.textContent.trim() === String(day)) {
+                    cell.classList.add('selected-date');
+                    selectedDateElement = cell;
+                }
+            });
+
             displaySchedules(selectedDate);
+        }
+
+        function showModal(schedule) {
+            document.getElementById('modal-title').textContent = `${schedule.oshiname}: ${schedule.title}`;
+            document.getElementById('modal-content').innerHTML = `
+                <p>日付: ${schedule.start_date}</p>
+                ${schedule.thumbnail ? `<img src="/storage/${schedule.thumbnail}" alt="サムネイル" style="width: 100%;">` : ''}`;
+            document.getElementById('schedule-modal').style.display = 'block';
+            document.getElementById('modal-overlay').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('schedule-modal').style.display = 'none';
+            document.getElementById('modal-overlay').style.display = 'none';
         }
 
         function displaySchedules(date) {
@@ -219,12 +173,10 @@
             schedules.forEach(schedule => {
                 if (schedule.start_date === formattedDate) {
                     foundSchedule = true;
-                    const item = document.createElement('div');
+                    const item = document.createElement('button'); // ボタンとして作成
                     item.classList.add('schedule-item');
-                    item.innerHTML = `
-            <strong>${schedule.oshiname}: ${schedule.title}</strong>
-            ${schedule.thumbnail ? `<br><img src="/storage/${schedule.thumbnail}" alt="サムネイル" width="50">` : ''}
-        `;
+                    item.innerHTML = `<strong>${schedule.oshiname}: ${schedule.title}</strong>`;
+                    item.onclick = () => showModal(schedule); // モーダル表示を設定
                     scheduleItems.appendChild(item);
                 }
             });
