@@ -16,7 +16,7 @@
                 <input type="password" id="password" name="password" required>
 
                 <button type="submit">ログイン</button>
-                <button type="submit">新規登録</button>
+                <button onclick="window.location.href='/register'">新規登録</button>
                 <button type="submit">パスワードを忘れた方はこちら</button>
         </form>
     </div>
