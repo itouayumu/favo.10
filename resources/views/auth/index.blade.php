@@ -5,14 +5,16 @@
 @endsection
 
 @section('content')
-    <img src="{{ asset('img/fs11.png') }}" alt="husen">
+    <h1 class="heading">ログイン</h1>
 
     <div class="form-container">
+        <img src="{{ asset('img/osipin.png') }}" alt="押しピン">
         <form action="#" method="post">
+            @csrf
                 <label for="name">ユーザーID</label>
                 <input type="text" id="name" name="name" required>
 
-                <label for="email">パスワード</label>
+                <label for="password">パスワード</label>
                 <input type="password" id="password" name="password" required>
 
                 <button type="submit">ログイン</button>
