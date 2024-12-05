@@ -7,6 +7,9 @@ use App\Http\Controllers\ScheduleController;
 
 use App\Http\Controllers\RecommendController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LoginController;
+
 
 
 
@@ -29,7 +32,9 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 
 Route::get('/', [UserMainController::class, 'index']);
-Route::get('/register', [UserMainController::class, 'register']);
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
+
 Route::get('/schedules', [ScheduleController::class, 'schedule']);
 Route::get('/schedules/create', [ScheduleController::class, 'create']);
 Route::post('/schedules', [ScheduleController::class, 'store']);
@@ -40,6 +45,10 @@ Route::delete('/schedules/{id}', [ScheduleController::class, 'destroy'])->name('
 
 Route::get('/recommends', [RecommendController::class, 'index']);
 
+
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login'); // ログイン画面表示
+Route::post('/login', [LoginController::class, 'login']); // ログイン処理
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); // ログアウト処理
 
 Route::get('/users/profile_edit', [UsersController::class, 'profile_edit']);
 
