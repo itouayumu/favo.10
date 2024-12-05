@@ -8,6 +8,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\RecommendController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LoginController;
 
 
 
@@ -43,6 +44,10 @@ Route::put('/schedules/{id}', [ScheduleController::class, 'update']);
 Route::delete('/schedules/{id}', [ScheduleController::class, 'destroy']);
 Route::get('/recommends', [RecommendController::class, 'index']);
 
+
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login'); // ログイン画面表示
+Route::post('/login', [LoginController::class, 'login']); // ログイン処理
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); // ログアウト処理
 
 Route::get('/users/profile_edit', [UsersController::class, 'profile_edit']);
 
