@@ -7,6 +7,8 @@ use App\Http\Controllers\ScheduleController;
 
 use App\Http\Controllers\RecommendController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\Auth\RegisterController;
+
 
 
 
@@ -29,7 +31,9 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 
 Route::get('/', [UserMainController::class, 'index']);
-Route::get('/register', [UserMainController::class, 'register']);
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
+
 Route::get('/schedules', [ScheduleController::class, 'schedule']);
 Route::get('/schedules/create', [ScheduleController::class, 'create']);
 Route::post('/schedules', [ScheduleController::class, 'store']);
