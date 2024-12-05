@@ -16,9 +16,14 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('image')->nullable();
+            $table->text('introduction')->nullable(); 
+            $table->integer('point')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->boolean('report_flag')->default(false); // 通報フラグ（デフォルト: 0）
+            $table->boolean('delete_flag')->default(false);
         });
     }
 
