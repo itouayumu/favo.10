@@ -30,7 +30,7 @@ body {
     margin-bottom: 15px;
 }
 
-/* フォームの要素 */
+/* フォームの要素
 label {
     font-size: 14px;
     color: #333;
@@ -60,7 +60,7 @@ input[type="checkbox"] {
     margin-right: 10px;
 }
 
-/* ボタン */
+ボタン
 .btn {
     display: block;
     width: 100%;
@@ -78,7 +78,7 @@ input[type="checkbox"] {
     background-color: #0056b3;
 }
 
-/* リンク */
+リンク
 .btn-link {
     font-size: 14px;
     color: #007bff;
@@ -89,7 +89,7 @@ input[type="checkbox"] {
 
 .btn-link:hover {
     text-decoration: underline;
-}
+} */
 
 /* スマホのレスポンシブ対応 */
 @media (max-width: 600px) {

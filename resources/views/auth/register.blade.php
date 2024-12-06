@@ -1,13 +1,15 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>新規登録</title>
-</head>
-<body>
-    <h1>アカウント新規登録</h1>
-    <form action="{{ route('register') }}" method="POST" enctype="multipart/form-data">
+@extends('layouts.auth')
+
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/register.css') }}">
+@endsection
+
+@section('content')
+    <h1 class="heading">新規登録</h1>
+
+    <div class="form-container">
+        <img src="{{ asset('img/osipin.png') }}" alt="押しピン" class="osipin">
+        <form action="{{ route('register') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div>
             <label for="name">名前</label>
@@ -38,13 +40,23 @@
             @error('introduction')<p>{{ $message }}</p>@enderror
         </div>
 
-        <div>
-            <label for="image">プロフィール画像</label>
-            <input type="file" name="image" id="image">
+        <label>プロフィール画像</label>
+        <div class="preview">
+            <!-- ファイルアップロードアイコン -->
+            <label for="fileInput" class="upload-icon"></label>
+            <!-- 画像プレビュー -->
+            <img id="imagePreview" class="image-preview" src="">
+            <!-- ファイル選択 -->
+            <input type="file" class="file-input" id="fileInput" accept="image/*">
             @error('image')<p>{{ $message }}</p>@enderror
         </div>
 
         <button type="submit">登録</button>
+        <button onclick="window.location.href='/'">戻る</button>
     </form>
-</body>
-</html>
+    </div>
+@endsection
+
+@section('scripts')
+    <script src="{{ asset('js/register.js') }}"></script>
+@endsection
