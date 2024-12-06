@@ -8,6 +8,7 @@ use App\Http\Controllers\RecommendController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\TagController;
 
 // ホームページ
 Route::get('/', [UserMainController::class, 'index'])->name('home');
@@ -37,3 +38,9 @@ Route::get('/recommends', [RecommendController::class, 'index']);
 
 // ホーム画面（デフォルトのリダイレクト先）
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+// プロフィール編集ページ
+Route::get('/users/{user}/profile/edit', [TagController::class, 'profileEdit'])->name('users.profile.edit');
+
+// タグの紐づけ
+Route::post('/users/{user}/tags', [TagController::class, 'attachTag'])->name('users.tags.attach');
