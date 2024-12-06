@@ -8,11 +8,11 @@
     <h1 class="heading">ログイン</h1>
 
     <div class="form-container">
-        <img src="{{ asset('img/osipin.png') }}" alt="押しピン">
+        <img src="{{ asset('img/osipin.png') }}" alt="押しピン" class="osipin">
         <form action="#" method="post">
             @csrf
-                <label for="name">ユーザーID</label>
-                <input type="text" id="name" name="name" required>
+                <label for="name">メールアドレス</label>
+                <input type="email" id="name" name="name" required>
 
                 <label for="password">パスワード</label>
                 <input type="password" id="password" name="password" required>
