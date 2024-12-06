@@ -27,7 +27,7 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate(); // セッション固定攻撃を防止
 
-            return redirect()->intended('home')->with('success', 'ログインしました');
+            return redirect()->intended('schedules')->with('success', 'ログインしました');
         }
 
         // 認証失敗時
