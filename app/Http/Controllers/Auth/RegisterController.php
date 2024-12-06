@@ -60,8 +60,8 @@ class RegisterController extends Controller
         //Log::info('ユーザーが作成されました: ', $user->toArray());
 
         // ログイン後のリダイレクト
-        auth()->login($user);
+        //auth()->login($user);
 
-        return redirect()->route('home')->with('success', 'アカウントが作成されました');
+        return redirect('/')->with('success', 'アカウントが作成されました');
     }
 }
