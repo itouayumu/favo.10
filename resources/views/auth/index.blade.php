@@ -8,7 +8,7 @@
     <h1 class="heading">ログイン</h1>
 
     <div class="form-container">
-        <img src="{{ asset('img/osipin.png') }}" alt="押しピン">
+        <img src="{{ asset('img/osipin.png') }}" alt="押しピン" class="osipin">
         <form action="{{ route('login') }}" method="post">
             @csrf
             <label for="email">メールアドレス</label>
