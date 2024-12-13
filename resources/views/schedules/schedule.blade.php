@@ -4,7 +4,13 @@
     <link rel="stylesheet" href="{{ asset('css/callender.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <a href="/users/profile_edit"><img src="" alt="アイコン"></a>
+    @if(Auth::check())
+    <!-- ログイン中のユーザー情報を表示 -->
+    <a href="{{ route('profile.show') }}">
+        <img src="{{ Auth::user()->image ? asset('storage/' . Auth::user()->image) : 'https://via.placeholder.com/150' }}" 
+             alt="アイコン">
+    </a>
+    @endif
     <h1>スケジュール管理</h1>
 
     <!-- 月の範囲表示 -->
