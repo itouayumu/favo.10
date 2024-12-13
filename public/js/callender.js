@@ -1,5 +1,4 @@
 let currentDate = new Date();
-let schedules = JSON.parse('@json($schedules)');
  // サーバーから受け取ったスケジュールデータ
 let selectedDateElement = null;
 
@@ -17,7 +16,6 @@ function updateMonthDisplay() {
     const lastDay = formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
 
     monthDisplay.textContent = `${currentDate.getFullYear()}年${monthName}のスケジュール`;
-    document.getElementById('month-info').textContent = `この月の範囲: ${firstDay} 〜 ${lastDay}`;
 }
 
 function displaySchedulesForDate(date) {
@@ -94,7 +92,7 @@ function showModal(schedule) {
     document.getElementById('modal-title').textContent = `${schedule.oshiname}: ${schedule.title}`;
     document.getElementById('modal-content').innerHTML = `
         <p>日付: ${schedule.start_date}</p>
-        ${schedule.thumbnail ? `<img src="/storage/${schedule.thumbnail}" alt="サムネイル" style="width: 100%;">` : ''}`;
+        ${schedule.thumbnail ? `<img src="/storage/${schedule.thumbnail}" alt="画像" style="width: 100%;">` : ''}`;
     document.getElementById('schedule-modal').style.display = 'block';
     document.getElementById('modal-overlay').style.display = 'block';
 }
