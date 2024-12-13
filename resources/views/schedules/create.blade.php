@@ -1,3 +1,9 @@
+@extends('app')
+
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/create_schedule.css') }}">
+@endsection
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
