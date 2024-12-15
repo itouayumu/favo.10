@@ -11,6 +11,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\ReplyController;
+use App\Http\Controllers\UserProfileController;
+
 // ホームページ
 Route::get('/', [UserMainController::class, 'index'])->name('home');
 
@@ -23,7 +25,10 @@ Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->na
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login']); // ログイン処理
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); // ログアウト処理
-Route::get('/users/profile_edit', [UsersController::class, 'profile_edit']);
+// ログイン中ユーザーのプロフィール表示ルート
+Route::get('/profile', [UserProfileController::class, 'show'])
+    ->name('profile.show')
+    ->middleware('auth'); // 認証を必須にする
 
 // スケジュール関連
 Route::get('/schedules', [ScheduleController::class, 'schedule']);
