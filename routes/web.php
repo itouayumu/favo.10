@@ -8,6 +8,9 @@ use App\Http\Controllers\RecommendController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\TimelineController;
+use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\UserProfileController;
 
 // ホームページ
@@ -47,3 +50,13 @@ Route::get('/users/{user}/profile/edit', [TagController::class, 'profileEdit'])-
 
 // タグの紐づけ
 Route::post('/users/{user}/tags', [TagController::class, 'attachTag'])->name('users.tags.attach');
+
+//timeline関係
+// タイムラインのページを表示
+Route::get('/timeline', [TimelineController::class, 'index']);
+Route::get('/fetch-timeline', [TimelineController::class, 'fetchTimeline'])->name('timeline.fetch');
+Route::post('/store', [TimelineController::class, 'store'])->name('timeline.store');
+
+//返信機能
+Route::post('/reply/store', [ReplyController::class, 'store'])->name('reply.store');
+Route::get('/reply/fetch/{post_id}', [ReplyController::class, 'fetch'])->name('reply.fetch');
