@@ -57,13 +57,13 @@ class TimelineController extends Controller
       $lastFetched = $request->input('last_fetched'); // 最後に取得した投稿の時刻
   
       $query = Post::where('delete_flag', false);
-  
+    
       if ($lastFetched) {
           $query->where('created_at', '>', $lastFetched); // 新しい投稿のみ取得
       }
-  
+    
       $posts = $query->orderBy('created_at', 'desc')->get();
-  
+    
       return response()->json($posts);
   }
   
