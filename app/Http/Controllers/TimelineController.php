@@ -66,6 +66,15 @@ class TimelineController extends Controller
     
       return response()->json($posts);
   }
-  
+  public function search(Request $request)
+  {
+      $query = $request->input('query'); // 検索クエリを取得
+      $posts = Post::where('post', 'LIKE', '%' . $query . '%')
+                   ->where('delete_flag', false)
+                   ->orderBy('created_at', 'desc')
+                   ->get();
+
+      return response()->json($posts);
+  }
 
 }

@@ -168,3 +168,66 @@ $(document).ready(function () {
         });
     });
 });
+$(document).ready(function () {
+    let searchTimeout;
+
+    // 🔍 検索機能
+    $('#searchInput').on('input', function () {
+        clearTimeout(searchTimeout); // 入力のたびにタイマーをクリア
+        const query = $(this).val();
+
+        if (query.length > 0) {
+            searchTimeout = setTimeout(() => {
+                searchPosts(query);
+            }, 500); // 0.5秒後に検索を実行
+        } else {
+            $('#searchResults').empty(); // フォームが空なら検索結果をクリア
+        }
+    });
+
+    function searchPosts(query) {
+        $.ajax({
+            url: '/posts/search',
+            type: 'GET',
+            data: { query: query },
+            success: function (posts) {
+                $('#searchResults').empty(); // 結果をクリア
+
+                if (posts.length > 0) {
+                    posts.forEach(post => {
+                        const postElement = `
+                            <div class="post mb-4 p-3 border rounded" id="post-${post.id}">
+                                <p>${$('<div>').text(post.post).html()}</p>
+                                <p class="text-muted">
+                                    <small>${new Date(post.created_at).toLocaleString()}</small>
+                                </p>
+                                ${post.image ? `<img src="/storage/${post.image}" class="img-fluid mb-2" alt="投稿画像">` : ''}
+
+                                <!-- 返信フォーム -->
+                                <form class="replyForm" data-post-id="${post.id}">
+                                    <input type="hidden" name="post_id" value="${post.id}">
+                                    <div class="mb-2">
+                                        <textarea name="comment" class="form-control" placeholder="返信を書く" required></textarea>
+                                    </div>
+                                    <div class="mb-2">
+                                        <input type="file" name="image" accept="image/*" class="form-control">
+                                    </div>
+                                    <button type="submit" class="btn btn-sm btn-secondary">返信する</button>
+                                </form>
+
+                                <!-- 返信一覧 -->
+                                <div class="replies mt-3" id="replies-${post.id}"></div>
+                            </div>
+                        `;
+                        $('#searchResults').append(postElement);
+                    });
+                } else {
+                    $('#searchResults').html('<p>該当する投稿はありません。</p>');
+                }
+            },
+            error: function (xhr) {
+                console.error('検索に失敗:', xhr.responseText);
+            }
+        });
+    }
+});

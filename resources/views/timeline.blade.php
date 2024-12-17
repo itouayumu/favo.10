@@ -11,6 +11,12 @@
 <body>
     <div class="container mt-5">
         <h1>タイムライン</h1>
+        <div class="mb-4">
+    <input type="text" id="searchInput" class="form-control" placeholder="投稿を検索...">
+</div>
+
+<div id="searchResults"></div> <!-- 検索結果の表示領域 -->
+
 
         <!-- 投稿フォーム -->
         <form id="postForm" action="{{ route('timeline.store') }}" method="POST" enctype="multipart/form-data" class="mb-4">

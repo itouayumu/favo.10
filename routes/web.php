@@ -58,3 +58,8 @@ Route::get('/timeline/fetch-timeline', [TimelineController::class, 'fetchTimelin
 Route::post('/reply/store', [ReplyController::class, 'store'])->name('reply.store');
 Route::get('/reply/fetch/{post_id}', [ReplyController::class, 'fetch'])->name('reply.fetch');
 Route::get('/reply/fetch-new-replies', [ReplyController::class, 'fetchNewReplies']);
+
+
+//検索機能
+Route::get('/posts/search', [TimelineController::class, 'search']);
+
