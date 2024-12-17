@@ -8,36 +8,39 @@
     <h1>予定表</h1>
 
 <div class="scroll">
-    <!-- カレンダー表示 -->
-    <div>
-        <span id="current-month"></span>
+
+    <div class="arrow-buttons">
+        <button onclick="changeMonth(-1)">◀ 前の月</button>
+        <button onclick="changeMonth(+1)">次の月 ▶</button>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>日</th>
-                <th>月</th>
-                <th>火</th>
-                <th>水</th>
-                <th>木</th>
-                <th>金</th>
-                <th>土</th>
-            </tr>
-        </thead>
-        <tbody id="calendar-body">
-            <!-- カレンダーの日付がここに動的に生成されます -->
-        </tbody>
-    </table>
+    <!-- カレンダー表示 -->
+     <div class="calendar">
+        <div class="month">
+            <span id="current-month"></span>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>SUN</th>
+                    <th>MON</th>
+                    <th>TUE</th>
+                    <th>WED</th>
+                    <th>THU</th>
+                    <th>FRI</th>
+                    <th>SAT</th>
+                </tr>
+            </thead>
+            <tbody id="calendar-body">
+                <!-- カレンダーの日付がここに動的に生成されます -->
+            </tbody>
+        </table>
+    </div>
 
     <div id="today-schedule" class="schedule-list">
         <h2 id="current-date"></h2>
         <div id="schedule-items"></div>
-    </div>
-
-    <div class="arrow-buttons">
-        <button onclick="changeMonth(-1)">◀ 前の日</button>
-        <button onclick="changeMonth(+1)">次の日 ▶</button>
     </div>
 
     <button class="add-schedule-btn" onclick="window.location.href='/schedules/create'">予定を追加</button>
