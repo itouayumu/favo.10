@@ -12,6 +12,7 @@ use App\Http\Controllers\TagController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\TagController;
 
 // ホームページ
 Route::get('/', [UserMainController::class, 'index'])->name('home');
@@ -29,6 +30,24 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); // �
 Route::get('/profile', [UserProfileController::class, 'show'])
     ->name('profile.show')
     ->middleware('auth'); // 認証を必須にする
+
+// 公開タグの表示
+Route::get('/tags', [TagController::class, 'publicTags'])->name('users.tags.public');
+
+// タグクリックカウント
+Route::post('/tags/{tagId}/count', [TagController::class, 'incrementClickCount']);
+
+//タグ作成
+Route::post('/tags/create', [TagController::class, 'create'])->name('tags.create');
+
+//タグ削除
+Route::post('/tags/{tagId}/delete', [TagController::class, 'delete'])->name('tags.delete');
+
+//タグ公開・非公開
+Route::get('/tags/public', [TagController::class, 'publicTags'])->name('tags.publicTags');
+Route::post('/tags/{tagId}/visibility', [TagController::class, 'toggleVisibility'])->name('tags.toggleVisibility');
+
+
 
 // スケジュール関連
 Route::get('/schedules', [ScheduleController::class, 'schedule']);

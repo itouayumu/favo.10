@@ -48,4 +48,29 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'user_tag', 'user_id', 'tags_id')
+                    ->withPivot('sort_id', 'count', 'hidden_flag', 'delete_flag')
+                    ->withTimestamps();
+        return $this->belongsToMany(Tag::class)->withPivot('hidden_flag', 'count');
+    }
+
+    public function publicTags()
+{
+    $user = auth()->user();
+
+    if (!$user) {
+        return redirect()->route('login')->with('error', 'セッションが切れました。再度ログインしてください。');
+    }
+
+    $tags = $user->tags()
+                 ->wherePivot('hidden_flag', 0)
+                 ->wherePivot('delete_flag', 0)
+                 ->get();
+
+    return view('tags.public_tags', compact('user', 'tags'));
+}
+
 }
