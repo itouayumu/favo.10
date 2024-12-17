@@ -46,4 +46,17 @@ class ReplyController extends Controller
 
         return response()->json($replies);
     }
+
+    public function fetchNewReplies(Request $request)
+{
+    $lastFetched = $request->input('last_fetched');
+    $replies = Reply::where('created_at', '>', $lastFetched)
+                    ->where('delete_flag', false)
+                    ->orderBy('created_at', 'asc')
+                    ->get();
+
+    return response()->json($replies);
+}
+
+    
 }

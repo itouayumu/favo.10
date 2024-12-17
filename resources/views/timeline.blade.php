@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>タイムライン</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -10,6 +11,12 @@
 <body>
     <div class="container mt-5">
         <h1>タイムライン</h1>
+        <div class="mb-4">
+    <input type="text" id="searchInput" class="form-control" placeholder="投稿を検索...">
+</div>
+
+<div id="searchResults"></div> <!-- 検索結果の表示領域 -->
+
 
         <!-- 投稿フォーム -->
         <form id="postForm" action="{{ route('timeline.store') }}" method="POST" enctype="multipart/form-data" class="mb-4">
@@ -57,6 +64,9 @@
             @endforeach
         </div>
     </div>
+
+
+
 
     <!-- timeline.js の読み込み -->
     <script src="{{ asset('js/timeline.js') }}"></script>

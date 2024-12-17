@@ -56,7 +56,15 @@ Route::post('/users/{user}/tags', [TagController::class, 'attachTag'])->name('us
 Route::get('/timeline', [TimelineController::class, 'index']);
 Route::get('/fetch-timeline', [TimelineController::class, 'fetchTimeline'])->name('timeline.fetch');
 Route::post('/store', [TimelineController::class, 'store'])->name('timeline.store');
+Route::get('/timeline/fetch-timeline', [TimelineController::class, 'fetchTimeline']);
+
 
 //返信機能
 Route::post('/reply/store', [ReplyController::class, 'store'])->name('reply.store');
 Route::get('/reply/fetch/{post_id}', [ReplyController::class, 'fetch'])->name('reply.fetch');
+Route::get('/reply/fetch-new-replies', [ReplyController::class, 'fetchNewReplies']);
+
+
+//検索機能
+Route::get('/posts/search', [TimelineController::class, 'search']);
+
