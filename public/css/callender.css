@@ -9,6 +9,17 @@
             background-color: #ffffff;
         }
 
+        .calendar{
+            background-color: #ffffff;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        .month{
+            margin: 10px;
+        }
+
         .scroll{
             overflow-y: auto;
             height: 360px;
@@ -37,24 +48,26 @@
             border-collapse: collapse;
         }
 
-        th, td {
-            padding: 10px;
+        th {
+            font-size: 10px;
             text-align: center;
-            border: 1px solid #ddd;
+            width: 30px;
+            box-sizing: border-box;
+            cursor: pointer;
+            position: relative;
+        }
+
+        td {
+            vertical-align: top;
+            background-color: #ffffff;
+            text-align: center;
+            border: 1px solid #000000;
+            padding: 10px;
             height: 30px;
             width: 30px;
             box-sizing: border-box;
             cursor: pointer;
             position: relative;
-            background-color: #ffffff;
-        }
-
-        th {
-            background-color: #f4f4f4;
-        }
-
-        td {
-            vertical-align: top;
         }
 
         .selected-date {
@@ -89,8 +102,8 @@
         .arrow-buttons button {
             background-color: #4CAF50;
             color: white;
-            padding: 10px;
-            font-size: 18px;
+            padding: 5px;
+            font-size: 15px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -102,13 +115,13 @@
 
         .schedule-list {
             margin-top: 20px;
+            margin-bottom: 30px;
+            margin-left: auto;
+            margin-right: auto;
             padding: 10px;
-            background-color: #fff3e6;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-image: url("../img/me06g.png");
+            background-size: cover;
             width: 90%;
-            max-width: 500px;
-            margin: 0 auto;
         }
 
         .schedule-item {
