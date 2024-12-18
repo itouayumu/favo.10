@@ -4,22 +4,24 @@ form {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 600px;
-    margin-left: 20px;
+    width: 100%; /* 親要素に合わせる */
+    max-width: 300px; /* コルクボード幅に合わせる */
+    margin: 0 auto; /* 横方向のセンタリング */
+    overflow-y: auto;
+    max-height: 90vh;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
-form h1 {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333;
+form::-webkit-scrollbar {
+    display: none;
 }
 
 form label {
     font-size: 14px;
-    margin-bottom: 8px;
     color: #555;
+    margin-bottom: 8px;
+    display: inline-block;
 }
 
 form input[type="text"],
@@ -31,14 +33,9 @@ form input[type="file"] {
     margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
+    box-sizing: border-box;
 }
 
-form input[type="file"] {
-    padding: 0;
-    margin: 0;
-}
-
-/* ボタン */
 button {
     background-color: #ff6f61;
     color: white;
@@ -47,18 +44,22 @@ button {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 button[type="button"] {
     background-color: #f44336; /* リセットボタン */
 }
 
-/* 入力のエラースタイル */
-input:invalid {
-    border-color: red;
+/* 画像プレビュー */
+.img_datareg {
+    display: block;
+    margin-bottom: 10px;
 }
 
-input:valid {
-    border-color: green;
+#image_preview {
+    display: block;
+    margin-top: 10px;
+    max-width: 100%;
+    height: auto;
 }
