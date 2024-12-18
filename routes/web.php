@@ -12,7 +12,6 @@ use App\Http\Controllers\TagController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\UserProfileController;
-use App\Http\Controllers\TagController;
 
 // ホームページ
 Route::get('/', [UserMainController::class, 'index'])->name('home');

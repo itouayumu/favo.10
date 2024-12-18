@@ -12,7 +12,7 @@ class TagController extends Controller
     public function publicTags()
     {
         $user = auth()->user();
-        
+
         // 削除されていないすべてのタグを取得
         $tags = $user->tags()
                      ->wherePivot('delete_flag', 0) // 削除されていないタグ
@@ -76,31 +76,39 @@ class TagController extends Controller
 
     // 公開/非公開の切り替え
     public function toggleVisibility(Request $request, $tagId)
-{
-    $user = auth()->user();
-    $userTag = $user->tags()->where('tags.id', $tagId)->first();
+    {
+        $user = auth()->user();
+        $userTag = $user->tags()->where('tags.id', $tagId)->first();
 
-    if (!$userTag) {
-        return response()->json(['success' => false, 'message' => 'タグが見つかりません。']);
+        if (!$userTag) {
+            return response()->json(['success' => false, 'message' => 'タグが見つかりません。']);
+        }
+
+        // hidden_flagを切り替える
+        $newVisibility = $request->input('hidden_flag'); // 0: 公開, 1: 非公開
+
+        $user->tags()->updateExistingPivot($tagId, [
+            'hidden_flag' => $newVisibility,
+        ]);
+
+        return response()->json(['success' => true, 'newVisibility' => $newVisibility]);
     }
-
-    // hidden_flagを切り替える
-    $newVisibility = $request->input('hidden_flag'); // 0: 公開, 1: 非公開
-
-    $user->tags()->updateExistingPivot($tagId, [
-        'hidden_flag' => $newVisibility,
-    ]);
-
-    return response()->json(['success' => true, 'newVisibility' => $newVisibility]);
-}
-
 
     // タグの削除
     public function delete($tagId)
     {
         try {
             $user = auth()->user();
-            $user->tags()->detach($tagId); // 関連付けを解除
+            $tag = $user->tags()->where('tags.id', $tagId)->first();
+
+            if (!$tag) {
+                return response()->json(['success' => false, 'message' => 'タグが見つかりません。']);
+            }
+
+            // 削除フラグを1に更新
+            $user->tags()->updateExistingPivot($tagId, [
+                'delete_flag' => 1,
+            ]);
 
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
