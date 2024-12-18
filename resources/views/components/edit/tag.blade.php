@@ -1,65 +1,8 @@
-@extends('layouts.app')
+<div>
+    <h3>{{ $user->name }} のタグ管理</h3>
 
-@section('content')
-<div class="container">
-    <h1>プロフィール編集</h1>
-
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        <div class="form-group">
-            <label for="name">名前</label>
-            <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $user->name) }}" required>
-            @error('name')
-                <small class="text-danger">{{ $message }}</small>
-            @enderror
-        </div>
-
-        <h3>使われているタグ</h3>
-        <ul id="public-tags">
-            @foreach ($user->tags()->wherePivot('hidden_flag', 0)->wherePivot('delete_flag', 0)->get() as $tag)
-                <li id="tag-{{ $tag->id }}">
-                    <a href="#" class="tag-click" data-tag-id="{{ $tag->id }}">{{ $tag->name }}</a>
-                    (クリック数: <span id="click-count-{{ $tag->id }}">{{ $tag->pivot->count }}</span>)
-                    <button class="btn btn-secondary" onclick="toggleVisibility({{ $tag->id }}, 1)">非公開にする</button>
-                    <button class="btn btn-danger" onclick="deleteTag({{ $tag->id }})">削除</button>
-                </li>
-            @endforeach
-        </ul>
-
-        <div>
-            <!-- 自己紹介のフォーム -->
-            <div class="form-group">
-                <label for="introduction">自己紹介</label>
-                <textarea name="introduction" id="introduction" class="form-control">{{ old('introduction', $user->introduction) }}</textarea>
-                @error('introduction')
-                    <small class="text-danger">{{ $message }}</small>
-                @enderror
-            </div>
-
-            <!-- プロフィール画像のアップロード -->
-            <div class="form-group">
-                <label for="image">プロフィール画像</label><br>
-                @if($user->image)
-                    <img src="{{ asset('storage/' . $user->image) }}" alt="プロフィール画像" width="150"><br>
-                @endif
-                <input type="file" name="image" id="image" class="form-control-file">
-                @error('image')
-                    <small class="text-danger">{{ $message }}</small>
-                @enderror
-            </div>
-
-            <button type="submit" class="btn btn-primary mt-3">更新</button>
-        </div>
-    </form>
-
-    <!-- 新しいタグ作成フォーム -->
-    <h3>新しいタグを作成</h3>
+    <!-- タグ作成フォーム -->
+    <h4>新しいタグを作成</h4>
     <form action="{{ route('tags.create') }}" method="POST">
         @csrf
         <div class="form-group">
@@ -78,10 +21,25 @@
 
     <hr>
 
+    <!-- 公開タグ -->
+    <h4>公開タグ</h4>
+    <ul id="public-tags">
+        @foreach ($tags->where('pivot.hidden_flag', 0) as $tag)
+            <li id="tag-{{ $tag->id }}">
+                <a href="#" class="tag-click" data-tag-id="{{ $tag->id }}">{{ $tag->name }}</a>
+                (クリック数: <span id="click-count-{{ $tag->id }}">{{ $tag->pivot->count }}</span>)
+                <button class="btn btn-secondary" onclick="toggleVisibility({{ $tag->id }}, 1)">非公開にする</button>
+                <button class="btn btn-danger" onclick="deleteTag({{ $tag->id }})">削除</button>
+            </li>
+        @endforeach
+    </ul>
+
+    <hr>
+
     <!-- 非公開タグ -->
-    <h3>使われてないタグ</h3>
+    <h4>非公開タグ</h4>
     <ul id="private-tags">
-        @foreach ($user->tags()->wherePivot('hidden_flag', 1)->wherePivot('delete_flag', 0)->get() as $tag)
+        @foreach ($tags->where('pivot.hidden_flag', 1) as $tag)
             <li id="tag-{{ $tag->id }}">
                 <a href="#" class="tag-click" data-tag-id="{{ $tag->id }}">{{ $tag->name }}</a>
                 (クリック数: <span id="click-count-{{ $tag->id }}">{{ $tag->pivot->count }}</span>)
@@ -90,11 +48,32 @@
             </li>
         @endforeach
     </ul>
-
 </div>
 
 <script>
-    // 公開/非公開切り替え
+    //クリック数
+    document.querySelectorAll('.tag-click').forEach(element => {
+        element.addEventListener('click', event => {
+            event.preventDefault();
+            const tagId = event.target.dataset.tagId;
+
+            fetch(`/tags/${tagId}/count`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById(`click-count-${tagId}`).textContent = data.click_count;
+                }
+            });
+        });
+    });
+
+    //公開・非公開
     function toggleVisibility(tagId, hiddenFlag) {
         fetch(`/tags/${tagId}/visibility`, {
             method: 'POST',
@@ -126,7 +105,7 @@
         });
     }
 
-    // タグ削除
+    //削除
     function deleteTag(tagId) {
         fetch(`/tags/${tagId}/delete`, {
             method: 'POST',
@@ -149,4 +128,3 @@
         });
     }
 </script>
-@endsection

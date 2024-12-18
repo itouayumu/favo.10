@@ -23,26 +23,26 @@ class TagController extends Controller
 
     // クリック数を増加
     public function incrementClickCount($tagId)
-    {
-        $userId = auth()->id();
-        $user = User::findOrFail($userId);
+{
+    $userId = auth()->id();
+    $user = User::findOrFail($userId);
 
-        // タグが存在するか確認
-        $tag = $user->tags()->where('tags.id', $tagId)->first();
-        if (!$tag) {
-            return response()->json(['success' => false, 'message' => 'タグが見つかりません。']);
-        }
-
-        // クリック数を1増加
-        $user->tags()->updateExistingPivot($tagId, [
-            'count' => \DB::raw('count + 1'),
-        ]);
-
-        // 最新のクリック数を取得
-        $clickCount = $user->tags()->find($tagId)->pivot->count;
-
-        return response()->json(['success' => true, 'click_count' => $clickCount]);
+    // タグが存在するか確認
+    $tag = $user->tags()->where('tags.id', $tagId)->first();
+    if (!$tag) {
+        return response()->json(['success' => false, 'message' => 'タグが見つかりません。']);
     }
+
+    // クリック数をインクリメント
+    $user->tags()->updateExistingPivot($tagId, [
+        'count' => \DB::raw('count + 1'),
+    ]);
+
+    // 最新のクリック数を取得
+    $clickCount = $user->tags()->where('tags.id', $tagId)->first()->pivot->count;
+
+    return response()->json(['success' => true, 'click_count' => $clickCount]);
+}
 
     // タグの作成
     public function create(Request $request)
