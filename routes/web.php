@@ -14,6 +14,7 @@ use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ProfileController;
 
+
 // ホームページ
 Route::get('/', [UserMainController::class, 'index'])->name('home');
 
