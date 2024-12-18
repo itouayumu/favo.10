@@ -12,6 +12,8 @@ use App\Http\Controllers\TagController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\ProfileController;
+
 
 // ホームページ
 Route::get('/', [UserMainController::class, 'index'])->name('home');
@@ -29,6 +31,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); // �
 Route::get('/profile', [UserProfileController::class, 'show'])
     ->name('profile.show')
     ->middleware('auth'); // 認証を必須にする
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
 // 公開タグの表示
 Route::get('/tags', [TagController::class, 'publicTags'])->name('users.tags.public');
