@@ -18,6 +18,4 @@ class Tag extends Model
                     ->withPivot('sort_id', 'count', 'hidden_flag', 'delete_flag')
                     ->withTimestamps();
     }
-
-    
 }
