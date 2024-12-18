@@ -39,6 +39,7 @@ Route::get('/tags', [TagController::class, 'publicTags'])->name('users.tags.publ
 
 // タグクリックカウント
 Route::post('/tags/{tagId}/count', [TagController::class, 'incrementClickCount']);
+Route::get('/tags/increment/{tagId}', [TagController::class, 'incrementClickCount'])->name('tags.incrementClickCount');
 
 //タグ作成
 Route::post('/tags/create', [TagController::class, 'create'])->name('tags.create');

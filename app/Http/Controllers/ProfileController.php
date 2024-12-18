@@ -10,6 +10,7 @@ class ProfileController extends Controller
     public function edit()
     {
         $user = Auth::user();
+        $tags = $user->tags;
         return view('profile.edit', compact('user'));
     }
 
