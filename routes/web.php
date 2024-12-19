@@ -68,7 +68,7 @@ Route::delete('/schedules/{id}', [ScheduleController::class, 'destroy'])->name('
 Route::get('/recommends', [RecommendController::class, 'index']);
 
 // ホーム画面（デフォルトのリダイレクト先）
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [ScheduleController::class, 'schedule']);
 
 // プロフィール編集ページ
 Route::get('/users/{user}/profile/edit', [TagController::class, 'profileEdit'])->name('users.profile.edit');
