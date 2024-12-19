@@ -32,7 +32,7 @@
     <input type="time" id="end_time" name="end_time" required value="{{ old('end_time') }}"><br><br>
 
     <label for="thumbnail">サムネイル画像:</label><br>
-    <input type="file" id="thumbnail" name="thumbnail" accept="image/*"><br><br>
+    <input type="file" id="thumbnail" name="image" accept="image/*"><br><br>
 
     <label for="content">内容</label>
     <textarea id="content" name="content" required>{{ old('content') }}</textarea><br><br>

@@ -13,6 +13,8 @@ use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\searchcontroller;
+use App\Http\Controllers\FavoriteController;
 
 
 // ホームページ
@@ -90,6 +92,12 @@ Route::get('/reply/fetch-new-replies', [ReplyController::class, 'fetchNewReplies
 
 //検索機能
 Route::get('/posts/search', [TimelineController::class, 'search']);
+Route::get('/favorites', [searchcontroller::class, 'index'])->name('favorites.index'); // 一覧表示
+Route::get('/favorites/search', [searchcontroller::class, 'searchAjax'])->name('favorites.search.ajax'); // 非同期検索
 
 // あいまい検索API
 Route::get('/favorites/search', [ScheduleController::class, 'searchFavorites']);
+
+//新規登録
+Route::get('/favorites/create', [FavoriteController::class, 'create'])->name('favorites.create'); // 新規登録フォーム
+Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store'); // 新規登録処理

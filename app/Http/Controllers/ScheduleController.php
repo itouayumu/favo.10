@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class ScheduleController extends Controller
@@ -57,6 +58,7 @@ class ScheduleController extends Controller
     // スケジュールの保存
     public function store(Request $request)
     {
+        // バリデーション
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
@@ -65,14 +67,15 @@ class ScheduleController extends Controller
             'start_time' => 'required|date_format:H:i',
             'end_date' => 'required|date',
             'end_time' => 'required|date_format:H:i',
-            'image' => 'nullable|image|max:2048',
         ]);
-    
+
         $imagePath = null;
+
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('images', 'public');
         }
-    
+
+
         Schedule::create([
             'user_id' => auth()->user()->id,
             'title' => $request->input('title'),
@@ -82,9 +85,9 @@ class ScheduleController extends Controller
             'end_date' => $request->input('end_date'),
             'end_time' => $request->input('end_time'),
             'favorite_id' => $request->input('oshiname'),
-            'image_path' => $imagePath,
+            'image' => $imagePath,
         ]);
 
         return redirect('/schedules')->with('success', 'スケジュールが作成されました');
     }
-}
+}    
