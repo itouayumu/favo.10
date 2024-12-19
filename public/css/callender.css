@@ -1,5 +1,6 @@
         .container{
             text-align: center;
+            position: relative;
         }
 
         .container h1{
@@ -10,14 +11,43 @@
         }
 
         .calendar{
+            position: relative;
             background-color: #ffffff;
-            margin-top: 20px;
+            margin-top: 10px;
             margin-bottom: 20px;
             padding: 10px;
         }
 
+        .calendar .osipin1{
+            width: 50px;
+            height: 30px;
+            position: absolute;
+            top: -8px;
+            left: -8px;
+        }
+
+        .calendar .osipin2{
+            width: 50px;
+            height: 30px;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+        }
+
         .month{
-            margin: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .month .current-month{
+            margin-left: 15px;
+            font-size: 30px;
+        }
+
+        .month .current-year{
+            margin-right: 15px;
+            margin-bottom: 5px;
+            align-self: flex-end;
         }
 
         .scroll{
@@ -96,7 +126,9 @@
             justify-content: space-between;
             width: 90%;
             max-width: 600px;
-            margin: 20px auto;
+            margin-top: 10px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .arrow-buttons button {
@@ -114,6 +146,7 @@
         }
 
         .schedule-list {
+            position: relative;
             margin-top: 20px;
             margin-bottom: 30px;
             margin-left: auto;
@@ -122,6 +155,15 @@
             background-image: url("../img/me06g.png");
             background-size: cover;
             width: 90%;
+        }
+
+        .schedule-list .osipin3{
+            width: 50px;
+            height: 30px;
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .schedule-item {
@@ -138,6 +180,9 @@
         }
 
         .add-schedule-btn {
+            position: absolute;
+            bottom: 25px;
+            right: 20px;
             background-color: #ffcc00;
             color: black;
             padding: 15px;
@@ -145,9 +190,6 @@
             border: none;
             border-radius: 50%;
             cursor: pointer;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
             width: 60px;
             height: 60px;
