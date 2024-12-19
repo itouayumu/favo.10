@@ -15,10 +15,14 @@
     </div>
 
     <!-- カレンダー表示 -->
-     <div class="calendar">
+    <div class="calendar">
         <div class="month">
-            <span id="current-month"></span>
+            <span id="current-month" class="current-month"></span>
+            <span id="current-year" class="current-year"></span>
         </div>
+
+        <img src="{{ asset('img/osipin.png') }}" alt="押しピン" class="osipin1">
+        <img src="{{ asset('img/osipin.png') }}" alt="押しピン" class="osipin2">
 
         <table>
             <thead>
@@ -41,9 +45,10 @@
     <div id="today-schedule" class="schedule-list">
         <h2 id="current-date"></h2>
         <div id="schedule-items"></div>
+        <img src="{{ asset('img/osipin.png') }}" alt="押しピン" class="osipin3">
     </div>
 
-    <button class="add-schedule-btn" onclick="window.location.href='/schedules/create'">予定を追加</button>
+    <button class="add-schedule-btn" onclick="window.location.href='/schedules/create'">+</button>
 
     <!-- モーダル -->
     <div id="schedule-modal">

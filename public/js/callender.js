@@ -10,12 +10,14 @@ function formatDate(date) {
 }
 
 function updateMonthDisplay() {
+    const yearDisplay = document.getElementById('current-year')
     const monthDisplay = document.getElementById('current-month');
     const monthName = currentDate.toLocaleString('default', { month: 'long' });
     const firstDay = formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
     const lastDay = formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
 
-    monthDisplay.textContent = `${currentDate.getFullYear()}年${monthName}のスケジュール`;
+    yearDisplay.textContent = `${currentDate.getFullYear()}`;
+    monthDisplay.textContent = `${monthName}`;
 }
 
 function displaySchedulesForDate(date) {
