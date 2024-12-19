@@ -1,67 +1,55 @@
 @extends('layouts.app')
 
-@section('css')
-<link rel="stylesheet" href="{{ asset('css/create_schedule.css') }}">
-@endsection
-
 @section('content')
-<div class="container">
-    <form action="/schedules" method="POST" enctype="multipart/form-data">
-        @csrf
-        <label for="oshiname">推しの名前:</label>
-        <input type="text" id="oshiname" name="oshiname" required>
+<h1>予定を作成</h1>
 
-        <label for="title">タイトル:</label>
-        <input type="text" id="title" name="title" required>
+<form action="/schedules" method="POST" enctype="multipart/form-data">
+    @csrf
 
-        <label for="thumbnail">配信サムネイル:</label>
-        <img id="preview" class="img_datareg" width="auto" height="200px">
-        <label>
-            <span class="filelabel" title="ファイルを選択">
-                <input type="file" id="thumbnail" name="thumbnail" accept="image/*" onchange="previewImage(event)">
-            </span>
-        </label>
-        <img id="image_preview" src="" alt="画像プレビュー" style="display:none; max-width: 200px; max-height: 200px;">
+    <!-- 推しの名前検索 -->
+    <label for="favorite-search">推しの名前を検索:</label><br>
+    <input type="text" id="favorite-search" placeholder="推しの名前を入力" autocomplete="off">
+    <ul id="favorite-list" style="border: 1px solid #ccc; max-height: 150px; overflow-y: auto; display: none;"></ul>
 
-        <label for="start_date">開始日:</label>
-        <input type="date" id="start_date" name="start_date" required>
+    <!-- 選択された推しのIDを格納する隠しフィールド -->
+    <input type="hidden" id="oshiname" name="oshiname" value="">
 
-        <label for="start_time">開始時間:</label>
-        <input type="time" id="start_time" name="start_time" required>
+    <br><br>
 
-        <label for="end_date">終了日:</label>
-        <input type="date" id="end_date" name="end_date" required>
+    <label for="title">タイトル:</label><br>
+    <input type="text" id="title" name="title" required value="{{ old('title') }}"><br><br>
 
-        <label for="end_time">終了時間:</label>
-        <input type="time" id="end_time" name="end_time" required>
+    <label for="start_date">開始日:</label><br>
+    <input type="date" id="start_date" name="start_date" required value="{{ old('start_date') }}"><br><br>
 
-        <button type="submit">予定を作成</button>
-        <button type="button" onclick="resetPreview()">リセット</button>
-    </form>
-</div>
-@endsection
+    <label for="start_time">開始時間:</label><br>
+    <input type="time" id="start_time" name="start_time" required value="{{ old('start_time') }}"><br><br>
 
-@section('scripts')
-<script>
-    function resetPreview() {
-        document.getElementById('thumbnail').value = "";
-        document.getElementById('image_preview').src = "";
-        document.getElementById('image_preview').style.display = "none";
-    }
+    <label for="end_date">終了日:</label><br>
+    <input type="date" id="end_date" name="end_date" required value="{{ old('end_date') }}"><br><br>
 
-    function previewImage(event) {
-        var file = event.target.files[0];
-        var reader = new FileReader();
+    <label for="end_time">終了時間:</label><br>
+    <input type="time" id="end_time" name="end_time" required value="{{ old('end_time') }}"><br><br>
 
-        reader.onload = function() {
-            var imagePreview = document.getElementById("image_preview");
-            imagePreview.src = reader.result;
-            imagePreview.style.display = "block"; // Show the image preview
-        }
+    <label for="thumbnail">サムネイル画像:</label><br>
+    <input type="file" id="thumbnail" name="thumbnail" accept="image/*"><br><br>
 
-        if (file) {
-            reader.readAsDataURL(file);
-        }
-    }
-</script>
+    <label for="content">内容</label>
+    <textarea id="content" name="content" required>{{ old('content') }}</textarea><br><br>
+
+    <button type="submit">予定を作成</button>
+</form>
+
+<!-- エラーメッセージの表示 -->
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+<script src="{{ asset('js/serch_favorite.js') }}"></script>
 @endsection

@@ -32,6 +32,7 @@ class TimelineController extends Controller
 
         $post = Post::create([
             'user_id' => auth()->id(), // 認証ユーザーのID
+            'favorite_id' => $request->input('oshiname'),
             'post' => $request->post,
             'image' => $imagePath,
             'delete_flag' => false,

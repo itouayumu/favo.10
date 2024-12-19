@@ -10,9 +10,11 @@ class Schedule extends Model
     use HasFactory;
 
     protected $fillable = [
-        'oshiname', // これを追加
+        'user_id',
+        'favorite_id',
         'title',
-        'thumbnail', 
+        'image', 
+        'content',
         'start_date',
         'start_time',
         'end_date',

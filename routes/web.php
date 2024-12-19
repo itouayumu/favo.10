@@ -91,3 +91,5 @@ Route::get('/reply/fetch-new-replies', [ReplyController::class, 'fetchNewReplies
 //検索機能
 Route::get('/posts/search', [TimelineController::class, 'search']);
 
+// あいまい検索API
+Route::get('/favorites/search', [ScheduleController::class, 'searchFavorites']);

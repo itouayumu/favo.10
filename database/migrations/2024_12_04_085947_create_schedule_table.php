@@ -20,7 +20,8 @@ return new class extends Migration
             
             // その他のカラム
             $table->string('title'); // タイトル
-            $table->binary('image')->nullable(); // 画像 (バイナリデータ格納)
+            $table->text('image')->nullable(); // 画像 (バイナリデータ格納)
+            $table->text('content');// 内容
             $table->date('start_date'); // 開始日
             $table->time('start_time')->nullable(); // 開始時間
             $table->date('end_date')->nullable(); // 終了日

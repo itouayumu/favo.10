@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('favorite_id');  // 推しID (外部キー)
             $table->unsignedBigInteger('schedule_id');  // スケジュールID (外部キー)
             $table->text('post');  // 投稿内容
-            $table->binary('image')->nullable();  // 画像 (バイナリ)
+            $table->text('image')->nullable();  // 画像 (バイナリ)
             $table->timestamps();  // 作成日と更新日
             $table->boolean('delete_flag')->default(0);  // 削除フラグ (デフォルト: 0)
 

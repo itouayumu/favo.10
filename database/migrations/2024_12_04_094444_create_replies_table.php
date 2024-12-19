@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();  // リプライID (主キー、自動インクリメント)
             $table->unsignedBigInteger('user_id');  // ユーザーID (外部キー)
             $table->unsignedBigInteger('post_id');  // 投稿ID (外部キー)
-            $table->binary('image')->nullable();  // 画像 (バイナリ)
+            $table->text('image')->nullable();  // 画像 (バイナリ)
             $table->string('comment');  // コメント (VARCHAR)
             $table->timestamps();  // 作成日と更新日
             $table->boolean('delete_flag')->default(0);  // 削除フラグ (デフォルト: 0)
