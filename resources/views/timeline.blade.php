@@ -20,7 +20,16 @@
 
         <!-- 投稿フォーム -->
         <form id="postForm" action="{{ route('timeline.store') }}" method="POST" enctype="multipart/form-data" class="mb-4">
+
             @csrf
+
+                <!-- 推しの名前検索 -->
+    <label for="favorite-search">推しの名前を検索:</label><br>
+    <input type="text" id="favorite-search" placeholder="推しの名前を入力" autocomplete="off">
+    <ul id="favorite-list" style="border: 1px solid #ccc; max-height: 150px; overflow-y: auto; display: none;"></ul>
+
+    <!-- 選択された推しのIDを格納する隠しフィールド -->
+    <input type="hidden" id="oshiname" name="oshiname" value="">
             <div class="mb-3">
                 <label for="post" class="form-label">投稿内容</label>
                 <textarea id="post" name="post" class="form-control" rows="3" required></textarea>
@@ -70,5 +79,6 @@
 
     <!-- timeline.js の読み込み -->
     <script src="{{ asset('js/timeline.js') }}"></script>
+    <script src="{{ asset('js/serch_favorite.js') }}"></script>
 </body>
 </html>

@@ -17,10 +17,10 @@ return new class extends Migration
             $table->unsignedBigInteger('genre_id'); // ジャンルID
             $table->string('name'); // 推し名
             $table->text('introduction')->nullable(); // 推し紹介
-            $table->binary('image_1')->nullable(); // 画像1
-            $table->binary('image_2')->nullable(); // 画像2
-            $table->binary('image_3')->nullable(); // 画像3
-            $table->binary('image_4')->nullable(); // 画像4
+            $table->text('image_1')->nullable(); // 画像1
+            $table->text('image_2')->nullable(); // 画像2
+            $table->text('image_3')->nullable(); // 画像3
+            $table->text('image_4')->nullable(); // 画像4
             $table->integer('favorite_count')->default(0); // 推しカウント
             $table->timestamps(); // 作成日・更新日
             $table->boolean('hidden_flag')->default(false); // 表示フラグ（デフォルト: 0）
