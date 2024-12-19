@@ -63,10 +63,17 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $imagePath = null;
+        if (isset($data['image']) && $data['image']->isValid()) {
+            $imagePath = $data['image']->store('profiles', 'public'); // 画像を `storage/app/public/profiles` に保存
+        }
+    
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'introduction' => $data['introduction'] ?? null, // 自己紹介も保存する
+            'image' => $imagePath, // 画像パスを保存する
         ]);
     }
 }
