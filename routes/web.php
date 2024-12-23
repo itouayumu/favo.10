@@ -15,7 +15,7 @@ use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\searchcontroller;
 use App\Http\Controllers\FavoriteController;
-
+use App\Http\Controllers\OshiController;
 
 // ホームページ
 Route::get('/', [UserMainController::class, 'index'])->name('home');
@@ -101,3 +101,6 @@ Route::get('/favorites/search', [ScheduleController::class, 'searchFavorites']);
 //新規登録
 Route::get('/favorites/create', [FavoriteController::class, 'create'])->name('favorites.create'); // 新規登録フォーム
 Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store'); // 新規登録処理
+
+//おすすめ機能
+Route::get('/recommend', [OshiController::class, 'recommend']);
