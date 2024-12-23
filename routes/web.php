@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\UserMainController;
 use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\RecommendController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
@@ -64,8 +63,7 @@ Route::get('/schedules/{id}/edit', [ScheduleController::class, 'edit']);
 Route::put('/schedules/{id}', [ScheduleController::class, 'update']);
 Route::delete('/schedules/{id}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
 
-// おすすめ関連
-Route::get('/recommends', [RecommendController::class, 'index']);
+
 
 // ホーム画面（デフォルトのリダイレクト先）
 Route::get('/home', [ScheduleController::class, 'schedule']);
@@ -103,4 +101,8 @@ Route::get('/favorites/create', [FavoriteController::class, 'create'])->name('fa
 Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store'); // 新規登録処理
 
 //おすすめ機能
-Route::get('/recommend', [OshiController::class, 'recommend']);
+Route::middleware(['auth'])->group(function () {
+    Route::get('/recommend', [OshiController::class, 'recommend'])->name('recommend');
+    Route::post('/recommend/favorite/{oshiId}', [OshiController::class, 'addFavorite'])->name('addFavorite');
+    Route::get('/recommend/next', [OshiController::class, 'nextRecommended'])->name('nextRecommended');
+});
