@@ -3,13 +3,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Carbon\Carbon;
 
 class TimelineController extends Controller
 {
     // タイムライン表示
     public function index()
     {
-        $posts = Post::where('delete_flag', false)
+        $posts = Post::with('user') // ユーザー情報をロード
+                     ->where('delete_flag', false)
                      ->orderBy('created_at', 'desc')
                      ->get();
 
@@ -31,51 +33,45 @@ class TimelineController extends Controller
         }
 
         $post = Post::create([
-            'user_id' => auth()->id(), // 認証ユーザーのID
+            'user_id' => auth()->id(),
             'favorite_id' => $request->input('oshiname'),
             'post' => $request->post,
             'image' => $imagePath,
             'delete_flag' => false,
         ]);
-        
 
         return response()->json([
             'message' => '投稿が保存されました',
             'post' => $post,
         ]);
     }
-    public function fetch()
-{
-    $posts = Post::where('delete_flag', false)
-                 ->orderBy('created_at', 'desc')
-                 ->get();
 
-    return response()->json($posts);
-}
-  // タイムラインデータ取得 (非同期対応)
-  public function fetchTimeline(Request $request)
-  {
-      $lastFetched = $request->input('last_fetched'); // 最後に取得した投稿の時刻
-  
-      $query = Post::where('delete_flag', false);
-    
-      if ($lastFetched) {
-          $query->where('created_at', '>', $lastFetched); // 新しい投稿のみ取得
-      }
-    
-      $posts = $query->orderBy('created_at', 'desc')->get();
-    
-      return response()->json($posts);
-  }
-  public function search(Request $request)
-  {
-      $query = $request->input('query'); // 検索クエリを取得
-      $posts = Post::where('post', 'LIKE', '%' . $query . '%')
-                   ->where('delete_flag', false)
-                   ->orderBy('created_at', 'desc')
-                   ->get();
+    // タイムラインデータ取得 (非同期対応)
+    public function fetchTimeline(Request $request)
+    {
+        $lastFetched = $request->input('last_fetched'); // 最後に取得した投稿の時刻
 
-      return response()->json($posts);
-  }
+        $query = Post::where('delete_flag', false);
 
+        if ($lastFetched) {
+            $lastFetchedTime = Carbon::parse($lastFetched); // 入力をCarbonインスタンスに変換
+            $query->where('created_at', '>', $lastFetchedTime);
+        }
+
+        $posts = $query->orderBy('created_at', 'desc')->with('user')->get();
+
+        return response()->json($posts);
+    }
+
+    // 投稿検索
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        $posts = Post::where('post', 'LIKE', '%' . $query . '%')
+                     ->where('delete_flag', false)
+                     ->orderBy('created_at', 'desc')
+                     ->get();
+
+        return response()->json($posts);
+    }
 }

@@ -78,10 +78,11 @@ Route::post('/users/{user}/tags', [TagController::class, 'attachTag'])->name('us
 
 //timeline関係
 // タイムラインのページを表示
-Route::get('/timeline', [TimelineController::class, 'index']);
-Route::get('/fetch-timeline', [TimelineController::class, 'fetchTimeline'])->name('timeline.fetch');
-Route::post('/store', [TimelineController::class, 'store'])->name('timeline.store');
+Route::get('/timeline', [TimelineController::class, 'index'])->name('timeline.index');
 Route::get('/timeline/fetch-timeline', [TimelineController::class, 'fetchTimeline']);
+Route::post('/store', [TimelineController::class, 'store'])->name('timeline.store');
+Route::get('/posts/search', [TimelineController::class, 'search'])->name('timeline.search');
+
 
 
 //返信機能

@@ -38,6 +38,13 @@ $(document).ready(function () {
                         if ($('#post-' + post.id).length === 0) { // 重複防止
                             const postElement = `
                                 <div class="post mb-4 p-3 border rounded" id="post-${post.id}">
+                                                                    <!-- 投稿者のアイコンと名前 -->
+                                    <div class="d-flex align-items-center mb-2">
+                                        <img src="${post.user.icon_url}" alt="投稿者のアイコン" 
+                                             class="rounded-circle me-2" 
+                                             style="width: 40px; height: 40px;">
+                                        <strong>${post.user.name}</strong>
+                                    </div>
                                     <p>${$('<div>').text(post.post).html()}</p>
                                     <p class="text-muted">
                                         <small>${new Date(post.created_at).toLocaleString()}</small>
