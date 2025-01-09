@@ -43,43 +43,49 @@
 
         <!-- タイムライン表示部分 -->
         <div id="timeline">
-            @foreach ($posts as $post)
-            <div class="post mb-4 p-3 border rounded" id="post-{{ $post->id }}">
-    <!-- 投稿者のアイコンと名前 -->
-    <div class="d-flex align-items-center mb-2">
-    <img src="{{ $post->user->icon_url }}" alt="{{$post->user->name }}のアイコン" />
-        <strong>{{ $post->user->name }}</strong>
-    </div>
-
-    <!-- 投稿内容表示 -->
-    <p>{{ $post->post }}</p>
-    <p class="text-muted">
-        <small>{{ $post->created_at }}</small>
-    </p>
-
-    @if ($post->image)
-        <img src="{{ asset('storage/' . $post->image) }}" alt="投稿画像" class="img-fluid mb-2">
-    @endif
-
-    <!-- 返信フォーム -->
-    <form class="replyForm" data-post-id="{{ $post->id }}">
-        @csrf
-        <input type="hidden" name="post_id" value="{{ $post->id }}">
-        <div class="mb-2">
-            <textarea name="comment" class="form-control" placeholder="返信を書く" required></textarea>
+    @foreach ($posts as $post)
+    <div class="post mb-4 p-3 border rounded" id="post-{{ $post->id }}">
+        <!-- 投稿者のアイコンと名前 -->
+        <div class="d-flex align-items-center mb-2">
+            <a href="{{ route('profile.showUser', ['id' => $post->user->id]) }}">
+                <img src="{{ $post->user->icon_url }}" alt="{{ $post->user->name }}のアイコン" 
+                     class="rounded-circle me-2" style="width: 40px; height: 40px;">
+            </a>
+            <strong>{{ $post->user->name }}</strong>
         </div>
-        <div class="mb-2">
-            <input type="file" name="image" accept="image/*" class="form-control">
-        </div>
-        <button type="submit" class="btn btn-sm btn-secondary">返信する</button>
-    </form>
 
-    <!-- 返信一覧 -->
-    <div class="replies mt-3" id="replies-{{ $post->id }}"></div>
-</div>
+        <!-- 投稿内容表示 -->
+        <p>{{ $post->post }}</p>
+        <p class="text-muted">
+            <small>{{ $post->created_at }}</small>
+        </p>
+
+        @if ($post->image)
+            <img src="{{ asset('storage/' . $post->image) }}" alt="投稿画像" class="img-fluid mb-2">
+        @endif
+
+        <!-- 返信一覧 -->
+        <div class="replies mt-3" id="replies-{{ $post->id }}">
+            @foreach ($post->replies as $reply)
+            <div class="reply mb-2 p-2 border rounded">
+                <div class="d-flex align-items-center mb-2">
+                    <a href="{{ route('profile.showUser', ['id' => $reply->user->id]) }}">
+                        <img src="{{ $reply->user->icon_url }}" alt="{{ $reply->user->name }}のアイコン" 
+                             class="rounded-circle me-2" style="width: 30px; height: 30px;">
+                    </a>
+                    <strong>{{ $reply->user->name }}</strong>
+                </div>
+                <p>{{ $reply->comment }}</p>
+                <p class="text-muted">
+                    <small>{{ $reply->created_at }}</small>
+                </p>
+            </div>
             @endforeach
         </div>
     </div>
+    @endforeach
+</div>
+
 
 
 
