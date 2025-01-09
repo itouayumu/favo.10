@@ -18,4 +18,9 @@ class Reply extends Model
         'image',
         'delete_flag',
     ];
+    public function user()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
+
 }

@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\UserMainController;
 use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\RecommendController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
@@ -15,7 +14,7 @@ use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\searchcontroller;
 use App\Http\Controllers\FavoriteController;
-
+use App\Http\Controllers\OshiController;
 
 // ホームページ
 Route::get('/', [UserMainController::class, 'index'])->name('home');
@@ -29,10 +28,17 @@ Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->na
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/login', [LoginController::class, 'login']); // ログイン処理
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); // ログアウト処理
-// ログイン中ユーザーのプロフィール表示ルート
-Route::get('/profile', [UserProfileController::class, 'show'])
+// ログイン中ユーザーのプロフィール表示
+Route::get('/profile', [ProfileController::class, 'show'])
     ->name('profile.show')
-    ->middleware('auth'); // 認証を必須にする
+    ->middleware('auth');
+
+// 他ユーザーのプロフィール表示
+Route::get('/profile/{id}', [ProfileController::class, 'showUser'])
+    ->name('profile.showUser')
+    ->middleware('auth');
+
+
 Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
@@ -64,8 +70,7 @@ Route::get('/schedules/{id}/edit', [ScheduleController::class, 'edit']);
 Route::put('/schedules/{id}', [ScheduleController::class, 'update']);
 Route::delete('/schedules/{id}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
 
-// おすすめ関連
-Route::get('/recommends', [RecommendController::class, 'index']);
+
 
 // ホーム画面（デフォルトのリダイレクト先）
 Route::get('/home', [ScheduleController::class, 'schedule']);
@@ -78,10 +83,11 @@ Route::post('/users/{user}/tags', [TagController::class, 'attachTag'])->name('us
 
 //timeline関係
 // タイムラインのページを表示
-Route::get('/timeline', [TimelineController::class, 'index']);
-Route::get('/fetch-timeline', [TimelineController::class, 'fetchTimeline'])->name('timeline.fetch');
-Route::post('/store', [TimelineController::class, 'store'])->name('timeline.store');
+Route::get('/timeline', [TimelineController::class, 'index'])->name('timeline.index');
 Route::get('/timeline/fetch-timeline', [TimelineController::class, 'fetchTimeline']);
+Route::post('/store', [TimelineController::class, 'store'])->name('timeline.store');
+Route::get('/posts/search', [TimelineController::class, 'search'])->name('timeline.search');
+
 
 
 //返信機能
@@ -101,3 +107,10 @@ Route::get('/favorites/search', [ScheduleController::class, 'searchFavorites']);
 //新規登録
 Route::get('/favorites/create', [FavoriteController::class, 'create'])->name('favorites.create'); // 新規登録フォーム
 Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store'); // 新規登録処理
+
+//おすすめ機能
+Route::middleware(['auth'])->group(function () {
+    Route::get('/recommend', [OshiController::class, 'recommend'])->name('recommend');
+    Route::post('/recommend/favorite/{oshiId}', [OshiController::class, 'addFavorite'])->name('addFavorite');
+    Route::get('/recommend/next', [OshiController::class, 'nextRecommended'])->name('nextRecommended');
+});
