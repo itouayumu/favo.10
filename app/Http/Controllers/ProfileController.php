@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
@@ -40,4 +41,18 @@ class ProfileController extends Controller
 
         return redirect()->route('profile.edit')->with('success', 'プロフィールが更新されました。');
     }
+
+     // ログイン中のユーザープロフィール表示
+     public function show()
+     {
+         $user = auth()->user();
+         return view('profile.show', compact('user'));
+     }
+ 
+     // 他ユーザーのプロフィール表示
+     public function showUser($id)
+     {
+         $user = User::findOrFail($id); // 指定されたIDのユーザーを取得
+         return view('profile.show', compact('user'));
+     }
 }
