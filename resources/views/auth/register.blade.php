@@ -40,14 +40,14 @@
             @error('introduction')<p>{{ $message }}</p>@enderror
         </div>
 
-        <div class="preview">
+        <div>
         <label for="fileInput">プロフィール画像</label>
-    <div class="preview">
-        <label for="fileInput" class="upload-icon"></label>
-        <img id="imagePreview" class="image-preview" src="">
-        <input type="file" name="image" class="file-input" id="fileInput" accept="image/*">
-        @error('image')<p>{{ $message }}</p>@enderror
-    </div>
+            <div class="preview">
+                <label for="fileInput" class="upload-icon"></label>
+                <img id="imagePreview" class="image-preview" src="">
+                <input type="file" name="image" class="file-input" id="fileInput" accept="image/*">
+                @error('image')<p>{{ $message }}</p>@enderror
+            </div>
         </div>
 
         <button type="submit">登録</button>

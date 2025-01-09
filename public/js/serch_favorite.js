@@ -51,3 +51,14 @@ function selectFavorite(id, name) {
     document.getElementById('favorite-search').value = name; // 名前を入力欄に表示
     document.getElementById('favorite-list').style.display = 'none'; // リストを非表示
 }
+
+document.getElementById('thumbnail').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('imagePreview').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
