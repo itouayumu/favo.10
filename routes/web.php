@@ -33,10 +33,7 @@ Route::get('/profile', [ProfileController::class, 'show'])
     ->name('profile.show')
     ->middleware('auth');
 
-// 他ユーザーのプロフィール表示
-Route::get('/profile/{id}', [ProfileController::class, 'showUser'])
-    ->name('profile.showUser')
-    ->middleware('auth');
+
 
 
 Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -114,3 +111,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/recommend/favorite/{oshiId}', [OshiController::class, 'addFavorite'])->name('addFavorite');
     Route::get('/recommend/next', [OshiController::class, 'nextRecommended'])->name('nextRecommended');
 });
+
+Route::post('/reply/store', [TimelineController::class, 'storeReply'])->name('reply.store');
+Route::get('/reply/fetch/{postId}', [TimelineController::class, 'fetchReplies']);
