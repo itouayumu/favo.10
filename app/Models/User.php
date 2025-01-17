@@ -11,6 +11,8 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    protected $table = 'users'; // テーブル名を明示的に指定
+
     protected $fillable = [
         'name',
         'email',
