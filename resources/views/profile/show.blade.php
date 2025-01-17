@@ -1,15 +1,22 @@
 @extends('layouts.app')
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/profile.css') }}">
+@endsection
+
 @section('content')
-<div class="container">
     <div class="card">
-        <div class="card-header text-center">
-            <img src="{{ $user->image ? asset('storage/' . $user->image) : 'https://via.placeholder.com/150' }}" 
-                 alt="Profile Image" class="img-thumbnail rounded-circle" width="150">
-            <h3>{{ $user->name }}</h3>
+        <div class="card-header">
+            <img src="{{ $user->image ? asset('storage/' . $user->image) : 'https://via.placeholder.com/150' }}"
+                 alt="Profile Image" class="icon" width="150">
+            <div class="prate">
+                <div class="name">
+                    <h3 class="username">{{ $user->name }}</h3>
+                </div>
+            </div>
         </div>
 
-        <div>
+        <div class="tag">
             @php
                 $tags = $user->tags()->wherePivot('hidden_flag', 0)->get();
             @endphp
@@ -25,18 +32,18 @@
         </div>
 
         <div class="card-body">
-            <div class="mb-3">
-                <strong>プロフィール:</strong>
-                <p>{{ $user->introduction ?? '詳細情報はありません。' }}</p>
+            <div class="introduction">
+                <div class="intro_content">
+                    <p>{{ $user->introduction ?? '詳細情報はありません。' }}</p>
+                </div>
             </div>
             <hr>
             <div class="d-flex justify-content-between mt-3">
-                <button class="btn btn-primary" onclick="location.href='{{ route('profile.edit') }}'">編集</button>
+                <button class="edit_btn" onclick="location.href='{{ route('profile.edit') }}'">編集</button>
                 <a href="{{ url()->previous() }}" class="btn btn-secondary">戻る</a>
             </div>
         </div>
     </div>
-</div>
 
 @endsection
 

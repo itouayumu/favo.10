@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <h1>タイムライン</h1>
+    <h1 class="heading">タイムライン</h1>
     <input type="text" id="searchInput" class="form-control" placeholder="投稿を検索...">
 
 <div id="searchResults"></div> <!-- 検索結果の表示領域 -->
@@ -35,28 +35,29 @@
         </form>
 
         <!-- タイムライン表示部分 -->
-        <div id="timeline">
+<div id="timeline">
     @foreach ($posts as $post)
     <div class="post mb-4 p-3 border rounded" id="post-{{ $post->id }}">
-        <!-- 投稿者のアイコンと名前 -->
-        <div class="d-flex align-items-center mb-2">
-            <a href="{{ route('profile.showUser', ['id' => $post->user->id]) }}">
-                <img src="{{ $post->user->icon_url }}" alt="{{ $post->user->name }}のアイコン" 
-                     class="rounded-circle me-2" style="width: 40px; height: 40px;">
-            </a>
-            <strong>{{ $post->user->name }}</strong>
+        <div class="p_content">
+            <!-- 投稿者のアイコンと名前 -->
+            <div class="d-flex align-items-center mb-2">
+                <a href="{{ route('profile.showUser', ['id' => $post->user->id]) }}">
+                    <img src="{{ $post->user->icon_url }}" alt="{{ $post->user->name }}のアイコン" 
+                        class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                </a>
+                <strong>{{ $post->user->name }}</strong>
+            </div>
+
+            <!-- 投稿内容表示 -->
+            <p>{{ $post->post }}</p>
+            <p class="text-muted">
+                <small>{{ $post->created_at }}</small>
+            </p>
+
+            @if ($post->image)
+                <img src="{{ asset('storage/' . $post->image) }}" alt="投稿画像" class="img-fluid mb-2">
+            @endif
         </div>
-
-        <!-- 投稿内容表示 -->
-        <p>{{ $post->post }}</p>
-        <p class="text-muted">
-            <small>{{ $post->created_at }}</small>
-        </p>
-
-        @if ($post->image)
-            <img src="{{ asset('storage/' . $post->image) }}" alt="投稿画像" class="img-fluid mb-2">
-        @endif
-
         <!-- 返信一覧 -->
         <div class="replies mt-3" id="replies-{{ $post->id }}">
             @foreach ($post->replies as $reply)
