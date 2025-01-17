@@ -114,3 +114,5 @@ Route::middleware(['auth'])->group(function () {
 
 Route::post('/reply/store', [TimelineController::class, 'storeReply'])->name('reply.store');
 Route::get('/reply/fetch/{postId}', [TimelineController::class, 'fetchReplies']);
+
+Route::get('/user/{id}/profile', [ProfileController::class, 'showUser'])->name('user.profile');
