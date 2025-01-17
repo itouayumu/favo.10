@@ -3,67 +3,71 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Favorite;
-use App\Models\Recommend; // 推しモデルをインポート
+use App\Models\Favorite; // モデルを使用
+use App\Models\ToFavorite;
 use Illuminate\Support\Facades\Auth;
 
 class OshiController extends Controller
 {
     public function recommend()
     {
-        // ログインユーザーを取得
         $user = Auth::user();
 
-        // おすすめの推しを取得
-        $recommended = Recommend::where('hidden_flag', false)->inRandomOrder()->first();
+        // ログインユーザーのお気に入り一覧を取得
+        $favoriteIds = ToFavorite::where('user_id', $user->id)
+            ->where('favorite_flag', 1)
+            ->pluck('favorite_id');
+
+        // 未登録のお気に入りをランダムに取得
+        $recommended = Favorite::whereNotIn('id', $favoriteIds)
+            ->inRandomOrder()
+            ->first();
 
         return view('recommends.recommend', compact('recommended', 'user'));
     }
 
     public function addFavorite($oshiId)
     {
-        // ログインユーザーを取得
         $user = Auth::user();
 
-        // 推しを取得（推しIDから）
-        $oshi = Recommend::findOrFail($oshiId);
+        // 推しを取得
+        $oshi = Favorite::findOrFail($oshiId);
 
-        // ユーザーのお気に入りに同じ名前の推しがすでに登録されているか確認
-        $existingFavorite = Favorite::where('user_id', $user->id)
-                                    ->where('name', $oshi->name) // 同じ名前の推しがすでに登録されていないか確認
-                                    ->first();
+        // 中間テーブルで重複登録を防止
+        $existingFavorite = ToFavorite::where('user_id', $user->id)
+            ->where('favorite_id', $oshiId)
+            ->where('favorite_flag', 1)
+            ->first();
 
-        // もし既に登録されていたらメッセージを返す
         if ($existingFavorite) {
             return redirect()->route('recommend')->with('message', 'この推しはすでにお気に入りに登録されています!');
         }
 
-        // お気に入りテーブルに新しい推しを登録
-        Favorite::create([
+        // 中間テーブルに登録
+        ToFavorite::create([
             'user_id' => $user->id,
-            'genre_id' => $oshi->genre_id,  // 推しのジャンルID
-            'name' => $oshi->name,
-            'introduction' => $oshi->introduction,
-            'image_1' => $oshi->image_1,
-            'image_2' => $oshi->image_2,
-            'image_3' => $oshi->image_3,
-            'image_4' => $oshi->image_4,
-            'favorite_count' => 0,  // 初期値として0
+            'favorite_id' => $oshiId,
+            'favorite_flag' => 1,
         ]);
 
-        // 推しのお気に入りカウントを更新
-        $oshi->increment('favorite_count');  // お気に入り数を1増加
+        // お気に入りカウントを増やす
+        $oshi->increment('favorite_count');
 
         return redirect()->route('recommend')->with('message', '推しをお気に入りに登録しました!');
     }
 
     public function nextRecommended()
     {
-        // ログインユーザーを取得
         $user = Auth::user();
 
-        // 次のおすすめをランダムに取得
-        $recommended = Recommend::where('hidden_flag', false)->inRandomOrder()->first();
+        // 次のおすすめを取得
+        $favoriteIds = ToFavorite::where('user_id', $user->id)
+            ->where('favorite_flag', 1)
+            ->pluck('favorite_id');
+
+        $recommended = Favorite::whereNotIn('id', $favoriteIds)
+            ->inRandomOrder()
+            ->first();
 
         return view('recommends.recommend', compact('recommended', 'user'));
     }

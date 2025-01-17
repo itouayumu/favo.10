@@ -39,7 +39,12 @@
             </div>
             <hr>
             <div class="d-flex justify-content-between mt-3">
-                <button class="edit_btn" onclick="location.href='{{ route('profile.edit') }}'">編集</button>
+                <button class="btn btn-primary" onclick="location.href='{{ route('profile.edit') }}'">編集</button>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit">ログアウト</button>
+                </form>
+                
                 <a href="{{ url()->previous() }}" class="btn btn-secondary">戻る</a>
             </div>
         </div>
