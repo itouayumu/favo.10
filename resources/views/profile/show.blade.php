@@ -55,7 +55,14 @@
 
                                 @if ($favoriteTags->isNotEmpty())
                                     @foreach ($favoriteTags as $favoriteTag)
-                                        <span style="margin-right: 10px;">{{ $favoriteTag->name }}</span>
+                                        <a href="javascript:void(0);" 
+                                           class="tag-link" 
+                                           data-favorite-id="{{ $favorite->id }}" 
+                                           data-tag-id="{{ $favoriteTag->id }}"
+                                           style="margin-right: 10px;">
+                                            {{ $favoriteTag->name }} 
+                                            (<span class="tag-count">{{ $favoriteTag->pivot->count }}</span>)
+                                        </a>
                                     @endforeach
                                 @else
                                     <p>タグはありません。</p>
@@ -85,4 +92,5 @@
 
 @section('scripts')
     <script src="{{ asset('js/user_tags_click.js') }}"></script>
+    <script src="{{ asset('js/favorite_tags_click.js') }}"></script>
 @endsection

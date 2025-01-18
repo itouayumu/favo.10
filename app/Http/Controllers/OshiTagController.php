@@ -44,24 +44,28 @@ class OshiTagController extends Controller
         return redirect()->back()->with('success', '推しタグが作成されました。')->with('tags', $tags);
     }
 
-    public function toggleTagVisibility($favoriteId, $tagId)
-{
-    // 推しを取得
-    $favorite = Favorite::findOrFail($favoriteId);
+    // タグをクリックした際にカウントを増加させるメソッド
+    public function incrementTagCount($favoriteId, $tagId)
+    {
+        // 推しを取得
+        $favorite = Favorite::findOrFail($favoriteId);
 
-    // タグを取得（推しに関連付けられているタグを絞り込む）
-    $tag = $favorite->tags()->where('tags_id', $tagId)->first();  // 修正
+        // タグを取得（推しに関連付けられているタグを絞り込む）
+        $tag = $favorite->tags()->where('tags_id', $tagId)->first();
 
-    // タグが関連付けられていない場合はエラー
-    if (!$tag) {
-        return back()->with('error', '指定されたタグはこの推しに関連付けられていません。');
+        // タグが関連付けられていない場合はエラー
+        if (!$tag) {
+            return response()->json(['error' => 'タグが見つかりません'], 404);
+        }
+
+        // カウントをインクリメント
+        $tag->pivot->count++;
+        $tag->pivot->save();
+
+        // 新しいカウントを返す
+        return response()->json([
+            'success' => true,
+            'newCount' => $tag->pivot->count
+        ]);
     }
-
-    // トグル（公開/非公開）する
-    $tag->pivot->hidden_flag = !$tag->pivot->hidden_flag; // hidden_flagの値を反転
-    $tag->pivot->save();
-
-    return back()->with('success', 'タグの公開設定が変更されました');
-}
-
 }
