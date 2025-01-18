@@ -86,6 +86,23 @@
             </li>
         @endforeach
     </ul>
+
+    <hr>
+
+    <h3>お気に入りの推し</h3>
+    <ul>
+        @foreach ($favorites as $favorite)
+            <li>
+                <h4>{{ $favorite->favorite->name }}</h4>
+                <p>{{ $favorite->favorite->introduction }}</p>
+                <img src="{{ asset('storage/' . $favorite->favorite->image_1) }}" alt="{{ $favorite->favorite->name }}" width="100">
+                <form action="{{ route('favorite.remove', $favorite->favorite_id) }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-danger">フォローを解除</button>
+                </form>
+            </li>
+        @endforeach
+    </ul>
 </div>
 
 <!-- CSSファイルのリンク -->

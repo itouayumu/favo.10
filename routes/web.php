@@ -75,6 +75,10 @@ Route::get('/home', [ScheduleController::class, 'schedule']);
 // プロフィール編集ページ
 Route::get('/users/{user}/profile/edit', [TagController::class, 'profileEdit'])->name('users.profile.edit');
 
+Route::get('/profile/edit', [OshiController::class, 'editProfile'])->name('profile.edit');
+Route::post('/favorite/remove/{id}', [OshiController::class, 'removeFavorite'])->name('favorite.remove');
+
+
 // タグの紐づけ
 Route::post('/users/{user}/tags', [TagController::class, 'attachTag'])->name('users.tags.attach');
 

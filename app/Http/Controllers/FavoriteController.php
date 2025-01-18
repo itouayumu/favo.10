@@ -19,6 +19,14 @@ class FavoriteController extends Controller
     // 新規登録処理
     public function store(Request $request)
     {
+        // 重複チェック: ユーザーが既に同じ名前の推しを登録していないか確認
+        $existingFavorite = Favorite::where('user_id', Auth::id())
+            ->where('name', $request->name)
+            ->first();
+
+        if ($existingFavorite) {
+            return redirect()->route('favorites.index')->with('error', '同じ名前の推しは既に登録されています！');
+        }
 
         // データ登録
         $favorite = new Favorite();
