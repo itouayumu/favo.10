@@ -138,4 +138,34 @@ class OshiController extends Controller
             return redirect()->route('profile.edit')->with('error', 'エラーが発生しました。');
         }
     }
+
+    public function toggleVisibility($favoriteId)
+    {
+        $user = Auth::user();
+        DB::beginTransaction();
+    
+        try {
+            // 'ToFavorite'リレーションシップを取得
+            $favorite = ToFavorite::where('user_id', $user->id)
+                ->where('favorite_id', $favoriteId)
+                ->first();
+    
+            if ($favorite) {
+                // 公開/非公開の切り替え (hidden_flag)
+                $newHiddenFlag = $favorite->favorite->hidden_flag == 0 ? 1 : 0;
+                $favorite->favorite->update(['hidden_flag' => $newHiddenFlag]);
+    
+                DB::commit();
+                return redirect()->route('profile.edit')->with('message', '公開設定を変更しました!');
+            } else {
+                DB::rollback();
+                return redirect()->route('profile.edit')->with('error', '推しはお気に入りに登録されていません。');
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('エラー発生: ' . $e->getMessage());
+            return redirect()->route('profile.edit')->with('error', 'エラーが発生しました。');
+        }
+    }
+    
 }

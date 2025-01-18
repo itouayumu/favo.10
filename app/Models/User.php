@@ -34,4 +34,9 @@ class User extends Authenticatable
                 ->withTimestamps();
 }
 
+
+public function favorites()
+{
+    return $this->hasMany(Favorite::class, 'user_id');
+}
 }
