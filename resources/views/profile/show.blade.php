@@ -41,39 +41,32 @@
             <hr>
             <h4>公開されたお気に入りの推し</h4>
             <div class="favorites">
-    @if ($user->favorites()->where('hidden_flag', 0)->exists())
-        @foreach ($user->favorites()->where('hidden_flag', 0)->get() as $favorite)
-            <div class="favorite-item">
-                <h5>{{ $favorite->name }}</h5>
-                <p>{{ $favorite->introduction }}</p>
-                
-                <!-- 関連するタグを表示 -->
-                <div class="favorite-tags">
-                    @php
-                        $favoriteTags = $favorite->tags()->wherePivot('hidden_flag', 0)->get();
-                    @endphp
-                    
-                    @if ($favoriteTags->isNotEmpty())
-                        <ul>
-                            @foreach ($favoriteTags as $tag)
-                                <li>
-                                    <a href="#" class="tag-click" data-tag-id="{{ $tag->id }}">
-                                        {{ $tag->name }}
-                                    </a>
-                                    <span id="click-count-{{ $tag->id }}">{{ $tag->pivot->count }}</span> 回クリック
-                                </li>
-                            @endforeach
-                        </ul>
-                    @else
-                        <p>タグはありません。</p>
-                    @endif
-                </div>
+                @if ($user->favorites()->where('hidden_flag', 0)->exists())
+                    @foreach ($user->favorites()->where('hidden_flag', 0)->get() as $favorite)
+                        <div class="favorite-item">
+                            <h5>{{ $favorite->name }}</h5>
+                            <p>{{ $favorite->introduction }}</p>
+
+                            <!-- 関連するタグを表示 -->
+                            <div class="favorite-tags">
+                                @php
+                                    $favoriteTags = $favorite->tags()->wherePivot('hidden_flag', 0)->get();
+                                @endphp
+
+                                @if ($favoriteTags->isNotEmpty())
+                                    @foreach ($favoriteTags as $favoriteTag)
+                                        <span style="margin-right: 10px;">{{ $favoriteTag->name }}</span>
+                                    @endforeach
+                                @else
+                                    <p>タグはありません。</p>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <p>公開されたお気に入りの推しはありません。</p>
+                @endif
             </div>
-        @endforeach
-    @else
-        <p>公開されたお気に入りの推しはありません。</p>
-    @endif
-</div>
 
             <hr>
 
@@ -83,7 +76,7 @@
                     @csrf
                     <button type="submit">ログアウト</button>
                 </form>
-                
+
                 <a href="{{ url()->previous() }}" class="btn btn-secondary">戻る</a>
             </div>
         </div>
