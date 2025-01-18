@@ -37,7 +37,23 @@
                     <p>{{ $user->introduction ?? '詳細情報はありません。' }}</p>
                 </div>
             </div>
+            
             <hr>
+            <h4>公開されたお気に入りの推し</h4>
+<div class="favorites">
+    @if ($user->favorites()->where('hidden_flag', 0)->exists())
+        @foreach ($user->favorites()->where('hidden_flag', 0)->get() as $favorite)
+            <div class="favorite-item">
+                <h5>{{ $favorite->name }}</h5>
+                <p>{{ $favorite->introduction }}</p>
+            </div>
+        @endforeach
+    @else
+        <p>公開されたお気に入りの推しはありません。</p>
+    @endif
+</div>
+            <hr>
+
             <div class="d-flex justify-content-between mt-3">
                 <button class="btn btn-primary" onclick="location.href='{{ route('profile.edit') }}'">編集</button>
                 <form action="{{ route('logout') }}" method="POST">

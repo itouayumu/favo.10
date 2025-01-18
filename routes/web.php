@@ -78,6 +78,7 @@ Route::get('/users/{user}/profile/edit', [TagController::class, 'profileEdit'])-
 Route::get('/profile/edit', [OshiController::class, 'editProfile'])->name('profile.edit');
 Route::post('/favorite/remove/{id}', [OshiController::class, 'removeFavorite'])->name('favorite.remove');
 
+Route::post('/oshi/{favorite}/toggleVisibility', [OshiController::class, 'toggleVisibility'])->name('oshi.toggleVisibility');
 
 // タグの紐づけ
 Route::post('/users/{user}/tags', [TagController::class, 'attachTag'])->name('users.tags.attach');

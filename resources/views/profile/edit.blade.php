@@ -90,19 +90,35 @@
     <hr>
 
     <h3>お気に入りの推し</h3>
-    <ul>
-        @foreach ($favorites as $favorite)
-            <li>
-                <h4>{{ $favorite->favorite->name }}</h4>
-                <p>{{ $favorite->favorite->introduction }}</p>
-                <img src="{{ asset('storage/' . $favorite->favorite->image_1) }}" alt="{{ $favorite->favorite->name }}" width="100">
-                <form action="{{ route('favorite.remove', $favorite->favorite_id) }}" method="POST" style="display: inline;">
+<ul>
+    @foreach ($favorites as $favorite)
+        <li>
+            <h4>{{ $favorite->favorite->name }}</h4>
+            <p>{{ $favorite->favorite->introduction }}</p>
+            <img src="{{ asset('storage/' . $favorite->favorite->image_1) }}" alt="{{ $favorite->favorite->name }}" width="100">
+
+            <!-- Follow/unfollow button -->
+            <form action="{{ route('favorite.remove', $favorite->favorite_id) }}" method="POST" style="display: inline;">
+                @csrf
+                <button type="submit" class="btn btn-danger">フォローを解除</button>
+            </form>
+
+            <!-- Visibility toggle (公開/非公開) -->
+            @if ($favorite->favorite->hidden_flag == 0)
+                <form action="{{ route('oshi.toggleVisibility', $favorite->favorite_id) }}" method="POST" style="display: inline;">
                     @csrf
-                    <button type="submit" class="btn btn-danger">フォローを解除</button>
+                    <button type="submit" class="btn btn-warning">非公開にする</button>
                 </form>
-            </li>
-        @endforeach
-    </ul>
+            @else
+                <form action="{{ route('oshi.toggleVisibility', $favorite->favorite_id) }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-success">公開する</button>
+                </form>
+            @endif
+        </li>
+    @endforeach
+</ul>
+
 </div>
 
 <!-- CSSファイルのリンク -->
