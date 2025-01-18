@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Favorite; // モデルを使用
 use App\Models\ToFavorite;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OshiController extends Controller
 {
@@ -29,31 +31,52 @@ class OshiController extends Controller
     public function addFavorite($oshiId)
     {
         $user = Auth::user();
+        DB::beginTransaction();
 
-        // 推しを取得
-        $oshi = Favorite::findOrFail($oshiId);
+        try {
+            // 推しを取得
+            $oshi = Favorite::findOrFail($oshiId);
 
-        // 中間テーブルで重複登録を防止
-        $existingFavorite = ToFavorite::where('user_id', $user->id)
-            ->where('favorite_id', $oshiId)
-            ->where('favorite_flag', 1)
-            ->first();
+            // すでにお気に入りに登録されているか確認
+            $existingFavorite = ToFavorite::where('user_id', $user->id)
+                ->where('favorite_id', $oshiId)
+                ->first();
 
-        if ($existingFavorite) {
-            return redirect()->route('recommend')->with('message', 'この推しはすでにお気に入りに登録されています!');
+            if ($existingFavorite) {
+                // もし `favorite_flag` が 0 であれば、そのレコードを更新してカウントを増やす
+                if ($existingFavorite->favorite_flag == 0) {
+                    $existingFavorite->update([
+                        'favorite_flag' => 1,  // 再度お気に入りとしてフラグを立てる
+                    ]);
+
+                    // お気に入りカウントを増やす
+                    $oshi->increment('favorite_count');
+
+                    DB::commit();
+                    return redirect()->route('recommend')->with('message', '推しを再びお気に入りに登録しました!');
+                }
+
+                // すでにお気に入りに登録されている場合
+                return redirect()->route('recommend')->with('message', 'この推しはすでにお気に入りに登録されています!');
+            } else {
+                // 新規にレコードを作成
+                ToFavorite::create([
+                    'user_id' => $user->id,
+                    'favorite_id' => $oshiId,
+                    'favorite_flag' => 1,  // お気に入りとしてフラグを立てる
+                ]);
+
+                // お気に入りカウントを増やす
+                $oshi->increment('favorite_count');
+            }
+
+            DB::commit();
+            return redirect()->route('recommend')->with('message', '推しをお気に入りに登録しました!');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('エラー発生: ' . $e->getMessage());
+            return redirect()->route('recommend')->with('error', 'エラーが発生しました。');
         }
-
-        // 中間テーブルに登録
-        ToFavorite::create([
-            'user_id' => $user->id,
-            'favorite_id' => $oshiId,
-            'favorite_flag' => 1,
-        ]);
-
-        // お気に入りカウントを増やす
-        $oshi->increment('favorite_count');
-
-        return redirect()->route('recommend')->with('message', '推しをお気に入りに登録しました!');
     }
 
     public function nextRecommended()
@@ -86,37 +109,33 @@ class OshiController extends Controller
     }
 
     public function removeFavorite($id)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
+        DB::beginTransaction();
 
-    // お気に入りの推しを取得
-    $toFavorite = ToFavorite::where('user_id', $user->id)
-        ->where('favorite_id', $id)
-        ->where('favorite_flag', 1) // お気に入りとして登録されているものを取得
-        ->first();
+        try {
+            // お気に入りの推しを取得
+            $toFavorite = ToFavorite::where('user_id', $user->id)
+                ->where('favorite_id', $id)
+                ->where('favorite_flag', 1) // お気に入りとして登録されているものを取得
+                ->first();
 
-    if ($toFavorite) {
-        // お気に入りフラグを解除
-        $toFavorite->update(['favorite_flag' => 0]);
+            if ($toFavorite) {
+                // 推しのfavorite_countを減らす
+                if ($toFavorite->favorite) {
+                    $toFavorite->favorite->decrement('favorite_count');
+                }
 
-        // 推しのカウントを減らす
-        if ($toFavorite->favorite) {
-            // 推しのfavorite_countを1減少させる
-            $toFavorite->favorite->decrement('favorite_count');
+                // `favorite_flag` を 0 にして非公開にする
+                $toFavorite->update(['favorite_flag' => 0]);
+            }
+
+            DB::commit();
+            return redirect()->route('profile.edit')->with('message', '推しのフォローを解除しました。');
+        } catch (\Exception $e) {
+            DB::rollback();
+            Log::error('エラー発生: ' . $e->getMessage());
+            return redirect()->route('profile.edit')->with('error', 'エラーが発生しました。');
         }
     }
-
-    // フォロー解除後、再度同じ推しを追加した際に重複エラーを防ぐ
-    // 推しのレコードがすでに存在しないか確認
-    $existingFavorite = ToFavorite::where('user_id', $user->id)
-        ->where('favorite_id', $id)
-        ->where('favorite_flag', 1)
-        ->first();
-
-    if ($existingFavorite) {
-        return redirect()->route('profile.edit')->with('message', 'この推しはすでにお気に入りに登録されています!');
-    }
-
-    return redirect()->route('profile.edit')->with('message', '推しのフォローを解除しました。');
-}
 }
