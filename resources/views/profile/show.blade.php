@@ -40,18 +40,41 @@
             
             <hr>
             <h4>公開されたお気に入りの推し</h4>
-<div class="favorites">
+            <div class="favorites">
     @if ($user->favorites()->where('hidden_flag', 0)->exists())
         @foreach ($user->favorites()->where('hidden_flag', 0)->get() as $favorite)
             <div class="favorite-item">
                 <h5>{{ $favorite->name }}</h5>
                 <p>{{ $favorite->introduction }}</p>
+                
+                <!-- 関連するタグを表示 -->
+                <div class="favorite-tags">
+                    @php
+                        $favoriteTags = $favorite->tags()->wherePivot('hidden_flag', 0)->get();
+                    @endphp
+                    
+                    @if ($favoriteTags->isNotEmpty())
+                        <ul>
+                            @foreach ($favoriteTags as $tag)
+                                <li>
+                                    <a href="#" class="tag-click" data-tag-id="{{ $tag->id }}">
+                                        {{ $tag->name }}
+                                    </a>
+                                    <span id="click-count-{{ $tag->id }}">{{ $tag->pivot->count }}</span> 回クリック
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p>タグはありません。</p>
+                    @endif
+                </div>
             </div>
         @endforeach
     @else
         <p>公開されたお気に入りの推しはありません。</p>
     @endif
 </div>
+
             <hr>
 
             <div class="d-flex justify-content-between mt-3">
@@ -65,40 +88,8 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // タグをクリックしたとき
-        document.querySelectorAll('.tag-click').forEach(function (tagLink) {
-            tagLink.addEventListener('click', function (event) {
-                event.preventDefault();  // デフォルトのリンク動作を無効化
-
-                let tagId = this.dataset.tagId;
-
-                // AJAXリクエストでクリック数を増加
-                fetch(`/tags/increment/${tagId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // クリック数を更新
-                        document.getElementById(`click-count-${tagId}`).innerText = data.click_count;
-                    } else {
-                        alert(data.message);  // エラーメッセージ
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            });
-        });
-    });
-</script>
+    <script src="{{ asset('js/user_tags_click.js') }}"></script>
 @endsection

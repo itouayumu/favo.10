@@ -11,6 +11,16 @@
         </div>
     @endif
 
+    <!-- ここに関連付けられたタグの表示を追加 -->
+    @if(session('tags'))
+        <h3>関連付けられたタグ:</h3>
+        <ul>
+            @foreach(session('tags') as $tag)
+                <li>{{ $tag->name }}</li>
+            @endforeach
+        </ul>
+    @endif
+
     <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
         
@@ -90,35 +100,73 @@
     <hr>
 
     <h3>お気に入りの推し</h3>
-<ul>
-    @foreach ($favorites as $favorite)
-        <li>
-            <h4>{{ $favorite->favorite->name }}</h4>
-            <p>{{ $favorite->favorite->introduction }}</p>
-            <img src="{{ asset('storage/' . $favorite->favorite->image_1) }}" alt="{{ $favorite->favorite->name }}" width="100">
+    <ul>
+        @foreach ($favorites as $favorite)
+            <li>
+                <h4>{{ $favorite->favorite->name }}</h4>
+                <p>{{ $favorite->favorite->introduction }}</p>
+                <img src="{{ asset('storage/' . $favorite->favorite->image_1) }}" alt="{{ $favorite->favorite->name }}" width="100">
 
-            <!-- Follow/unfollow button -->
-            <form action="{{ route('favorite.remove', $favorite->favorite_id) }}" method="POST" style="display: inline;">
-                @csrf
-                <button type="submit" class="btn btn-danger">フォローを解除</button>
-            </form>
-
-            <!-- Visibility toggle (公開/非公開) -->
-            @if ($favorite->favorite->hidden_flag == 0)
-                <form action="{{ route('oshi.toggleVisibility', $favorite->favorite_id) }}" method="POST" style="display: inline;">
+                <!-- Follow/unfollow button -->
+                <form action="{{ route('favorite.remove', $favorite->favorite_id) }}" method="POST" style="display: inline;">
                     @csrf
-                    <button type="submit" class="btn btn-warning">非公開にする</button>
+                    <button type="submit" class="btn btn-danger">フォローを解除</button>
                 </form>
-            @else
-                <form action="{{ route('oshi.toggleVisibility', $favorite->favorite_id) }}" method="POST" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="btn btn-success">公開する</button>
-                </form>
-            @endif
-        </li>
-    @endforeach
-</ul>
 
+                <!-- Visibility toggle (公開/非公開) -->
+                @if ($favorite->favorite->hidden_flag == 0)
+                    <form action="{{ route('oshi.toggleVisibility', $favorite->favorite_id) }}" method="POST" style="display: inline;">
+                        @csrf
+                        <button type="submit" class="btn btn-warning">非公開にする</button>
+                    </form>
+                @else
+                    <form action="{{ route('oshi.toggleVisibility', $favorite->favorite_id) }}" method="POST" style="display: inline;">
+                        @csrf
+                        <button type="submit" class="btn btn-success">公開する</button>
+                    </form>
+                @endif
+
+                <!-- 推しタグの表示 -->
+                <h4>推しタグ</h4>
+                <ul>
+                    @foreach ($favorite->favorite->tags as $tag)
+                        <li>{{ $tag->name }}
+
+                            <!-- Visibility toggle (公開/非公開) -->
+                            @if ($tag->pivot->hidden_flag == 0) <!-- 0 means public -->
+                                <form action="{{ route('oshi.toggleTagVisibility', [$favorite->favorite_id, $tag->id]) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    <button type="submit" class="btn btn-warning">非公開にする</button>
+                                </form>
+                            @else <!-- 1 means private -->
+                                <form action="{{ route('oshi.toggleTagVisibility', [$favorite->favorite_id, $tag->id]) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success">公開する</button>
+                                </form>
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+
+                <!-- 推しタグ作成フォーム -->
+                <form action="{{ route('oshi.createTag', $favorite->favorite_id) }}" method="POST" style="margin-top: 10px;">
+                    @csrf
+                    <div class="form-group">
+                        <label for="tag-name-{{ $favorite->favorite_id }}">タグ名</label>
+                        <input type="text" id="tag-name-{{ $favorite->favorite_id }}" name="tag_name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="visibility-{{ $favorite->favorite_id }}">公開設定</label>
+                        <select id="visibility-{{ $favorite->favorite_id }}" name="visibility" class="form-control">
+                            <option value="public">公開</option>
+                            <option value="private">非公開</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">推しタグを作成</button>
+                </form>
+            </li>
+        @endforeach
+    </ul>
 </div>
 
 <!-- CSSファイルのリンク -->

@@ -23,4 +23,13 @@ class Favorite extends Model
         'favorite_count',
         'hidden_flag',
     ];
+
+    // 多対多リレーション
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'favorite_tag', 'favorite_id', 'tags_id')
+                    ->withPivot('sort_id', 'count', 'hidden_flag', 'delete_flag')
+                    ->withTimestamps();
+    }
+
 }

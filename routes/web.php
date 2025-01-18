@@ -15,6 +15,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\searchcontroller;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\OshiController;
+use App\Http\Controllers\OshiTagController;
 
 // ホームページ
 Route::get('/', [UserMainController::class, 'index'])->name('home');
@@ -82,6 +83,11 @@ Route::post('/oshi/{favorite}/toggleVisibility', [OshiController::class, 'toggle
 
 // タグの紐づけ
 Route::post('/users/{user}/tags', [TagController::class, 'attachTag'])->name('users.tags.attach');
+
+Route::post('favorites/{favorite_id}/tags', [OshiTagController::class, 'createTag'])->name('oshi.createTag');;
+
+Route::post('oshi/{favoriteId}/tag/{tagId}/toggleVisibility', [OshiTagController::class, 'toggleTagVisibility'])->name('oshi.toggleTagVisibility');
+
 
 //timeline関係
 // タイムラインのページを表示
