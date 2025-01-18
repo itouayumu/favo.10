@@ -18,7 +18,7 @@ class TagController extends Controller
                      ->wherePivot('delete_flag', 0) // 削除されていないタグ
                      ->get();
 
-        return view('tags.public_tags', compact('user', 'tags'));
+        return view('profile.edit', compact('user', 'tags'));
     }
 
     // クリック数を増加
