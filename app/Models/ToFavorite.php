@@ -26,4 +26,9 @@ class ToFavorite extends Model
     {
         return $this->belongsTo(Favorite::class, 'favorite_id');
     }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'favorite_tag'); // 推しタグとのリレーション
+    }
 }
