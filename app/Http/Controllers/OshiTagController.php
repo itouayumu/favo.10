@@ -68,4 +68,24 @@ class OshiTagController extends Controller
             'newCount' => $tag->pivot->count
         ]);
     }
+
+    public function deleteTag($favoriteId, $tagId)
+{
+    // favorite_tagテーブルの該当行を取得
+    $favoriteTag = \App\Models\FavoriteTag::where('favorite_id', $favoriteId)
+                                            ->where('tags_id', $tagId)
+                                            ->first();
+
+    if ($favoriteTag) {
+        // delete_flagを1に設定して非表示にする
+        $favoriteTag->delete_flag = 1;
+        $favoriteTag->save();
+        
+        return redirect()->back()->with('success', 'タグが削除されました。');
+    }
+
+    return redirect()->back()->with('error', 'タグが見つかりませんでした。');
+}
+
+
 }

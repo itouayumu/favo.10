@@ -88,6 +88,8 @@ Route::post('favorites/{favorite_id}/tags', [OshiTagController::class, 'createTa
 
 Route::post('oshi/{favoriteId}/tag/{tagId}/toggleVisibility', [OshiTagController::class, 'toggleTagVisibility'])->name('oshi.toggleTagVisibility');
 Route::get('/oshiTag/increment/{favoriteId}/{tagId}', [OshiTagController::class, 'incrementTagCount'])->name('oshiTag.increment');
+Route::post('oshi/{favoriteId}/tag/{tagId}/delete', [OshiTagController::class, 'deleteTag'])->name('oshi.deleteTag');
+
 
 
 //timeline関係
