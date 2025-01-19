@@ -131,21 +131,29 @@
                     <h4>推しタグ</h4>
                     <ul>
                         @foreach ($favorite->favorite->tags as $tag)
-                            <li>{{ $tag->name }}
+                            @if ($tag->pivot->delete_flag == 0) <!-- ここでdelete_flagを確認 -->
+                                <li>{{ $tag->name }}
 
-                                <!-- Visibility toggle (公開/非公開) -->
-                                @if ($tag->pivot->hidden_flag == 0) <!-- 0 means public -->
-                                    <form action="{{ route('oshi.toggleTagVisibility', [$favorite->favorite_id, $tag->id]) }}" method="POST" style="display: inline;">
+                                    <!-- Visibility toggle (公開/非公開) -->
+                                    @if ($tag->pivot->hidden_flag == 0) <!-- 0 means public -->
+                                        <form action="{{ route('oshi.toggleTagVisibility', [$favorite->favorite_id, $tag->id]) }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            <button type="submit" class="btn btn-warning">非公開にする</button>
+                                        </form>
+                                    @else <!-- 1 means private -->
+                                        <form action="{{ route('oshi.toggleTagVisibility', [$favorite->favorite_id, $tag->id]) }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success">公開する</button>
+                                        </form>
+                                    @endif
+
+                                    <!-- 削除ボタン -->
+                                    <form action="{{ route('oshi.deleteTag', [$favorite->favorite_id, $tag->id]) }}" method="POST" style="display: inline;">
                                         @csrf
-                                        <button type="submit" class="btn btn-warning">非公開にする</button>
+                                        <button type="submit" class="btn btn-danger">削除</button>
                                     </form>
-                                @else <!-- 1 means private -->
-                                    <form action="{{ route('oshi.toggleTagVisibility', [$favorite->favorite_id, $tag->id]) }}" method="POST" style="display: inline;">
-                                        @csrf
-                                        <button type="submit" class="btn btn-success">公開する</button>
-                                    </form>
-                                @endif
-                            </li>
+                                </li>
+                            @endif
                         @endforeach
                     </ul>
 
