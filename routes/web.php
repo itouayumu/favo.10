@@ -63,10 +63,9 @@ Route::get('/schedules', [ScheduleController::class, 'schedule']);
 Route::get('/schedules/create', [ScheduleController::class, 'create']);
 Route::post('/schedules', [ScheduleController::class, 'store']);
 Route::get('/schedules/{id}', [ScheduleController::class, 'show']);
-Route::get('/schedules/{id}/edit', [ScheduleController::class, 'edit']);
-Route::put('/schedules/{id}', [ScheduleController::class, 'update']);
-Route::delete('/schedules/{id}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
-
+Route::get('/schedules/{id}/edit', [ScheduleController::class, 'edit'])->name('schedules.edit');
+Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
+Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
 
 
 // ホーム画面（デフォルトのリダイレクト先）
