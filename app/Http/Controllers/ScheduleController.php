@@ -90,7 +90,8 @@ class ScheduleController extends Controller
         return redirect('/schedules')->with('success', 'スケジュールが作成されました');
     }
 
-    // スケジュール編集画面表示
+    // スケジュール編集画面表示   
+    
     public function edit($id)
     {
         $schedule = Schedule::findOrFail($id);
