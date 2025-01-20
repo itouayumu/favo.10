@@ -11,6 +11,8 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    protected $table = 'users'; // テーブル名を明示的に指定
+
     protected $fillable = [
         'name',
         'email',
@@ -28,11 +30,17 @@ class User extends Authenticatable
     }
 
     public function tags()
-    {
-        return $this->belongsToMany(Tag::class, 'user_tag', 'user_id', 'tags_id')
-                    ->withPivot('sort_id', 'count', 'hidden_flag', 'delete_flag')
-                    ->withTimestamps();
-    }
+
+{
+    return $this->belongsToMany(Tag::class, 'user_tag', 'user_id', 'tags_id')
+                ->withPivot('sort_id', 'count', 'hidden_flag', 'delete_flag')
+                ->withTimestamps();
+}
+public function getImageUrlAttribute()
+{
+    return $this->image ? asset('storage/' . $this->image) : asset('default-icon.png');
+}
+
 
     // お気に入りの推し (Favorite モデルとのリレーション)
     public function favorites()

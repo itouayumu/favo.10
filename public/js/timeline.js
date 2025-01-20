@@ -1,6 +1,59 @@
 $(document).ready(function () {
     let lastFetchedPost = new Date().toISOString(); // 最後に取得した投稿時刻を初期化
     let lastFetchedReply = new Date().toISOString(); // 最後に取得した返信時刻を初期化
+// 推しの名前検索処理
+favoriteSearchInput.addEventListener('input', async function () {
+    const query = this.value.trim();
+
+    if (query.length === 0) {
+        favoriteList.style.display = 'none';
+        favoriteList.innerHTML = '';
+        return;
+    }
+
+    try {
+        const response = await fetch(`/favorites/search?query=${encodeURIComponent(query)}`);
+        if (response.ok) {
+            const favorites = await response.json();
+
+            favoriteList.innerHTML = ''; // リストをクリア
+            favorites.forEach(favorite => {
+                const listItem = document.createElement('li');
+                listItem.textContent = favorite.name;
+                listItem.dataset.favoriteId = favorite.id; // 推しのIDを保持
+                listItem.classList.add('list-group-item', 'list-group-item-action');
+                favoriteList.appendChild(listItem);
+            });
+
+            favoriteList.style.display = 'block';
+        } else {
+            console.error('推し検索に失敗しました');
+        }
+    } catch (error) {
+        console.error('エラー:', error);
+    }
+});
+
+// 推しの名前を選択
+favoriteList.addEventListener('click', function (event) {
+    if (event.target.tagName === 'LI') {
+        const selectedName = event.target.textContent;
+        const selectedId = event.target.dataset.favoriteId;
+
+        favoriteSearchInput.value = selectedName; // 検索ボックスに選択した名前を表示
+        oshiNameInput.value = selectedId; // 隠しフィールドにIDをセット
+
+        favoriteList.style.display = 'none'; // リストを隠す
+        favoriteList.innerHTML = ''; // リストをクリア
+    }
+});
+
+// 検索ボックス外をクリックしたら候補リストを隠す
+document.addEventListener('click', (event) => {
+    if (!favoriteSearchInput.contains(event.target) && !favoriteList.contains(event.target)) {
+        favoriteList.style.display = 'none';
+    }
+});
 
     // 投稿フォーム非同期送信
     $('#postForm').on('submit', function (e) {

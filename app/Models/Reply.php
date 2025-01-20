@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,8 +8,6 @@ class Reply extends Model
 {
     use HasFactory;
 
-    protected $table = 'replies';
-
     protected $fillable = [
         'user_id',
         'post_id',
@@ -18,9 +15,21 @@ class Reply extends Model
         'image',
         'delete_flag',
     ];
-    public function user()
-{
-    return $this->belongsTo(User::class, 'user_id');
-}
 
+    /**
+     * 投稿 (Post) とのリレーション
+     */
+    public function post()
+    {
+        return $this->belongsTo(Post::class, 'post_id'); // Replyは1つのPostに属する
+    }
+
+    /**
+     * ユーザー (User) とのリレーション
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id'); // Replyは1人のUserに属する
+    }
+    
 }
