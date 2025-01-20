@@ -16,7 +16,13 @@
             <input type="text" id="searchInput" class="form-control" placeholder="投稿を検索...">
         </div>
         <div id="searchResults"></div>
+   <!-- 推しの名前検索 -->
+   <label for="favorite-search">推しの選択</label><br>
+    <input type="text" id="favorite-search" placeholder="推しの名前を入力" autocomplete="off">
+    <ul id="favorite-list" style="border: 1px solid #ccc; max-height: 150px; overflow-y: auto; display: none;"></ul>
 
+    <!-- 選択された推しのIDを格納する隠しフィールド -->
+    <input type="hidden" id="oshiname" name="oshiname" value="">
         <!-- 投稿フォーム -->
         <form id="postForm" action="{{ route('timeline.store') }}" method="POST" enctype="multipart/form-data" class="mb-4">
             @csrf
