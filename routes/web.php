@@ -15,6 +15,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\searchcontroller;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\OshiController;
+use App\Http\Controllers\OshiTagController;
 
 // ホームページ
 Route::get('/', [UserMainController::class, 'index'])->name('home');
@@ -74,8 +75,21 @@ Route::get('/home', [ScheduleController::class, 'schedule']);
 // プロフィール編集ページ
 Route::get('/users/{user}/profile/edit', [TagController::class, 'profileEdit'])->name('users.profile.edit');
 
+Route::get('/profile/edit', [OshiController::class, 'editProfile'])->name('profile.edit');
+Route::post('/favorite/remove/{id}', [OshiController::class, 'removeFavorite'])->name('favorite.remove');
+
+Route::post('/oshi/{favorite}/toggleVisibility', [OshiController::class, 'toggleVisibility'])->name('oshi.toggleVisibility');
+
 // タグの紐づけ
 Route::post('/users/{user}/tags', [TagController::class, 'attachTag'])->name('users.tags.attach');
+
+Route::post('favorites/{favorite_id}/tags', [OshiTagController::class, 'createTag'])->name('oshi.createTag');;
+
+Route::post('oshi/{favoriteId}/tag/{tagId}/toggleVisibility', [OshiTagController::class, 'toggleTagVisibility'])->name('oshi.toggleTagVisibility');
+Route::get('/oshiTag/increment/{favoriteId}/{tagId}', [OshiTagController::class, 'incrementTagCount'])->name('oshiTag.increment');
+Route::post('oshi/{favoriteId}/tag/{tagId}/delete', [OshiTagController::class, 'deleteTag'])->name('oshi.deleteTag');
+
+
 
 //timeline関係
 // タイムラインのページを表示
@@ -113,3 +127,5 @@ Route::middleware(['auth'])->group(function () {
 
 Route::post('/reply/store', [TimelineController::class, 'storeReply'])->name('reply.store');
 Route::get('/reply/fetch/{postId}', [TimelineController::class, 'fetchReplies']);
+
+Route::get('/user/{id}/profile', [ProfileController::class, 'showUser'])->name('user.profile');

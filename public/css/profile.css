@@ -1,14 +1,39 @@
-/* コンテナ全体をスクロール可能にする */
-.scrollable-container {
-    height: calc(200vh - 50px); /* 画面高さの2倍からヘッダーの高さを引く */
-    overflow-y: auto; /* 縦方向のスクロールを有効にする */
-    padding-right: 10px; /* スクロールバーが出ても内容が隠れないように少し余裕を持たせる */
-    box-sizing: border-box; /* パディングを含めた高さ計算を行う */
+.card-header{
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+    position: relative;
 }
 
+.card-header .icon{
+    height: 80px;
+    width: 80px;
+    background-color: white;
+    border-radius: 50%;
+}
 
-/* 必要に応じてヘッダーの高さを調整 */
-header {
-    height: 50px; /* ヘッダーの高さ（調整可能） */
-    box-sizing: border-box; /* ヘッダーの高さをボーダー込みで計算 */
+.tag{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.introduction{
+    height: 120px;
+    width: 280px;
+    padding: 10px;
+    background-image: url('../img/me06g.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0 auto;
+}
+
+.intro_content{
+    height: 110px;
+    width: 270px;
+    margin: 0 auto;
+}
+
+.intro_content p{
+    margin: 0;
+    overflow-wrap: break-word;
 }
