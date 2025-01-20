@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     let lastFetchedReply = new Date().toISOString(); // 最後に取得した返信の時刻
+    const favoriteSearchInput = document.getElementById('favorite-search'); // 推し検索の入力ボックス
+    const favoriteList = document.getElementById('favorite-list'); // 推し候補リスト
+    const oshiNameInput = document.getElementById('oshiname'); // 選択された推しの名前を保持する隠しフィールド
 
     // 投稿フォームの送信処理
     const postForm = document.getElementById('postForm');
@@ -25,47 +28,58 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 返信表示ボタンの処理
-    document.querySelectorAll('.reply-show').forEach(button => {
-        button.addEventListener('click', async (event) => {
-            const postId = event.target.dataset.postId;
-            const replyList = document.getElementById(`reply-list-${postId}`);
+    // 推しの名前検索処理
+    favoriteSearchInput.addEventListener('input', async function () {
+        const query = this.value.trim();
 
-            if (replyList.classList.contains('d-none')) {
-                try {
-                    // サーバーから返信を取得
-                    const response = await fetch(`/reply/fetch/${postId}`);
-                    const replies = await response.json();
+        if (query.length === 0) {
+            favoriteList.style.display = 'none';
+            favoriteList.innerHTML = '';
+            return;
+        }
 
-                    // レスポンスを描画
-                    const replyHtml = replies.map(reply => `
-                        <div class="reply" id="reply-${reply.id}">
-                            <div class="reply-header d-flex align-items-center mb-2">
-                                ${reply.user && reply.user.image ? 
-                                    `<img src="/storage/${reply.user.image}" alt="${reply.user.name}" class="rounded-circle me-2" style="width: 30px; height: 30px;">` 
-                                    : '<div class="default-icon me-2" style="width: 30px; height: 30px; background: gray; border-radius: 50%;"></div>'}
-                                <strong>${reply.user ? reply.user.name : '匿名ユーザー'}</strong>
-                                <span class="text-muted ms-2">${new Date(reply.created_at).toLocaleString()}</span>
-                            </div>
-                            <div class="reply-body">
-                                <p>${reply.comment}</p>
-                                ${reply.image ? `<img src="/storage/${reply.image}" alt="返信画像" class="reply-image">` : ''}
-                            </div>
-                        </div>
-                    `).join('');
-                    
-                    replyList.innerHTML = replyHtml;
+        try {
+            const response = await fetch(`/favorites/search?query=${encodeURIComponent(query)}`);
+            if (response.ok) {
+                const favorites = await response.json();
 
-                    // 返信リストを表示
-                    replyList.classList.remove('d-none');
-                } catch (error) {
-                    console.error('エラー:', error);
-                }
+                favoriteList.innerHTML = ''; // リストをクリア
+                favorites.forEach(favorite => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = favorite.name;
+                    listItem.dataset.favoriteId = favorite.id; // 推しのIDを保持
+                    listItem.classList.add('list-group-item', 'list-group-item-action');
+                    favoriteList.appendChild(listItem);
+                });
+
+                favoriteList.style.display = 'block';
             } else {
-                // 返信リストを非表示
-                replyList.classList.add('d-none');
+                console.error('推し検索に失敗しました');
             }
-        });
+        } catch (error) {
+            console.error('エラー:', error);
+        }
+    });
+
+    // 推しの名前を選択
+    favoriteList.addEventListener('click', function (event) {
+        if (event.target.tagName === 'LI') {
+            const selectedName = event.target.textContent;
+            const selectedId = event.target.dataset.favoriteId;
+
+            favoriteSearchInput.value = selectedName; // 検索ボックスに選択した名前を表示
+            oshiNameInput.value = selectedId; // 隠しフィールドにIDをセット
+
+            favoriteList.style.display = 'none'; // リストを隠す
+            favoriteList.innerHTML = ''; // リストをクリア
+        }
+    });
+
+    // 検索ボックス外をクリックしたら候補リストを隠す
+    document.addEventListener('click', (event) => {
+        if (!favoriteSearchInput.contains(event.target) && !favoriteList.contains(event.target)) {
+            favoriteList.style.display = 'none';
+        }
     });
 
     // 返信フォームの送信処理
@@ -91,43 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error('エラー:', error);
-            }
-        });
-    });
-
-    // jQueryを使用した動的なイベント処理
-
-    // 返信フォームの表示切り替え
-    $(document).on('click', '.reply-toggle', function () {
-        const postId = $(this).data('post-id');
-        const form = $(`#reply-form-${postId}`);
-        form.toggleClass('d-none');
-    });
-
-    // 返信フォームの非同期送信
-    $(document).on('submit', '.replyForm', function (e) {
-        e.preventDefault();
-
-        const form = $(this);
-        const formData = new FormData(this);
-        const postId = form.data('post-id');
-
-        $.ajax({
-            url: '/reply/store',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRFトークン
-            },
-            success: function (data) {
-                alert(data.message);
-                form[0].reset();
-                fetchReplies(postId); // 返信を再取得
-            },
-            error: function (xhr) {
-                alert('返信の保存に失敗しました: ' + xhr.responseJSON.message);
             }
         });
     });
