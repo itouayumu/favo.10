@@ -6,7 +6,13 @@
 <body>
     <h1>予定編集</h1>
 
-    <form method="post" action="/schedules/{{ $schedule->id }}" enctype="multipart/form-data">
+    <!-- メッセージ表示 -->
+    @if (session('success'))
+        <p style="color: green;">{{ session('success') }}</p>
+    @endif
+
+    <!-- 更新フォーム -->
+    <form method="post" action="{{ route('schedules.update', ['schedule' => $schedule->id]) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -21,7 +27,8 @@
         <button type="submit">更新</button>
     </form>
 
-    <form method="post" action="/schedules/{{ $schedule->id }}">
+    <!-- 削除フォーム -->
+    <form method="post" action="{{ route('schedules.destroy', ['schedule' => $schedule->id]) }}">
         @csrf
         @method('DELETE')
         <button type="submit">削除</button>
