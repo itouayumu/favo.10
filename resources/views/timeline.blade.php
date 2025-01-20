@@ -55,6 +55,7 @@
                     <div class="reply-form d-none" id="reply-form-{{ $post->id }}">
                         <form class="replyForm" data-post-id="{{ $post->id }}">
                             @csrf
+                            <input type="hidden" name="post_id" value="{{ $post->id }}">
                             <textarea name="comment" class="form-control mb-2" placeholder="返信を入力" required></textarea>
                             <input type="file" name="image" class="form-control mb-2" accept="image/*">
                             <button type="submit" class="btn btn-primary btn-sm">返信を送信</button>
@@ -64,19 +65,18 @@
                     <!-- 返信リスト -->
                     <div class="reply-list d-none" id="reply-list-{{ $post->id }}">
                         @foreach ($post->replies as $reply)
-                        <div class="reply p-2 border rounded mb-2">
-        <div class="d-flex align-items-center">
-            <strong>{{ $reply->user ? $reply->user->name : '匿名ユーザー' }}</strong> <!-- nullチェック -->
-            <small class="text-muted ms-2">{{ $reply->created_at->format('Y-m-d H:i') }}</small>
-        </div>
-        <p class="mt-2">{{ $reply->comment }}</p>
-        @if ($reply->image)
-            <img src="{{ asset('storage/' . $reply->image) }}" alt="返信画像" class="img-fluid">
-        @endif
-        \Log::info('Reply User ID:', ['user_id' => $reply->user_id]);
-\Log::info('User Relation:', ['user' => $reply->user]);
-
-    </div>
+                            <div class="reply p-2 border rounded mb-2">
+                                <div class="d-flex align-items-center">
+                                    <!-- 返信者のアイコン -->
+                                    <img src="${reply.user.image_url}" alt="${reply.user.name}" class="rounded-circle me-2" style="width: 30px; height: 30px;">
+                                    <strong>{{ $reply->user ? $reply->user->name : '匿名ユーザー' }}</strong> <!-- nullチェック -->
+                                    <small class="text-muted ms-2">{{ $reply->created_at->format('Y-m-d H:i') }}</small>
+                                </div>
+                                <p class="mt-2">{{ $reply->comment }}</p>
+                                @if ($reply->image)
+                                    <img src="{{ asset('storage/' . $reply->image) }}" alt="返信画像" class="img-fluid">
+                                @endif
+                            </div>
                         @endforeach
                     </div>
 

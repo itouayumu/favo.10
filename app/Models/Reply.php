@@ -31,4 +31,5 @@ class Reply extends Model
     {
         return $this->belongsTo(User::class, 'user_id'); // Replyは1人のUserに属する
     }
+    
 }

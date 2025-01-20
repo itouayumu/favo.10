@@ -35,5 +35,9 @@ class User extends Authenticatable
                 ->withPivot('sort_id', 'count', 'hidden_flag', 'delete_flag')
                 ->withTimestamps();
 }
+public function getImageUrlAttribute()
+{
+    return $this->image ? asset('storage/' . $this->image) : asset('default-icon.png');
+}
 
 }

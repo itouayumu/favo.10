@@ -40,9 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     // レスポンスを描画
                     const replyHtml = replies.map(reply => `
                         <div class="reply" id="reply-${reply.id}">
-                            <div class="reply-header">
+                            <div class="reply-header d-flex align-items-center mb-2">
+                                ${reply.user && reply.user.image ? 
+                                    `<img src="/storage/${reply.user.image}" alt="${reply.user.name}" class="rounded-circle me-2" style="width: 30px; height: 30px;">` 
+                                    : '<div class="default-icon me-2" style="width: 30px; height: 30px; background: gray; border-radius: 50%;"></div>'}
                                 <strong>${reply.user ? reply.user.name : '匿名ユーザー'}</strong>
-                                <span class="text-muted">${new Date(reply.created_at).toLocaleString()}</span>
+                                <span class="text-muted ms-2">${new Date(reply.created_at).toLocaleString()}</span>
                             </div>
                             <div class="reply-body">
                                 <p>${reply.comment}</p>
@@ -50,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
                     `).join('');
+                    
                     replyList.innerHTML = replyHtml;
 
                     // 返信リストを表示
