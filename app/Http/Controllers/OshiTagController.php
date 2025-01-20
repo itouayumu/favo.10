@@ -71,13 +71,13 @@ class OshiTagController extends Controller
 
     public function deleteTag($favoriteId, $tagId)
 {
-    // favorite_tagテーブルの該当行を取得
+    // Fetch the pivot record
     $favoriteTag = \App\Models\FavoriteTag::where('favorite_id', $favoriteId)
-                                            ->where('tags_id', $tagId)
-                                            ->first();
+                                          ->where('tags_id', $tagId)
+                                          ->first();
 
     if ($favoriteTag) {
-        // delete_flagを1に設定して非表示にする
+        // Update the delete_flag
         $favoriteTag->delete_flag = 1;
         $favoriteTag->save();
         
@@ -87,5 +87,34 @@ class OshiTagController extends Controller
     return redirect()->back()->with('error', 'タグが見つかりませんでした。');
 }
 
+
+
+public function toggleTagVisibility(Request $request, $favoriteId, $tagId)
+{
+    // 推しを取得
+    $favorite = Favorite::findOrFail($favoriteId);
+
+    // タグを取得（推しに関連付けられているタグを絞り込む）
+    $tag = $favorite->tags()->where('tags.id', $tagId)->first();
+
+    // タグが関連付けられていない場合はエラー
+    if (!$tag) {
+        return redirect()->back()->with('error', 'タグが見つかりませんでした。');
+    }
+
+    // タグのvisibilityをトグル（公開・非公開）
+    $currentVisibility = $tag->pivot->hidden_flag;
+    $newVisibility = $currentVisibility == 0 ? 1 : 0;
+
+    // 更新
+    $tag->pivot->hidden_flag = $newVisibility;
+    $tag->pivot->save();
+
+    // 新しいvisibilityに基づいたメッセージを設定
+    $message = $newVisibility == 0 ? 'タグが公開されました。' : 'タグが非公開になりました。';
+
+    // リダイレクト
+    return redirect()->back()->with('success', $message);
+}
 
 }
