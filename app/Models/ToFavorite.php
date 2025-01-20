@@ -18,4 +18,17 @@ class ToFavorite extends Model
         'favorite_flag',
         'delete_flag',
     ];
+
+    /**
+     * Favoriteテーブルとのリレーション
+     */
+    public function favorite()
+    {
+        return $this->belongsTo(Favorite::class, 'favorite_id');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'favorite_tag'); // 推しタグとのリレーション
+    }
 }
