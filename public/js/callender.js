@@ -90,20 +90,12 @@ function selectDate(day) {
     displaySchedules(selectedDate);
 }
 
-function showModal(schedule) {
-    document.getElementById('modal-title').textContent = `${schedule.oshiname}: ${schedule.title}`;
-    document.getElementById('modal-content').innerHTML = `
-        <p>日付: ${schedule.start_date}</p>
-        ${schedule.thumbnail ? `<img src="/storage/${schedule.thumbnail}" alt="画像" style="width: 100%;">` : ''}`;
-    document.getElementById('schedule-modal').style.display = 'block';
-    document.getElementById('modal-overlay').style.display = 'block';
+// スケジュール編集ページにリダイレクトする関数
+function showEditPage(schedule) {
+    window.location.href = `/schedules/${schedule.id}/edit`; // 編集ページに遷移
 }
 
-function closeModal() {
-    document.getElementById('schedule-modal').style.display = 'none';
-    document.getElementById('modal-overlay').style.display = 'none';
-}
-
+// スケジュールを表示する関数
 function displaySchedules(date) {
     const formattedDate = formatDate(date);
     document.getElementById('current-date').textContent = `日付: ${formattedDate}`;
@@ -117,18 +109,24 @@ function displaySchedules(date) {
             const item = document.createElement('button'); // ボタンとして作成
             item.classList.add('schedule-item');
             item.innerHTML = `<strong>${schedule.oshiname}: ${schedule.title}</strong>`;
-            item.onclick = () => showModal(schedule); // モーダル表示を設定
+            item.onclick = () => showEditPage(schedule); // 編集ページへの移動
             scheduleItems.appendChild(item);
         }
     });
-
     if (!foundSchedule) {
         scheduleItems.innerHTML = '<p>予定はありません</p>';
     }
 }
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     updateMonthDisplay();
     updateCalendar();
     displaySchedules(currentDate); // 初期表示で今日の日付の予定を表示
 });
+
+
+
+
+showModal
