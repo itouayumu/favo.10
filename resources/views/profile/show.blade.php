@@ -46,40 +46,38 @@
             <h4>公開されたお気に入りの推し</h4>
             <div class="favorites">
                 @if ($user->favorites()->where('hidden_flag', 0)->exists())
-                    @if ($user->toFavorites()->where('favorite_flag', 1)->exists())
-                        @foreach ($user->favorites()->where('hidden_flag', 0)->get() as $favorite)
-                            @foreach ($user->toFavorites()->where('favorite_flag', 1)->get() as $toFavorite)
-                                <div class="favorite-item">
-                                    <h5>{{ $favorite->name }}</h5>
-                                    <p>{{ $favorite->introduction }}</p>
+                    @foreach ($user->favorites()->where('hidden_flag', 0)->get() as $favorite)
+                        <div class="favorite-item">
+                            <h5>{{ $favorite->name }}</h5>
+                            <p>{{ $favorite->introduction }}</p>
 
-                                    <!-- 関連するタグを表示 -->
-                                    <div class="favorite-tags">
-                                        @php
-                                            $favoriteTags = $favorite->tags()->wherePivot('hidden_flag', 0)->wherePivot('delete_flag', 0)->get();
-                                        @endphp
+                            <!-- 関連するタグを表示 -->
+                            <div class="favorite-tags">
+                                @php
+                                    // 推しに関連付けられた非公開でないタグを取得
+                                    $favoriteTags = $favorite->tags()
+                                        ->wherePivot('hidden_flag', 0)
+                                        ->wherePivot('delete_flag', 0)
+                                        ->get();
+                                @endphp
 
-                                        @if ($favoriteTags->isNotEmpty())
-                                            @foreach ($favoriteTags as $favoriteTag)
-                                                <a href="javascript:void(0);" 
-                                                   class="tag-link" 
-                                                   data-favorite-id="{{ $favorite->id }}" 
-                                                   data-tag-id="{{ $favoriteTag->id }}"
-                                                   style="margin-right: 10px;">
-                                                    {{ $favoriteTag->name }} 
-                                                    (<span class="tag-count">{{ $favoriteTag->pivot->count }}</span>)
-                                                </a>
-                                            @endforeach
-                                        @else
-                                            <p>タグはありません。</p>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        @endforeach
-                    @else
-                        <p>公開されたお気に入りの推しはありません。</p>
-                    @endif
+                                @if ($favoriteTags->isNotEmpty())
+                                    @foreach ($favoriteTags as $favoriteTag)
+                                        <a href="javascript:void(0);" 
+                                           class="tag-link" 
+                                           data-favorite-id="{{ $favorite->id }}" 
+                                           data-tag-id="{{ $favoriteTag->id }}"
+                                           style="margin-right: 10px;">
+                                            {{ $favoriteTag->name }} 
+                                            (<span class="tag-count">{{ $favoriteTag->pivot->count }}</span>)
+                                        </a>
+                                    @endforeach
+                                @else
+                                    <p>タグはありません。</p>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
                 @else
                     <p>公開されたお気に入りの推しはありません。</p>
                 @endif
