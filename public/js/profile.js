@@ -1,5 +1,13 @@
 // 公開/非公開切り替え
 function toggleVisibility(tagId, hiddenFlag) {
+    const maxPublicTags = 3;
+    const publicTagsCount = document.getElementById('public-tags').childElementCount;
+
+    if (hiddenFlag === 0 && publicTagsCount >= maxPublicTags) {
+        alert('公開できるタグは最大3つまでです。');
+        return;
+    }
+
     fetch(`/tags/${tagId}/visibility`, {
         method: 'POST',
         headers: {
