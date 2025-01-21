@@ -9,40 +9,50 @@ use Illuminate\Http\Request;
 class OshiTagController extends Controller
 {
     public function createTag(Request $request, $favoriteId)
-    {
-        $request->validate([
-            'tag_name' => 'required|string|max:255',
-            'visibility' => 'required|in:public,private',
-        ]);
+{
+    $request->validate([
+        'tag_name' => 'required|string|max:255',
+        'visibility' => 'required|in:public,private',
+    ]);
 
-        // タグが既に存在するか確認、なければ作成
-        $tag = Tag::firstOrCreate(
-            ['name' => $request->tag_name],
-            ['create_user' => auth()->id()]  // create_userに現在のユーザーIDを設定
-        );
+    // タグを取得または作成
+    $tag = Tag::firstOrCreate(
+        ['name' => $request->tag_name],
+        ['create_user' => auth()->id()]
+    );
 
-        // 推しを取得
-        $favorite = Favorite::findOrFail($favoriteId);
+    // すでに同じタグが関連付けられているか確認
+    $favoriteTag = \App\Models\FavoriteTag::where('favorite_id', $favoriteId)
+                                          ->where('tags_id', $tag->id)
+                                          ->first();
 
-        // すでにそのタグが推しに関連付けられているか確認
-        if ($favorite->tags->contains($tag->id)) {
+    if ($favoriteTag) {
+        if ($favoriteTag->delete_flag === 0) {
+            // 既に存在し、削除フラグが立っていない場合
             return redirect()->back()->with('info', 'このタグはすでに関連付けられています。');
+        } else {
+            // 削除フラグが立っている場合は再利用
+            $favoriteTag->delete_flag = 0;
+            $favoriteTag->hidden_flag = $request->visibility == 'private' ? 1 : 0;
+            $favoriteTag->save();
+
+            return redirect()->back()->with('success', '削除されたタグが再度関連付けられました。');
         }
-
-        // 推しタグを関連付け
-        $favorite->tags()->attach($tag->id, [
-            'sort_id' => 0,
-            'count' => 0,
-            'hidden_flag' => $request->visibility == 'private' ? 1 : 0,
-            'delete_flag' => 0,
-        ]);
-
-        // 関連付けたタグを取得
-        $tags = $favorite->tags;
-
-        // タグ名をビューに渡す
-        return redirect()->back()->with('success', '推しタグが作成されました。')->with('tags', $tags);
     }
+
+    // 推しタグを関連付け
+    \App\Models\FavoriteTag::create([
+        'favorite_id' => $favoriteId,
+        'tags_id' => $tag->id,
+        'sort_id' => 0,
+        'count' => 0,
+        'hidden_flag' => $request->visibility == 'private' ? 1 : 0,
+        'delete_flag' => 0,
+    ]);
+
+    return redirect()->back()->with('success', '推しタグが作成されました。');
+}
+
 
     // タグをクリックした際にカウントを増加させるメソッド
     public function incrementTagCount($favoriteId, $tagId)
@@ -70,22 +80,24 @@ class OshiTagController extends Controller
     }
 
     public function deleteTag($favoriteId, $tagId)
-{
-    // Fetch the pivot record
-    $favoriteTag = \App\Models\FavoriteTag::where('favorite_id', $favoriteId)
-                                          ->where('tags_id', $tagId)
-                                          ->first();
-
-    if ($favoriteTag) {
-        // Update the delete_flag
-        $favoriteTag->delete_flag = 1;
-        $favoriteTag->save();
-        
-        return redirect()->back()->with('success', 'タグが削除されました。');
+    {
+        // Fetch the pivot record with strict conditions
+        $favoriteTag = \App\Models\FavoriteTag::where('favorite_id', $favoriteId)
+                                              ->where('tags_id', $tagId)
+                                              ->where('delete_flag', 0)
+                                              ->first();
+    
+        if ($favoriteTag) {
+            // Update the delete_flag
+            $favoriteTag->delete_flag = 1;
+            $favoriteTag->save();
+            
+            return redirect()->back()->with('success', 'タグが削除されました。');
+        }
+    
+        return redirect()->back()->with('error', 'タグが見つかりませんでした。');
     }
-
-    return redirect()->back()->with('error', 'タグが見つかりませんでした。');
-}
+    
 
 
 
