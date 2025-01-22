@@ -12,18 +12,12 @@
         <h2>{{ $recommended->name }}</h2>
         <p>{{ $recommended->introduction }}</p>
         <div>
-            @if($recommended->image_1)
-                <img src="{{ $recommended->image_1 }}" alt="{{ $recommended->name }}" style="width: 300px;">
-            @endif
-            @if($recommended->image_2)
-                <img src="{{ $recommended->image_2 }}" alt="{{ $recommended->name }}" style="width: 300px;">
-            @endif
-            @if($recommended->image_3)
-                <img src="{{ $recommended->image_3 }}" alt="{{ $recommended->name }}" style="width: 300px;">
-            @endif
-            @if($recommended->image_4)
-                <img src="{{ $recommended->image_4 }}" alt="{{ $recommended->name }}" style="width: 300px;">
-            @endif
+            @foreach (['image_1', 'image_2', 'image_3', 'image_4'] as $image)
+                @if($recommended->$image)
+                    <!-- storage フォルダの画像を表示 -->
+                    <img src="{{ asset('storage/' . $recommended->$image) }}" alt="{{ $recommended->name }}" style="width: 300px;">
+                @endif
+            @endforeach
         </div>
         <p>お気に入り数: {{ $recommended->favorite_count }}</p>
 

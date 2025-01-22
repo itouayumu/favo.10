@@ -10,25 +10,27 @@ use Illuminate\Support\Facades\Auth;
 class FavoriteController extends Controller
 {
     // 新規登録フォームの表示
-    public function create()
+    public function create(Request $request)
     {
         $genres = Genre::where('delete_flag', false)->get(); // ジャンル一覧を取得
-        return view('create', compact('genres'));
+
+        // セッションに保存されたメッセージを取得（成功・失敗時の表示）
+        $success = $request->session()->get('success');
+        $error = $request->session()->get('error');
+
+        return view('recommends.create', compact('genres', 'success', 'error'));
     }
 
     // 新規登録処理
     public function store(Request $request)
     {
-        // ジャンル一覧を取得（エラー時の再表示で利用可能）
-        $genres = Genre::where('delete_flag', false)->get();
-
         // 重複チェック: ユーザーが既に同じ名前の推しを登録していないか確認
         $existingFavorite = Favorite::where('user_id', Auth::id())
             ->where('name', $request->name)
             ->first();
 
         if ($existingFavorite) {
-            return redirect()->route('favorites.index')->with('error', '同じ名前の推しは既に登録されています！');
+            return redirect()->route('recommends.create')->with('error', '同じ名前の推しは既に登録されています！');
         }
 
         // データ登録
@@ -54,6 +56,6 @@ class FavoriteController extends Controller
 
         $favorite->save();
 
-        return redirect()->route('favorites.index')->with('success', '推しを登録しました！');
+        return redirect()->route('recommends.create')->with('success', '推しを登録しました！');
     }
 }
