@@ -114,10 +114,6 @@ Route::get('/favorites/search', [searchcontroller::class, 'searchAjax'])->name('
 // あいまい検索API
 Route::get('/favorites/search', [ScheduleController::class, 'searchFavorites']);
 
-//新規登録
-Route::get('/favorites/create', [FavoriteController::class, 'create'])->name('favorites.create'); // 新規登録フォーム
-Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store'); // 新規登録処理
-
 //おすすめ機能
 Route::middleware(['auth'])->group(function () {
     Route::get('/recommend', [OshiController::class, 'recommend'])->name('recommend');
