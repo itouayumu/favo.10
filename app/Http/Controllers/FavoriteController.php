@@ -19,6 +19,9 @@ class FavoriteController extends Controller
     // 新規登録処理
     public function store(Request $request)
     {
+        // ジャンル一覧を取得（エラー時の再表示で利用可能）
+        $genres = Genre::where('delete_flag', false)->get();
+
         // 重複チェック: ユーザーが既に同じ名前の推しを登録していないか確認
         $existingFavorite = Favorite::where('user_id', Auth::id())
             ->where('name', $request->name)
@@ -38,6 +41,15 @@ class FavoriteController extends Controller
         // 画像の保存
         if ($request->hasFile('image_1')) {
             $favorite->image_1 = $request->file('image_1')->store('images', 'public');
+        }
+        if ($request->hasFile('image_2')) {
+            $favorite->image_2 = $request->file('image_2')->store('images', 'public');
+        }
+        if ($request->hasFile('image_3')) {
+            $favorite->image_3 = $request->file('image_3')->store('images', 'public');
+        }
+        if ($request->hasFile('image_4')) {
+            $favorite->image_4 = $request->file('image_4')->store('images', 'public');
         }
 
         $favorite->save();

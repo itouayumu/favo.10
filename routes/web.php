@@ -129,3 +129,9 @@ Route::post('/reply/store', [TimelineController::class, 'storeReply'])->name('re
 Route::get('/reply/fetch/{postId}', [TimelineController::class, 'fetchReplies']);
 
 Route::get('/user/{id}/profile', [ProfileController::class, 'showUser'])->name('user.profile');
+
+// 推しの新規登録フォームの表示
+Route::get('/recommends/create', [FavoriteController::class, 'create'])->name('recommends.create');
+
+// 推しの新規登録処理
+Route::post('/recommends/store', [FavoriteController::class, 'store'])->name('recommends.store');
