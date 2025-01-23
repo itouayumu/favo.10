@@ -54,7 +54,11 @@
                             <!-- 関連するタグを表示 -->
                             <div class="favorite-tags">
                                 @php
-                                    $favoriteTags = $favorite->tags()->wherePivot('hidden_flag', 0)->wherePivot('delete_flag', 0)->get();
+                                    // 推しに関連付けられた非公開でないタグを取得
+                                    $favoriteTags = $favorite->tags()
+                                        ->wherePivot('hidden_flag', 0)
+                                        ->wherePivot('delete_flag', 0)
+                                        ->get();
                                 @endphp
 
                                 @if ($favoriteTags->isNotEmpty())
@@ -88,7 +92,7 @@
                     @csrf
                     <button type="submit">ログアウト</button>
                 </form>
-                <a href="{{ url()->previous() }}" class="btn btn-secondary">戻る</a>
+                <!-- <a href="{{ url()->previous() }}" class="btn btn-secondary">戻る</a> -->
             </div>
         </div>
     </div>

@@ -1,5 +1,13 @@
 // 公開/非公開切り替え
 function toggleVisibility(tagId, hiddenFlag) {
+    const maxPublicTags = 3;
+    const publicTagsCount = document.getElementById('public-tags').childElementCount;
+
+    if (hiddenFlag === 0 && publicTagsCount >= maxPublicTags) {
+        alert('公開できるタグは最大3つまでです。');
+        return;
+    }
+
     fetch(`/tags/${tagId}/visibility`, {
         method: 'POST',
         headers: {
@@ -52,3 +60,29 @@ function deleteTag(tagId) {
         alert('エラーが発生しました。');
     });
 }
+
+document.getElementById('image').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('imagePreview').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+function updateCharacterCount() {
+    const textarea = document.getElementById('introduction');
+    const currentChars = document.getElementById('currentChars');
+    const maxChars = 200; // 最大文字数
+    const currentLength = textarea.value.length; // 全角文字は1文字、半角文字も1文字としてカウント
+
+    // 現在の文字数を表示
+    currentChars.textContent = currentLength;
+
+    // 200文字を超えた場合は入力を無効にする
+    if (currentLength > maxChars) {
+      textarea.value = textarea.value.slice(0, maxChars);
+    }
+  }

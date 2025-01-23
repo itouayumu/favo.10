@@ -57,6 +57,15 @@ Route::prefix('replies')->group(function () {
 });
 
 
+// スケジュール関連
+Route::get('/schedules', [ScheduleController::class, 'schedule']);
+Route::get('/schedules/create', [ScheduleController::class, 'create']);
+Route::post('/schedules', [ScheduleController::class, 'store']);
+Route::get('/schedules/{id}', [ScheduleController::class, 'show']);
+Route::get('/schedules/{id}/edit', [ScheduleController::class, 'edit'])->name('schedules.edit');
+Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
+Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
+
 
 // お気に入り機能
 Route::prefix('favorites')->group(function () {
@@ -117,10 +126,6 @@ Route::get('/favorites/search', [searchcontroller::class, 'searchAjax'])->name('
 // あいまい検索API
 Route::get('/favorites/search', [ScheduleController::class, 'searchFavorites']);
 
-//新規登録
-Route::get('/favorites/create', [FavoriteController::class, 'create'])->name('favorites.create'); // 新規登録フォーム
-Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store'); // 新規登録処理
-
 //おすすめ機能
 Route::middleware(['auth'])->group(function () {
     Route::get('/recommend', [OshiController::class, 'recommend'])->name('recommend');
@@ -128,5 +133,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/recommend/next', [OshiController::class, 'nextRecommended'])->name('nextRecommended');
 });
 
-// ユーザー詳細ページ
+
+Route::post('/reply/store', [TimelineController::class, 'storeReply'])->name('reply.store');
+Route::get('/reply/fetch/{postId}', [TimelineController::class, 'fetchReplies']);
+
 Route::get('/user/{id}/profile', [ProfileController::class, 'showUser'])->name('user.profile');
+
+// 推しの新規登録フォームの表示
+Route::get('/recommends/create', [FavoriteController::class, 'create'])->name('recommends.create');
+
+// 推しの新規登録処理
+Route::post('/recommends/store', [FavoriteController::class, 'store'])->name('recommends.store');
+

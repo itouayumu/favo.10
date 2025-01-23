@@ -10,10 +10,15 @@ use Illuminate\Support\Facades\Auth;
 class FavoriteController extends Controller
 {
     // 新規登録フォームの表示
-    public function create()
+    public function create(Request $request)
     {
         $genres = Genre::where('delete_flag', false)->get(); // ジャンル一覧を取得
-        return view('create', compact('genres'));
+
+        // セッションに保存されたメッセージを取得（成功・失敗時の表示）
+        $success = $request->session()->get('success');
+        $error = $request->session()->get('error');
+
+        return view('recommends.create', compact('genres', 'success', 'error'));
     }
 
     // 新規登録処理
@@ -25,7 +30,7 @@ class FavoriteController extends Controller
             ->first();
 
         if ($existingFavorite) {
-            return redirect()->route('favorites.index')->with('error', '同じ名前の推しは既に登録されています！');
+            return redirect()->route('recommends.create')->with('error', '同じ名前の推しは既に登録されています！');
         }
 
         // データ登録
@@ -39,9 +44,18 @@ class FavoriteController extends Controller
         if ($request->hasFile('image_1')) {
             $favorite->image_1 = $request->file('image_1')->store('images', 'public');
         }
+        if ($request->hasFile('image_2')) {
+            $favorite->image_2 = $request->file('image_2')->store('images', 'public');
+        }
+        if ($request->hasFile('image_3')) {
+            $favorite->image_3 = $request->file('image_3')->store('images', 'public');
+        }
+        if ($request->hasFile('image_4')) {
+            $favorite->image_4 = $request->file('image_4')->store('images', 'public');
+        }
 
         $favorite->save();
 
-        return redirect()->route('favorites.index')->with('success', '推しを登録しました！');
+        return redirect()->route('recommends.create')->with('success', '推しを登録しました！');
     }
 }

@@ -55,8 +55,7 @@
         <h2 id="modal-title"></h2>
         <p id="modal-content"></p>
         <div class="modal-actions">
-            <button id="delete-schedule-btn" onclick="deleteSchedule()">削除</button>
-            <button id="edit-schedule-btn" onclick="editSchedule()">更新</button>
+
             <button onclick="closeModal()">閉じる</button>
         </div>
     </div>
