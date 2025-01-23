@@ -41,21 +41,21 @@ Route::resource('schedules', ScheduleController::class);
 
 // タイムライン関連
 Route::prefix('timeline')->group(function () {
-    Route::get('/', [TimelineController::class, 'index'])->name('timeline.index');
-    Route::get('/fetch-timeline', [TimelineController::class, 'fetchTimeline']);
-    Route::post('/store', [TimelineController::class, 'store'])->name('timeline.store');
-    Route::get('/search', [TimelineController::class, 'search'])->name('timeline.search');
-    
-    // 返信機能 (TimelineController内)
-    Route::post('/reply/store', [TimelineController::class, 'storeReply'])->name('reply.store');
-    Route::get('/reply/fetch/{postId}', [TimelineController::class, 'fetchReplies'])->name('reply.fetch');
+    Route::get('/', [TimelineController::class, 'index'])->name('timeline.index'); // タイムラインの表示
+    Route::get('/latest', [TimelineController::class, 'fetchTimeline'])->name('timeline.latest'); // 新しい投稿の取得
+    Route::post('/store', [TimelineController::class, 'store'])->name('timeline.store'); // 投稿の作成
+    Route::get('/post/{id}', [TimelineController::class, 'fetchTimeline'])->name('timeline.fetchPost'); // 特定の投稿を取得
+    Route::get('/search', [TimelineController::class, 'search'])->name('timeline.search'); // タイムライン検索
 });
 
-// 返信機能
-Route::post('/replies/store', [ReplyController::class, 'store'])->name('replies.store');
-Route::get('/replies/{post_id}', [ReplyController::class, 'fetch'])->name('replies.fetch');
-Route::post('/replies/fetch', [ReplyController::class, 'fetchReplies'])->name('replies.fetch');
-Route::get('/replies/fetch-new-replies', [ReplyController::class, 'fetchNewReplies'])->name('replies.fetchNewReplies');
+// リプライ関連
+Route::prefix('replies')->group(function () {
+    Route::post('/store', [ReplyController::class, 'store'])->name('replies.store'); // リプライの投稿
+    Route::get('/fetch/{postId}', [ReplyController::class, 'fetchReplies'])->name('replies.fetch'); // 特定の投稿に紐付くリプライの取得
+    Route::get('/fetch-new', [ReplyController::class, 'fetchNewReplies'])->name('replies.fetchNew'); // 新しいリプライの取得
+});
+
+
 
 // お気に入り機能
 Route::prefix('favorites')->group(function () {

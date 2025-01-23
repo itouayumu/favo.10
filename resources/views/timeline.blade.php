@@ -52,59 +52,61 @@
             </div>
         @endif
 
-        <!-- タイムライン表示 -->
-        <div id="timeline">
-            @foreach ($posts as $post)
-                <div class="post mb-4 p-3 border rounded" id="post-{{ $post->id }}">
-                    <div class="d-flex align-items-center mb-2">
-                        <a href="{{ route('user.profile', ['id' => $post->user->id]) }}">
-                            <img src="{{ $post->user->icon_url }}" alt="{{ $post->user->name }}のアイコン" class="rounded-circle me-2" style="width: 40px; height: 40px;">
-                        </a>
-                        <strong><a href="{{ route('user.profile', ['id' => $post->user->id]) }}">{{ $post->user->name }}</a></strong>
-                    </div>
-                    <p>{{ $post->post }}</p>
-                    <p class="text-muted"><small>{{ $post->created_at }}</small></p>
-                    @if ($post->image)
-                        <img src="{{ asset('storage/' . $post->image) }}" alt="投稿画像" class="img-fluid mb-2">
-                    @endif
+     <!-- タイムライン表示 -->
+<div id="timeline">
+    @foreach ($posts as $post)
+        <div class="post mb-4 p-3 border rounded" id="post-{{ $post->id }}">
+            <div class="d-flex align-items-center mb-2">
+                <a href="{{ route('user.profile', ['id' => $post->user->id]) }}">
+                    <img src="{{ $post->user->icon_url }}" alt="{{ $post->user->name }}のアイコン" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                </a>
+                <strong><a href="{{ route('user.profile', ['id' => $post->user->id]) }}">{{ $post->user->name }}</a></strong>
+            </div>
+            <p>{{ $post->post }}</p>
+            <p class="text-muted"><small>{{ $post->created_at }}</small></p>
+            @if ($post->image)
+                <img src="{{ asset('storage/' . $post->image) }}" alt="投稿画像" class="img-fluid mb-2">
+            @endif
 
-                    <!-- 返信フォーム -->
-                    <div class="reply-form d-none" id="reply-form-{{ $post->id }}">
-                    <form action="{{ route('replies.store', ['postId' => $post->id]) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <input type="hidden" name="post_id" value="{{ $post->id }}">
-                        <textarea name="comment">aa</textarea>
-                        <input type="file" name="image">
-                        <button type="submit">送信</button>
-                    </form>
+          <!-- 返信フォーム（初期状態で非表示） -->
+<form id="reply-form-{{ $post->id }}" enctype="multipart/form-data" class="d-none">
+    <textarea class="reply-comment" placeholder="返信を入力"></textarea>
+    <input type="file" class="reply-image" accept="image/*">
+    <button type="button" class="send-reply" data-post-id="{{ $post->id }}">返信する</button>
+    <div class="reply-error" style="color: red;"></div>
+</form>
 
-                    </div>
-
-                    <!-- 返信リスト -->
-                    <div class="reply-list d-none" id="reply-list-{{ $post->id }}">
-                        @foreach ($post->replies as $reply)
-                            <div class="reply p-2 border rounded mb-2">
-                                <div class="d-flex align-items-center">
-                                    <img src="{{ $reply->user ? $reply->user->icon_url : asset('default-icon.png') }}" alt="{{ $reply->user->name }}" class="rounded-circle me-2" style="width: 30px; height: 30px;">
-                                    <strong>{{ $reply->user ? $reply->user->name : '匿名ユーザー' }}</strong>
-                                    <small class="text-muted ms-2">{{ $reply->created_at->format('Y-m-d H:i') }}</small>
-                                </div>
-                                <p class="mt-2">{{ $reply->comment }}</p>
-                                @if ($reply->image)
-                                    <img src="{{ asset('storage/' . $reply->image) }}" alt="返信画像" class="img-fluid">
-                                @endif
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <!-- 返信ボタン -->
-                    <div class="post-footer">
-                        <button class="btn btn-link btn-sm reply-toggle" data-post-id="{{ $post->id }}">返信する</button>
-                        <button class="btn btn-link btn-sm reply-show" data-post-id="{{ $post->id }}">返信を表示</button>
-                    </div>
-                </div>
-            @endforeach
+<!-- 返信リスト（初期状態で非表示） -->
+<div class="reply-list d-none" id="reply-list-{{ $post->id }}">
+    @foreach ($post->replies as $reply)
+        <div class="reply p-2 border rounded mb-2">
+            <div class="d-flex align-items-center">
+                <img src="{{ $reply->user ? $reply->user->icon_url : asset('default-icon.png') }}" 
+                     alt="{{ $reply->user->name }}" 
+                     class="rounded-circle me-2" 
+                     style="width: 30px; height: 30px;">
+                <strong>{{ $reply->user ? $reply->user->name : '匿名ユーザー' }}</strong>
+                <small class="text-muted ms-2">{{ $reply->created_at->format('Y-m-d H:i') }}</small>
+            </div>
+            <p class="mt-2">{{ $reply->comment }}</p>
+            @if ($reply->image)
+                <img src="{{ asset('storage/' . $reply->image) }}" alt="返信画像" class="img-fluid">
+            @endif
         </div>
+    @endforeach
+</div>
+
+
+
+            <!-- 返信ボタン -->
+            <div class="post-footer">
+                <button class="btn btn-link btn-sm reply-toggle" data-post-id="{{ $post->id }}">返信する</button>
+                <button class="btn btn-link btn-sm reply-show" data-post-id="{{ $post->id }}">返信を表示</button>
+            </div>
+        </div>
+    @endforeach
+</div>
+
     </div>
 @endsection
 
