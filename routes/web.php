@@ -15,6 +15,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\OshiController;
+use App\Http\Controllers\OshiTagController;
 
 // ホームページ
 Route::get('/', [UserMainController::class, 'index'])->name('home');
@@ -66,7 +67,61 @@ Route::prefix('favorites')->group(function () {
     Route::get('/search', [ScheduleController::class, 'searchFavorites']);
 });
 
-// おすすめ機能（認証後のみ）
+
+// プロフィール編集ページ
+Route::get('/users/{user}/profile/edit', [TagController::class, 'profileEdit'])->name('users.profile.edit');
+
+Route::get('/profile/edit', [OshiController::class, 'editProfile'])->name('profile.edit');
+Route::post('/favorite/remove/{id}', [OshiController::class, 'removeFavorite'])->name('favorite.remove');
+
+Route::post('/oshi/{favorite}/toggleVisibility', [OshiController::class, 'toggleVisibility'])->name('oshi.toggleVisibility');
+
+// タグの紐づけ
+Route::post('/users/{user}/tags', [TagController::class, 'attachTag'])->name('users.tags.attach');
+
+Route::post('favorites/{favorite_id}/tags', [OshiTagController::class, 'createTag'])->name('oshi.createTag');;
+
+Route::post('oshi/{favoriteId}/tag/{tagId}/toggleVisibility', [OshiTagController::class, 'toggleTagVisibility'])->name('oshi.toggleTagVisibility');
+Route::get('/oshiTag/increment/{favoriteId}/{tagId}', [OshiTagController::class, 'incrementTagCount'])->name('oshiTag.increment');
+Route::post('oshi/{favoriteId}/tag/{tagId}/delete', [OshiTagController::class, 'deleteTag'])->name('oshi.deleteTag');
+
+
+
+//timeline関係
+// タイムラインのページを表示
+Route::get('/timeline', [TimelineController::class, 'index'])->name('timeline.index');
+Route::get('/timeline/fetch-timeline', [TimelineController::class, 'fetchTimeline']);
+Route::post('/store', [TimelineController::class, 'store'])->name('timeline.store');
+Route::get('/posts/search', [TimelineController::class, 'search'])->name('timeline.search');
+
+// 新しい返信を取得するルート
+Route::post('/replies/fetch-new', [ReplyController::class, 'fetchNewReplies']);
+
+// 他のルート
+Route::get('/replies/{post_id}', [ReplyController::class, 'fetch']);
+Route::post('/replies/fetch', [ReplyController::class, 'fetchReplies']);
+
+
+
+//返信機能
+Route::post('/reply/store', [ReplyController::class, 'store'])->name('reply.store');
+Route::get('/reply/fetch/{post_id}', [ReplyController::class, 'fetch'])->name('reply.fetch');
+Route::get('/reply/fetch-new-replies', [ReplyController::class, 'fetchNewReplies']);
+
+
+//検索機能
+Route::get('/posts/search', [TimelineController::class, 'search']);
+Route::get('/favorites', [searchcontroller::class, 'index'])->name('favorites.index'); // 一覧表示
+Route::get('/favorites/search', [searchcontroller::class, 'searchAjax'])->name('favorites.search.ajax'); // 非同期検索
+
+// あいまい検索API
+Route::get('/favorites/search', [ScheduleController::class, 'searchFavorites']);
+
+//新規登録
+Route::get('/favorites/create', [FavoriteController::class, 'create'])->name('favorites.create'); // 新規登録フォーム
+Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store'); // 新規登録処理
+
+//おすすめ機能
 Route::middleware(['auth'])->group(function () {
     Route::get('/recommend', [OshiController::class, 'recommend'])->name('recommend');
     Route::post('/recommend/favorite/{oshiId}', [OshiController::class, 'addFavorite'])->name('addFavorite');

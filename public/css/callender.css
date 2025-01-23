@@ -93,11 +93,18 @@
             text-align: center;
             border: 1px solid #000000;
             padding: 10px;
-            height: 30px;
+            height: 35px;
             width: 30px;
             box-sizing: border-box;
             cursor: pointer;
             position: relative;
+        }
+
+        td strong{
+            font-size: 10px;
+            position: absolute;
+            left: 0;
+            top: 0;
         }
 
         .selected-date {

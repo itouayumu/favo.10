@@ -9,11 +9,14 @@ use App\Models\User;
 class ProfileController extends Controller
 {
     public function edit()
-    {
-        $user = Auth::user();
-        $tags = $user->tags;
-        return view('profile.edit', compact('user'));
-    }
+{
+    $user = Auth::user();
+    $tags = $user->tags;  // ユーザーに関連するタグを取得
+    $favorites = $user->favorites;  // ユーザーのお気に入りを取得
+
+    return view('profile.edit', compact('user', 'favorites', 'tags'));  // 'favorites' をビューに渡す
+}
+
 
     public function update(Request $request)
     {

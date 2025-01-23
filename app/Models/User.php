@@ -30,6 +30,7 @@ class User extends Authenticatable
     }
 
     public function tags()
+
 {
     return $this->belongsToMany(Tag::class, 'user_tag', 'user_id', 'tags_id')
                 ->withPivot('sort_id', 'count', 'hidden_flag', 'delete_flag')
@@ -40,4 +41,16 @@ public function getImageUrlAttribute()
     return $this->image ? asset('storage/' . $this->image) : asset('default-icon.png');
 }
 
+
+    // お気に入りの推し (Favorite モデルとのリレーション)
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'user_id'); // `favorite` テーブルとのリレーション
+    }
+
+    // お気に入りの推し (ToFavorite モデルとのリレーション)
+    public function toFavorites()
+    {
+        return $this->hasMany(ToFavorite::class, 'user_id'); // `to_favorite` テーブルとのリレーション
+    }
 }

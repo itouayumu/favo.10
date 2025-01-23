@@ -19,4 +19,11 @@ class Tag extends Model
                     ->withTimestamps();
     }
 
+    public function favorites()
+    {
+        return $this->belongsToMany(Favorite::class, 'favorite_tag', 'tags_id', 'favorite_id')
+                    ->withPivot('sort_id', 'count', 'hidden_flag', 'delete_flag')
+                    ->withTimestamps();
+    }
+
 }

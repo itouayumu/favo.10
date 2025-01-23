@@ -1,275 +1,148 @@
-$(document).ready(function () {
-    // DOMが準備完了した時に実行される処理
-
-    const postForm = $('#postForm'); // 投稿フォームの要素
-    const postList = $('#post-list'); // 投稿リストの要素
-    const favoriteSearchInput = $('#favorite-search'); // 推しの名前検索入力フィールド
-    const favoriteList = $('#favorite-list'); // 推しリストの要素
-    const favoriteIdInput = $('#favorite_id'); // 推しIDを保持する隠しフィールド
-    const favoriteError = $('#favorite-error'); // エラーメッセージ表示エリア
-    let currentIndex = -1; // 現在選択しているリスト項目のインデックス
-    let debounceTimeout; // 検索のデバウンス用タイマー
-
-    const csrfToken = $('meta[name="csrf-token"]').attr('content'); // CSRFトークンを取得
-
-    /**
-     * 推しの名前検索処理（デバウンス対応）
-     */
-    favoriteSearchInput.on('input', function () {
-        clearTimeout(debounceTimeout); // 直前のタイマーをクリア
-        debounceTimeout = setTimeout(() => performFavoriteSearch(this.value.trim()), 300); // 入力後300msで検索を実行
-    });
-
-    // 推しの名前を検索して結果を表示する関数
-    async function performFavoriteSearch(query) {
-        if (query.length === 0) {
-            favoriteList.hide().empty(); // クエリが空ならリストを非表示
-            return;
-        }
-
-        try {
-            // サーバーに検索リクエストを送る
-            const response = await fetch(`/favorites/search?query=${encodeURIComponent(query)}`);
-            if (response.ok) {
-                const favorites = await response.json(); // 結果をJSON形式で取得
-                renderFavoriteList(favorites); // リストに結果をレンダリング
-            } else {
-                showError('検索中に問題が発生しました'); // エラーメッセージ表示
-            }
-        } catch (error) {
-            console.error('エラー:', error);
-            showError('通信エラーが発生しました'); // 通信エラー時の処理
-        }
-    }
-
-    // 検索結果をリストに表示する関数
-    function renderFavoriteList(favorites) {
-        favoriteList.empty(); // リストを空にする
-        if (favorites.length === 0) {
-            favoriteList.append('<li class="list-group-item text-muted">結果が見つかりません</li>'); // 結果がない場合
-        } else {
-            // 結果がある場合、リストに追加
-            favorites.forEach(favorite => {
-                favoriteList.append(
-                    `<li class="list-group-item list-group-item-action" role="option" aria-selected="false" data-favorite-id="${favorite.id}">${favorite.name}</li>`
-                );
-            });
-        }
-        favoriteList.show(); // リストを表示
-    }
-
-    // エラーメッセージを表示する関数
-    function showError(message) {
-        favoriteError.text(message).show(); // エラーメッセージを設定して表示
-    }
-
-    // リストアイテムをクリックした時の処理
-    favoriteList.on('click', 'li', function () {
-        const selectedName = $(this).text(); // 選択された名前を取得
-        const selectedId = $(this).data('favoriteId'); // 選択されたIDを取得
-        favoriteSearchInput.val(selectedName); // 名前を入力フィールドにセット
-        favoriteIdInput.val(selectedId); // IDを隠しフィールドにセット
-        favoriteError.hide(); // エラーメッセージを非表示
-        favoriteList.hide().empty(); // リストを非表示にして空にする
-    });
-
-    // キーボードの矢印キーやEnterキーによるリスト操作
-    favoriteSearchInput.on('keydown', function (event) {
-        const items = favoriteList.find('li'); // リストアイテムを取得
-        if (items.length === 0) return; // アイテムがない場合は何もしない
-
-        if (event.key === 'ArrowDown') {
-            currentIndex = (currentIndex + 1) % items.length; // 下キー：インデックスを更新
-            highlightItem(items, currentIndex); // アイテムをハイライト
-        } else if (event.key === 'ArrowUp') {
-            currentIndex = (currentIndex - 1 + items.length) % items.length; // 上キー：インデックスを更新
-            highlightItem(items, currentIndex); // アイテムをハイライト
-        } else if (event.key === 'Enter') {
-            event.preventDefault(); // Enterキー押下時にデフォルトの送信を防ぐ
-            if (currentIndex >= 0) items.eq(currentIndex).click(); // 選択されたアイテムをクリック
-        }
-    });
-
-    // アイテムをハイライトする関数
-    function highlightItem(items, index) {
-        items.removeClass('active').attr('aria-selected', 'false'); // すべてのアイテムからアクティブを外す
-        items.eq(index).addClass('active').attr('aria-selected', 'true'); // 選択されたアイテムをハイライト
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    let lastFetchedReply = new Date().toISOString(); // 最後に取得した返信の時刻
+    const favoriteSearchInput = document.getElementById('favorite-search'); // 推し検索の入力ボックス
+    const favoriteList = document.getElementById('favorite-list'); // 推し候補リスト
+    const oshiNameInput = document.getElementById('oshiname'); // 選択された推しの名前を保持する隠しフィールド
 
     // 投稿フォームの送信処理
-    postForm.on('submit', async function (e) {
-        e.preventDefault(); // デフォルトの送信を防ぐ
-        if (!favoriteIdInput.val()) {
-            showError('推しの名前を選択してください。'); // 推しを選択しないと投稿できない
-            return;
-        }
-        favoriteError.hide(); // エラーメッセージを非表示
+    const postForm = document.getElementById('postForm');
+    postForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
 
-        const formData = new FormData(postForm[0]); // フォームデータを作成
+        const formData = new FormData(postForm);
         try {
-            const response = await fetch('/timeline/store', {
+            const response = await fetch(postForm.action, {
                 method: 'POST',
-                body: formData,
-                headers: { 'X-CSRF-TOKEN': csrfToken }, // CSRFトークンを送信
+                body: formData
             });
 
             if (response.ok) {
-                const { post } = await response.json(); // 投稿データを取得
-                addPostToList(post); // 新しい投稿をリストに追加
-                postForm[0].reset(); // フォームをリセット
+                const newPost = await response.json();
+                console.log('新しい投稿:', newPost);
+                // タイムラインに新しい投稿を追加するロジックを実装
             } else {
-                alert('投稿に失敗しました。詳細はコンソールを確認してください。'); // エラー時
+                console.error('投稿の送信に失敗しました');
             }
         } catch (error) {
             console.error('エラー:', error);
-            alert('通信エラーが発生しました。詳細はコンソールを確認してください。'); // 通信エラー時
         }
     });
 
-    // 投稿をリストに追加する関数
-    function addPostToList(post) {
-        const postItem = `
-            <div class="post-item border rounded p-3 mb-3">
-                <div class="d-flex align-items-center mb-2">
-                    <img src="${post.user.icon_url}" alt="${post.user.name}のアイコン" class="rounded-circle me-2" style="width: 40px; height: 40px;">
-                    <strong>${post.user.name}</strong>
-                </div>
-                <p>${post.post}</p>
-                ${post.image ? `<img src="/storage/${post.image}" alt="投稿画像" class="img-fluid mt-2">` : ''}
-                <p class="text-muted"><small>${new Date(post.created_at).toLocaleString()}</small></p>
-            </div>
-        `;
-        postList.prepend(postItem); // 新しい投稿を先頭に追加
-    }
+    // 推しの名前検索処理
+    favoriteSearchInput.addEventListener('input', async function () {
+        const query = this.value.trim();
 
-    // リプライの送信処理
-    $(document).on('click', '.send-reply', async function () {
-        const postId = $(this).data('post-id'); // ボタンから投稿IDを取得
-        const replyForm = $(`#reply-form-${postId}`); // フォームを特定
-        const comment = replyForm.find('.reply-comment').val(); // コメント取得
-        const imageInput = replyForm.find('.reply-image')[0]?.files[0]; // 画像取得
-        const errorDiv = replyForm.find('.reply-error'); // エラーメッセージ表示エリア
-
-        // 入力チェック
-        if (!comment) {
-            errorDiv.text('返信内容を入力してください。');
+        if (query.length === 0) {
+            favoriteList.style.display = 'none';
+            favoriteList.innerHTML = '';
             return;
         }
-        errorDiv.text(''); // エラーメッセージをクリア
 
-        // フォームデータ作成
-        const formData = new FormData();
-        formData.append('post_id', postId);
-        formData.append('comment', comment);
-        if (imageInput) formData.append('image', imageInput);
-
-        // サーバーにリクエスト送信
         try {
-            const response = await fetch('/replies/store', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                },
-            });
+            const response = await fetch(`/favorites/search?query=${encodeURIComponent(query)}`);
+            if (response.ok) {
+                const favorites = await response.json();
 
-            // レスポンス処理
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('エラー内容:', errorText); // HTMLを確認
-                errorDiv.text('送信エラー: サーバーの応答が正しくありません。');
-                return;
-            }
+                favoriteList.innerHTML = ''; // リストをクリア
+                favorites.forEach(favorite => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = favorite.name;
+                    listItem.dataset.favoriteId = favorite.id; // 推しのIDを保持
+                    listItem.classList.add('list-group-item', 'list-group-item-action');
+                    favoriteList.appendChild(listItem);
+                });
 
-            const data = await response.json();
-            if (data.reply) {
-                addReplyToList(postId, data.reply); // 成功時にリプライを表示
-                replyForm[0].reset(); // フォームをリセット
-            } else if (data.errors) {
-                errorDiv.text('入力エラー: ' + Object.values(data.errors).flat().join(' '));
+                favoriteList.style.display = 'block';
+            } else {
+                console.error('推し検索に失敗しました');
             }
         } catch (error) {
-            console.error('通信エラー:', error);
-            errorDiv.text('通信エラーが発生しました。');
+            console.error('エラー:', error);
         }
     });
 
-    // リプライをリストに追加する関数
-    function addReplyToList(postId, reply) {
-        const replyList = $(`#reply-list-${postId}`); // リストを取得
-        const newReply = `
-            <li>
-                <p>${reply.comment}</p>
-                ${reply.image ? `<img src="/storage/${reply.image}" alt="返信画像" />` : ''}
-            </li>
-        `;
-        replyList.append(newReply); // 新しいリプライを追加
-    }
-});
-$(document).on('click', '.reply-toggle', function () {
-    const postId = $(this).data('post-id'); // 投稿IDを取得
-    $(`#reply-form-${postId}`).toggleClass('d-none'); // 返信フォームの表示/非表示を切り替え
-});
+    // 推しの名前を選択
+    favoriteList.addEventListener('click', function (event) {
+        if (event.target.tagName === 'LI') {
+            const selectedName = event.target.textContent;
+            const selectedId = event.target.dataset.favoriteId;
 
-$(document).on('click', '.reply-show', function () {
-    const postId = $(this).data('post-id'); // 投稿IDを取得
-    $(`#reply-list-${postId}`).toggleClass('d-none'); // 返信リストの表示/非表示を切り替え
-});
-async function loadReplies(postId) {
-    try {
-        const response = await fetch(`/timeline/replies/${postId}`);
-        if (response.ok) {
-            const replies = await response.json();
-            renderReplies(postId, replies);
-        } else {
-            console.error('返信の取得に失敗しました');
+            favoriteSearchInput.value = selectedName; // 検索ボックスに選択した名前を表示
+            oshiNameInput.value = selectedId; // 隠しフィールドにIDをセット
+
+            favoriteList.style.display = 'none'; // リストを隠す
+            favoriteList.innerHTML = ''; // リストをクリア
         }
-    } catch (error) {
-        console.error('エラー:', error);
-    }
-}
-
-function renderReplies(postId, replies) {
-    const replyList = $(`#reply-list-${postId}`);
-    replyList.empty(); // 既存の返信をクリア
-    replies.forEach(reply => {
-        const replyItem = `
-            <div class="reply p-2 border rounded mb-2" id="reply-${reply.id}">
-            <div class="d-flex align-items-center">
-                <img src="${reply.user ? reply.user.icon_url : '/storage/default-icon.png'}" 
-                     alt="${reply.user ? reply.user.name : '匿名ユーザー'}" 
-                     class="rounded-circle me-2" 
-                     style="width: 30px; height: 30px;">
-                <strong>${reply.user ? reply.user.name : '匿名ユーザー'}</strong>
-                <small class="text-muted ms-2">${new Date(reply.created_at).toLocaleString()}</small>
-            </div>
-            <p class="mt-2">${reply.comment}</p>
-            ${reply.image ? `<img src="/storage/${reply.image}" alt="返信画像" class="img-fluid">` : ''}
-        </div>
-    `;
-        replyList.append(replyItem);
     });
-}
 
-// 新しい投稿が追加された時にその投稿の返信を取得
-function addPostToList(post) {
-    const postItem = `
-        <div class="post-item border rounded p-3 mb-3" id="post-${post.id}">
-            <div class="d-flex align-items-center mb-2">
-                <img src="${post.user.icon_url}" alt="${post.user.name}のアイコン" class="rounded-circle me-2" style="width: 40px; height: 40px;">
-                <strong>${post.user.name}</strong>
-            </div>
-            <p>${post.post}</p>
-            ${post.image ? `<img src="/storage/${post.image}" alt="投稿画像" class="img-fluid mt-2">` : ''}
-            <p class="text-muted"><small>${new Date(post.created_at).toLocaleString()}</small></p>
+    // 検索ボックス外をクリックしたら候補リストを隠す
+    document.addEventListener('click', (event) => {
+        if (!favoriteSearchInput.contains(event.target) && !favoriteList.contains(event.target)) {
+            favoriteList.style.display = 'none';
+        }
+    });
 
-            <div id="reply-list-${post.id}"></div> <!-- 返信リストをここに追加 -->
-            <div class="d-flex mt-3">
-                <textarea id="reply-comment-${post.id}" class="form-control" placeholder="返信を入力"></textarea>
-                <button data-post-id="${post.id}" class="send-reply btn btn-primary ms-2">返信</button>
-            </div>
-        </div>
-    `;
-    postList.prepend(postItem); // 新しい投稿を先頭に追加
-    loadReplies(post.id);  // 新しい投稿のリプライを取得
-}
+    // 返信フォームの送信処理
+    document.querySelectorAll('.replyForm').forEach(form => {
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const postId = form.dataset.postId;
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(`/reply/store/${postId}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const newReply = await response.json();
+                    console.log('新しい返信:', newReply);
+                    // 新しい返信を表示するロジックを実装
+                } else {
+                    console.error('返信の送信に失敗しました');
+                }
+            } catch (error) {
+                console.error('エラー:', error);
+            }
+        });
+    });
+
+    // 新規返信を取得して表示する関数
+    function fetchNewReplies() {
+        $.ajax({
+            url: '/reply/fetch-new-replies', // 新規返信を取得するAPIエンドポイント
+            type: 'GET',
+            data: { last_fetched: lastFetchedReply },
+            success: function (replies) {
+                console.log('新しい返信:', replies);
+                if (replies.length > 0) {
+                    replies.forEach(reply => {
+                        const postId = reply.post_id;
+                        const repliesContainer = $(`#replies-${postId}`);
+
+                        // 新規返信のみ追加
+                        if ($(`#reply-${reply.id}`).length === 0) { // 重複チェック
+                            const replyElement = `
+                                <div class="reply mb-2 p-2 border rounded" id="reply-${reply.id}">
+                                    <p>${reply.comment}</p>
+                                    <small class="text-muted">${new Date(reply.created_at).toLocaleString()}</small>
+                                    ${reply.image ? `<img src="/storage/${reply.image}" alt="返信画像" class="img-fluid">` : ''}
+                                </div>
+                            `;
+                            repliesContainer.append(replyElement); // 返信リストの一番下に追加
+                        }
+                    });
+                    lastFetchedReply = new Date().toISOString(); // 最後の取得時刻を更新
+                }
+            },
+            error: function (xhr) {
+                console.error('新しい返信の取得に失敗:', xhr.responseText);
+            }
+        });
+    }
+
+    // 5秒ごとに新しい返信をチェック
+    setInterval(fetchNewReplies, 5000);
+});
