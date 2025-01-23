@@ -92,7 +92,7 @@
                     @csrf
                     <button type="submit">ログアウト</button>
                 </form>
-                <a href="{{ url()->previous() }}" class="btn btn-secondary">戻る</a>
+                <!-- <a href="{{ url()->previous() }}" class="btn btn-secondary">戻る</a> -->
             </div>
         </div>
     </div>
