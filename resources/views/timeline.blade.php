@@ -16,19 +16,13 @@
 
     <div class="container mt-5">
         <h1>タイムライン</h1>
-        
+
         <!-- 検索機能 -->
         <div class="mb-4">
             <input type="text" id="searchInput" class="form-control" placeholder="投稿を検索...">
         </div>
         <div id="searchResults"></div>
-   <!-- 推しの名前検索 -->
-   <label for="favorite-search">推しの選択</label><br>
-    <input type="text" id="favorite-search" placeholder="推しの名前を入力" autocomplete="off">
-    <ul id="favorite-list" style="border: 1px solid #ccc; max-height: 150px; overflow-y: auto; display: none;"></ul>
 
-    <!-- 選択された推しのIDを格納する隠しフィールド -->
-    <input type="hidden" id="oshiname" name="oshiname" value="">
         <!-- 投稿フォーム -->
         <form id="postForm" action="{{ route('timeline.store') }}" method="POST" enctype="multipart/form-data" class="mb-4">
             @csrf
@@ -36,76 +30,96 @@
                 <label for="post" class="form-label">投稿内容</label>
                 <textarea id="post" name="post" class="form-control" rows="3" required></textarea>
             </div>
+
+            <div class="mb-3">
+                <label for="favorite-search" class="form-label">推しの名前を検索</label>
+                <input type="text" id="favorite-search" placeholder="推しの名前を入力" class="form-control" autocomplete="off">
+                <ul id="favorite-list" class="list-group mt-2" style="display: none;"></ul>
+                <input type="hidden" id="favorite_id" name="favorite_id" value="">
+                <span id="favorite-error" class="text-danger" style="display: none;"></span>
+            </div>
+
             <div class="mb-3">
                 <label for="image" class="form-label">画像 (任意)</label>
                 <input type="file" id="image" name="image" accept="image/*" class="form-control">
             </div>
+
             <button type="submit" class="btn btn-primary">投稿する</button>
-            <button type="button" class="btn btn-secondary" id="shareScheduleBtn" data-bs-toggle="modal" data-bs-target="#scheduleModal">
-                自分の予定を共有
-            </button>
         </form>
 
+        <!-- エラーメッセージ -->
+        @if ($errors->any())
+            <div class="alert alert-danger mt-3">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-        <!-- タイムライン表示部分 -->
+     <!-- タイムライン表示 -->
 <div id="timeline">
     @foreach ($posts as $post)
-    <div class="post mb-4 p-3 border rounded" id="post-{{ $post->id }}">
-        <div class="p_content">
-            <!-- 投稿者のアイコンと名前 -->
+        <div class="post mb-4 p-3 border rounded" id="post-{{ $post->id }}">
             <div class="d-flex align-items-center mb-2">
-                <a href="{{ route('profile.showUser', ['id' => $post->user->id]) }}">
-                    <img src="{{ $post->user->icon_url }}" alt="{{ $post->user->name }}のアイコン" 
-                        class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                <a href="{{ route('user.profile', ['id' => $post->user->id]) }}">
+                    <img src="{{ $post->user->icon_url }}" alt="{{ $post->user->name }}のアイコン" class="rounded-circle me-2" style="width: 40px; height: 40px;">
                 </a>
-                <strong>{{ $post->user->name }}</strong>
+                <strong><a href="{{ route('user.profile', ['id' => $post->user->id]) }}">{{ $post->user->name }}</a></strong>
             </div>
-
-            <!-- 投稿内容表示 -->
             <p>{{ $post->post }}</p>
-            <p class="text-muted">
-                <small>{{ $post->created_at }}</small>
-            </p>
-
+            <p class="text-muted"><small>{{ $post->created_at }}</small></p>
             @if ($post->image)
                 <img src="{{ asset('storage/' . $post->image) }}" alt="投稿画像" class="img-fluid mb-2">
             @endif
-        </div>
-        <!-- 返信一覧 -->
-        <div class="replies mt-3" id="replies-{{ $post->id }}">
-            @foreach ($post->replies as $reply)
-            <div class="reply mb-2 p-2 border rounded">
-                <div class="d-flex align-items-center mb-2">
-                    <a href="{{ route('profile.showUser', ['id' => $reply->user->id]) }}">
-                        <img src="{{ $reply->user->icon_url }}" alt="{{ $reply->user->name }}のアイコン" 
-                             class="rounded-circle me-2" style="width: 30px; height: 30px;">
-                    </a>
-                    <strong>{{ $reply->user->name }}</strong>
 
-                </div>
-            @endforeach
-        </div>
-    </div>
+          <!-- 返信フォーム（初期状態で非表示） -->
+<form id="reply-form-{{ $post->id }}" enctype="multipart/form-data" class="d-none">
+    <textarea class="reply-comment" placeholder="返信を入力"></textarea>
+    <input type="file" class="reply-image" accept="image/*">
+    <button type="button" class="send-reply" data-post-id="{{ $post->id }}">返信する</button>
+    <div class="reply-error" style="color: red;"></div>
+</form>
 
-    <!-- モーダル: 自分の予定を共有 -->
-    <div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="scheduleModalLabel">共有する予定を選択</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <ul id="scheduleList" class="list-group"></ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                </div>
+<!-- 返信リスト（初期状態で非表示） -->
+<div class="reply-list d-none" id="reply-list-{{ $post->id }}">
+    @foreach ($post->replies as $reply)
+        <div class="reply p-2 border rounded mb-2">
+            <div class="d-flex align-items-center">
+                <img src="{{ $reply->user ? $reply->user->icon_url : asset('default-icon.png') }}" 
+                     alt="{{ $reply->user->name }}" 
+                     class="rounded-circle me-2" 
+                     style="width: 30px; height: 30px;">
+                <strong>{{ $reply->user ? $reply->user->name : '匿名ユーザー' }}</strong>
+                <small class="text-muted ms-2">{{ $reply->created_at->format('Y-m-d H:i') }}</small>
+            </div>
+            <p class="mt-2">{{ $reply->comment }}</p>
+            @if ($reply->image)
+                <img src="{{ asset('storage/' . $reply->image) }}" alt="返信画像" class="img-fluid">
+            @endif
+=======
+
+ 
+        </div>
+    @endforeach
+</div>
+
+
+
+            <!-- 返信ボタン -->
+            <div class="post-footer">
+                <button class="btn btn-link btn-sm reply-toggle" data-post-id="{{ $post->id }}">返信する</button>
+                <button class="btn btn-link btn-sm reply-show" data-post-id="{{ $post->id }}">返信を表示</button>
             </div>
         </div>
+    @endforeach
+</div>
+
     </div>
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/timeline.js') }}"></script>
+<script src="{{ asset('js/timeline.js') }}"></script>
+<script src="{{ asset('js/serch_favorite.js') }}"></script>
 @endsection

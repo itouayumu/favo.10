@@ -25,9 +25,17 @@ class Post extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    // 返信とのリレーション
     public function replies()
-{
-    return $this->hasMany(Reply::class, 'post_id');
+    {
+        return $this->hasMany(Reply::class, 'post_id');
+    }
+
+    // 推し（Favorite）とのリレーション
+    public function favorite()
+    {
+        return $this->belongsTo(Favorite::class, 'favorite_id');  // favorite_idをキーにFavoriteモデルと関連付け
+    }
 }
 
-}

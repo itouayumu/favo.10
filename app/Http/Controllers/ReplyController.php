@@ -4,74 +4,76 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Reply;
+use Illuminate\Support\Facades\Log;
 
 class ReplyController extends Controller
 {
-    // 返信の保存
-    public function store(Request $request)
-    {
-        $request->validate([
-            'post_id' => 'required|exists:posts,id', // post テーブルの id を確認
-            'comment' => 'required|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        $imagePath = null;
-
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('reply_images', 'public');
-        }
-
-        $reply = Reply::create([
-            'user_id' => auth()->id(),
-            'post_id' => $request->post_id,
-            'comment' => $request->comment,
-            'image' => $imagePath,
-            'delete_flag' => false,
-        ]);
-
-        $reply->load('user:id,name,image'); // ユーザー情報をロード
-
-        return response()->json([
-            'message' => '返信が保存されました',
-            'reply' => $reply,
-        ]);
-    }
-
-    // 特定の投稿の返信を取得
+    // 返信一覧を取得
     public function fetch($post_id)
     {
-        $replies = Reply::with('user:id,name,image') // アイコン情報を取得
-                        ->where('post_id', $post_id)
-                        ->where('delete_flag', false)
-                        ->orderBy('created_at', 'asc')
-                        ->get();
+        try {
+            $replies = Reply::where('post_id', $post_id)
+                ->where('delete_flag', false)
+                ->with('user:id,name')
+                ->orderBy('created_at', 'asc')
+                ->get();
 
-        return response()->json($replies);
+            if ($replies->isEmpty()) {
+                return response()->json([
+                    'message' => '返信はまだありません。',
+                ]);
+            }
+
+            return response()->json($replies);
+        } catch (\Exception $e) {
+            Log::error('返信データ取得エラー: ' . $e->getMessage());
+            return response()->json(['error' => '返信データの取得に失敗しました。'], 500);
+        }
     }
 
-    // 新しい返信を取得
-    public function fetchNewReplies(Request $request)
+    // 返信を保存
+    public function store(Request $request)
     {
-        $lastFetched = $request->input('last_fetched');
-        $replies = Reply::with('user:id,name,image') // アイコン情報を取得
-                        ->where('created_at', '>', $lastFetched)
-                        ->where('delete_flag', false)
-                        ->orderBy('created_at', 'asc')
-                        ->get();
+        // バリデーション
+        try {
+            $validatedData = $request->validate([
+                'post_id' => 'required',
+                'comment' => 'required|max:255',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors(),
+            ], 422);
+        }
+        Log::debug('リクエストデータ: ', $request->all());
 
-        return response()->json($replies);
-    }
+        // 画像保存
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('replies', 'public');
+        }
 
-    public function fetchReplies(Request $request)
-    {
-        $lastFetched = $request->input('last_fetched');
-        $replies = Reply::with('user:id,name,image') // アイコン情報を取得
-                        ->where('created_at', '>', $lastFetched)
-                        ->where('delete_flag', false)
-                        ->orderBy('created_at', 'asc')
-                        ->get();
+        // 返信作成
+        try {
+            $reply = Reply::create([
+                'user_id' => auth()->id(),
+                'post_id' => $validatedData['post_id'],
+                'comment' => $validatedData['comment'],
+                'image' => $imagePath,
+                'delete_flag' => false,
+            ]);
 
-        return response()->json($replies);
+            return response()->json([
+                'message' => '返信が保存されました。',
+                'reply' => $reply,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('返信保存エラー: ' . $e->getMessage());
+            return response()->json([
+                'message' => '返信の保存に失敗しました。',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

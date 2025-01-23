@@ -12,7 +12,7 @@ use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\searchcontroller;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\OshiController;
 use App\Http\Controllers\OshiTagController;
@@ -23,40 +23,38 @@ Route::get('/', [UserMainController::class, 'index'])->name('home');
 // 認証関連
 Auth::routes();
 
-
 // ユーザー関連
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
-Route::post('/login', [LoginController::class, 'login']); // ログイン処理
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); // ログアウト処理
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
 // ログイン中ユーザーのプロフィール表示
-Route::get('/profile', [ProfileController::class, 'show'])
-    ->name('profile.show')
-    ->middleware('auth');
-
-
-
-
+Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show')->middleware('auth');
 Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
-// 公開タグの表示
-Route::get('/tags', [TagController::class, 'publicTags'])->name('users.tags.public');
+// タグ関連
+Route::resource('tags', TagController::class); // RESTfulなタグ管理
 
-// タグクリックカウント
-Route::post('/tags/{tagId}/count', [TagController::class, 'incrementClickCount']);
-Route::get('/tags/increment/{tagId}', [TagController::class, 'incrementClickCount'])->name('tags.incrementClickCount');
+// スケジュール関連
+Route::resource('schedules', ScheduleController::class);
 
-//タグ作成
-Route::post('/tags/create', [TagController::class, 'create'])->name('tags.create');
+// タイムライン関連
+Route::prefix('timeline')->group(function () {
+    Route::get('/', [TimelineController::class, 'index'])->name('timeline.index'); // タイムラインの表示
+    Route::get('/latest', [TimelineController::class, 'fetchTimeline'])->name('timeline.latest'); // 新しい投稿の取得
+    Route::post('/store', [TimelineController::class, 'store'])->name('timeline.store'); // 投稿の作成
+    Route::get('/post/{id}', [TimelineController::class, 'fetchTimeline'])->name('timeline.fetchPost'); // 特定の投稿を取得
+    Route::get('/search', [TimelineController::class, 'search'])->name('timeline.search'); // タイムライン検索
+});
 
-//タグ削除
-Route::post('/tags/{tagId}/delete', [TagController::class, 'delete'])->name('tags.delete');
-
-//タグ公開・非公開
-Route::get('/tags/public', [TagController::class, 'publicTags'])->name('tags.publicTags');
-Route::post('/tags/{tagId}/visibility', [TagController::class, 'toggleVisibility'])->name('tags.toggleVisibility');
-
+// リプライ関連
+Route::prefix('replies')->group(function () {
+    Route::post('/store', [ReplyController::class, 'store'])->name('replies.store'); // リプライの投稿
+    Route::get('/fetch/{postId}', [ReplyController::class, 'fetchReplies'])->name('replies.fetch'); // 特定の投稿に紐付くリプライの取得
+    Route::get('/fetch-new', [ReplyController::class, 'fetchNewReplies'])->name('replies.fetchNew'); // 新しいリプライの取得
+});
 
 
 // スケジュール関連
@@ -69,8 +67,15 @@ Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])->name
 Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
 
 
-// ホーム画面（デフォルトのリダイレクト先）
-Route::get('/home', [ScheduleController::class, 'schedule']);
+// お気に入り機能
+Route::prefix('favorites')->group(function () {
+    Route::get('/', [SearchController::class, 'index'])->name('favorites.index');
+    Route::get('/search', [SearchController::class, 'searchAjax'])->name('favorites.search.ajax');
+    Route::post('/', [FavoriteController::class, 'store'])->name('favorites.store');
+    Route::get('/create', [FavoriteController::class, 'create'])->name('favorites.create');
+    Route::get('/search', [ScheduleController::class, 'searchFavorites']);
+});
+
 
 // プロフィール編集ページ
 Route::get('/users/{user}/profile/edit', [TagController::class, 'profileEdit'])->name('users.profile.edit');
@@ -128,6 +133,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/recommend/next', [OshiController::class, 'nextRecommended'])->name('nextRecommended');
 });
 
+
 Route::post('/reply/store', [TimelineController::class, 'storeReply'])->name('reply.store');
 Route::get('/reply/fetch/{postId}', [TimelineController::class, 'fetchReplies']);
 
@@ -138,3 +144,4 @@ Route::get('/recommends/create', [FavoriteController::class, 'create'])->name('r
 
 // 推しの新規登録処理
 Route::post('/recommends/store', [FavoriteController::class, 'store'])->name('recommends.store');
+
