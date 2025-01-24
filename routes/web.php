@@ -65,9 +65,12 @@ Route::get('/schedules/{id}', [ScheduleController::class, 'show']);
 Route::get('/schedules/{id}/edit', [ScheduleController::class, 'edit'])->name('schedules.edit');
 Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
 Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
+Route::get('/profile/user/{user}', [ProfileController::class, 'show'])->name('profile.showUser');
+Route::get('/profile/user/{id}', [ProfileController::class, 'showUser'])
+    ->name('profile.showUser')
+    ->middleware('auth');
 
-
-// ホーム画面（デフォルトのリダイレクト先）
+// ホーム画面（デフォルトのリダイレクト先
 Route::get('/home', [ScheduleController::class, 'schedule']);
 
 // プロフィール編集ページ
@@ -95,20 +98,20 @@ Route::get('/timeline', [TimelineController::class, 'index'])->name('timeline.in
 Route::get('/timeline/fetch-timeline', [TimelineController::class, 'fetchTimeline']);
 Route::post('/store', [TimelineController::class, 'store'])->name('timeline.store');
 Route::get('/posts/search', [TimelineController::class, 'search'])->name('timeline.search');
-
-// 新しい返信を取得するルート
-Route::post('/replies/fetch-new', [ReplyController::class, 'fetchNewReplies']);
-
-// 他のルート
-Route::get('/replies/{post_id}', [ReplyController::class, 'fetch']);
-Route::post('/replies/fetch', [ReplyController::class, 'fetchReplies']);
+Route::post('/timeline/store', [TimelineController::class, 'store'])->name('timeline.store');
 
 
 
 //返信機能
-Route::post('/reply/store', [ReplyController::class, 'store'])->name('reply.store');
-Route::get('/reply/fetch/{post_id}', [ReplyController::class, 'fetch'])->name('reply.fetch');
+Route::post('/replies/store', [ReplyController::class, 'store'])->name('reply.store');
+Route::get('/replies/{post}', [ReplyController::class, 'fetch'])->name('reply.fetch');
 Route::get('/reply/fetch-new-replies', [ReplyController::class, 'fetchNewReplies']);
+Route::get('/replies/{post}', [ReplyController::class, 'fetch'])->name('replies.index');
+// 返信一覧を取得
+Route::get('/reply/fetch/{post_id}', [ReplyController::class, 'fetch'])->name('reply.fetch');
+
+// 全ての返信を取得 (もし必要なら)
+Route::get('/replies/{post}', [ReplyController::class, 'fetch'])->name('replies.index');
 
 
 //検索機能
