@@ -48,7 +48,11 @@
                         <div class="favorite-item">
                             <h5>{{ $favorite->name }}</h5>
                             <p>{{ $favorite->introduction }}</p>
-
+                            <img 
+                                src="{{ $favorite->image_1 && Storage::exists('public/' . $favorite->image_1) 
+                                ? Storage::url($favorite->image_1) 
+                                : asset('img/default.png') }}"  
+                                style="width: 100px; height: 100px;" >
                             <!-- 関連するタグを表示 -->
                             <div class="favorite-tags">
                                 @php
