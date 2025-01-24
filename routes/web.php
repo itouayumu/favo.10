@@ -11,7 +11,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\ReplyController;
-
+use App\Http\Controllers\OshiController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\searchcontroller;
