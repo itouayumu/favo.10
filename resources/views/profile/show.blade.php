@@ -10,11 +10,9 @@
         <div class="card-header">
             <img src="{{ $user->image ? asset('storage/' . $user->image) : 'https://via.placeholder.com/150' }}"
                  alt="Profile Image" class="icon" width="150">
-            <div class="prate">
-                <div class="name">
-                    <h3 class="username">{{ $user->name }}</h3>
-                </div>
-            </div>
+                 <div class="username">
+                     <h3>{{ $user->name }}</h3>
+                 </div>
         </div>
 
         <!-- Tags Section -->
