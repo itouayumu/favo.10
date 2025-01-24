@@ -120,15 +120,17 @@ Route::get('/favorites/search', [searchcontroller::class, 'searchAjax'])->name('
 Route::get('/favorites/search', [ScheduleController::class, 'searchFavorites']);
 
 //新規登録
-Route::get('/favorites/create', [FavoriteController::class, 'create'])->name('favorites.create'); // 新規登録フォーム
-Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store'); // 新規登録処理
+Route::get('/recommends/create', [FavoriteController::class, 'create'])->name('recommends.create'); // 新規登録フォーム
+Route::post('/recommends', [FavoriteController::class, 'store'])->name('recommends.store'); // 新規登録処理
 
 Route::get('/api/fetch-timeline', [TimelineController::class, 'fetchTimeline'])->name('fetchTimeline');
+
 //おすすめ機能
 Route::middleware(['auth'])->group(function () {
     Route::get('/recommend', [OshiController::class, 'recommend'])->name('recommend');
     Route::post('/recommend/favorite/{oshiId}', [OshiController::class, 'addFavorite'])->name('addFavorite');
     Route::get('/recommend/next', [OshiController::class, 'nextRecommended'])->name('nextRecommended');
 });
+
 
 Route::get('/api/user-schedules', [ScheduleController::class, 'getUserSchedules'])->name('user-schedules');
