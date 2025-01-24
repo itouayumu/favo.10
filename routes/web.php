@@ -11,7 +11,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\ReplyController;
-
+use App\Http\Controllers\OshiController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\searchcontroller;
@@ -120,8 +120,8 @@ Route::get('/favorites/search', [searchcontroller::class, 'searchAjax'])->name('
 Route::get('/favorites/search', [ScheduleController::class, 'searchFavorites']);
 
 //新規登録
-Route::get('/favorites/create', [FavoriteController::class, 'create'])->name('favorites.create'); // 新規登録フォーム
-Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store'); // 新規登録処理
+Route::get('/recommends/create', [FavoriteController::class, 'create'])->name('recommends.create'); // 新規登録フォーム
+Route::post('/recommends', [FavoriteController::class, 'store'])->name('recommends.store'); // 新規登録処理
 
 Route::get('/api/fetch-timeline', [TimelineController::class, 'fetchTimeline'])->name('fetchTimeline');
 //おすすめ機能
