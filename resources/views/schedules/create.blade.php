@@ -67,4 +67,5 @@
 
 @section("scripts")
 <script src="{{ asset('js/serch_favorite.js') }}"></script>
+<script src="{{ asset('js/schedule.js') }}"></script>
 @endsection
