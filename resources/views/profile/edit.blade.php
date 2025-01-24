@@ -1,15 +1,17 @@
 @extends('layouts.app')
 
-@section('content')
-<!-- スクロール可能なコンテナを適用 -->
-<div class="container scrollable-container">
-    <h1>プロフィール編集</h1>
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/edit_profile.css') }}">
+@endsection
 
-    @if(session('success'))
+@section('content')
+    <h1 class="heading">プロフィール編集</h1>
+
+    <!-- @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
-    @endif
+    @endif -->
 
     <!-- ここに関連付けられたタグの表示を追加 -->
     @if(session('tags'))
@@ -21,11 +23,23 @@
         </ul>
     @endif
 
-    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+<div class="form-container">
+<img src="{{ asset('img/osipin.png') }}" alt="押しピン" class="osipin">
+<form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        
+        <div class="e_icon">
+            @if($user->image)
+                <label for="image"><img src="{{ asset('storage/' . $user->image) }}" alt="プロフィール画像" class="icon" id="imagePreview"></label>
+            @endif
+            <input type="file" name="image" id="image" class="form-control-file" accept="image/*">
+            <label for="image" class="camera"></label>
+            @error('image')
+                <small class="text-danger">{{ $message }}</small>
+            @enderror
+        </div>
+
         <div class="form-group">
-            <label for="name">名前</label>
+            <p><label for="name">名前</label></p>
             <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $user->name) }}" required>
             @error('name')
                 <small class="text-danger">{{ $message }}</small>
@@ -46,19 +60,9 @@
 
         <div class="form-group">
             <label for="introduction">自己紹介</label>
-            <textarea name="introduction" id="introduction" class="form-control">{{ old('introduction', $user->introduction) }}</textarea>
+            <textarea name="introduction" id="introduction" class="form-control" maxlength="200" oninput="updateCharacterCount()">{{ old('introduction', $user->introduction) }}</textarea>
+            <p><span id="currentChars">0</span> / 200</p>
             @error('introduction')
-                <small class="text-danger">{{ $message }}</small>
-            @enderror
-        </div>
-
-        <div class="form-group">
-            <label for="image">プロフィール画像</label><br>
-            @if($user->image)
-                <img src="{{ asset('storage/' . $user->image) }}" alt="プロフィール画像" width="150"><br>
-            @endif
-            <input type="file" name="image" id="image" class="form-control-file">
-            @error('image')
                 <small class="text-danger">{{ $message }}</small>
             @enderror
         </div>
@@ -180,10 +184,9 @@
         <p>お気に入りの推しがありません。</p>
     @endif
 </div>
+@endsection
 
-<!-- CSSファイルのリンク -->
-<link rel="stylesheet" href="{{ asset('css/profile.css') }}">
-
-<!-- JavaScriptファイルの読み込み -->
-<script src="{{ asset('js/profile.js') }}"></script>
+@section('scripts')
+    <!-- JavaScriptファイルの読み込み -->
+    <script src="{{ asset('js/profile.js') }}"></script>
 @endsection

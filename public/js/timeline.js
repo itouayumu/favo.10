@@ -1,293 +1,351 @@
 $(document).ready(function () {
-    let lastFetchedPost = new Date().toISOString(); // 最後に取得した投稿時刻を初期化
-    let lastFetchedReply = new Date().toISOString(); // 最後に取得した返信時刻を初期化
-// 推しの名前検索処理
-favoriteSearchInput.addEventListener('input', async function () {
-    const query = this.value.trim();
+    const csrfToken = $('meta[name="csrf-token"]').attr('content'); // CSRFトークンの取得
 
-    if (query.length === 0) {
-        favoriteList.style.display = 'none';
-        favoriteList.innerHTML = '';
-        return;
-    }
+    // 推し検索関連要素
+    const favoriteSearchInput = $('#favorite-search'); // 推しの名前検索入力
+    const favoriteList = $('#favorite-list'); // 推しリスト表示
+    const favoriteIdInput = $('#favorite_id'); // 選択された推しIDを保持
+    const favoriteError = $('#favorite-error'); // エラーメッセージ表示
+    let debounceTimeout;
 
-    try {
-        const response = await fetch(`/favorites/search?query=${encodeURIComponent(query)}`);
-        if (response.ok) {
-            const favorites = await response.json();
+    // モーダル関連要素
+    const replyFormModal = $('#reply-form-modal'); // 返信フォームモーダル
+    const replyListModal = $('#reply-list-modal'); // 返信リストモーダル
+    const replyListBody = $('#reply-list-body'); // 返信リスト表示領域
 
-            favoriteList.innerHTML = ''; // リストをクリア
-            favorites.forEach(favorite => {
-                const listItem = document.createElement('li');
-                listItem.textContent = favorite.name;
-                listItem.dataset.favoriteId = favorite.id; // 推しのIDを保持
-                listItem.classList.add('list-group-item', 'list-group-item-action');
-                favoriteList.appendChild(listItem);
-            });
-
-            favoriteList.style.display = 'block';
-        } else {
-            console.error('推し検索に失敗しました');
-        }
-    } catch (error) {
-        console.error('エラー:', error);
-    }
-});
-
-// 推しの名前を選択
-favoriteList.addEventListener('click', function (event) {
-    if (event.target.tagName === 'LI') {
-        const selectedName = event.target.textContent;
-        const selectedId = event.target.dataset.favoriteId;
-
-        favoriteSearchInput.value = selectedName; // 検索ボックスに選択した名前を表示
-        oshiNameInput.value = selectedId; // 隠しフィールドにIDをセット
-
-        favoriteList.style.display = 'none'; // リストを隠す
-        favoriteList.innerHTML = ''; // リストをクリア
-    }
-});
-
-// 検索ボックス外をクリックしたら候補リストを隠す
-document.addEventListener('click', (event) => {
-    if (!favoriteSearchInput.contains(event.target) && !favoriteList.contains(event.target)) {
-        favoriteList.style.display = 'none';
-    }
-});
-
-    // 投稿フォーム非同期送信
-    $('#postForm').on('submit', function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (data) {
-                alert(data.message);
-                $('#postForm')[0].reset();
-                fetchNewPosts(); // 投稿後すぐに新しい投稿を取得
-            },
-            error: function (xhr) {
-                alert('投稿に失敗しました: ' + xhr.responseJSON.message);
-            }
-        });
+    /**
+     * 推しの名前検索処理（デバウンス対応）
+     */
+    favoriteSearchInput.on('input', function () {
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => performFavoriteSearch(this.value.trim()), 300);
     });
 
-    // 新しい投稿を取得
-    function fetchNewPosts() {
-        $.ajax({
-            url: '/timeline/fetch-timeline',
-            type: 'GET',
-            data: { last_fetched: lastFetchedPost },
-            success: function (posts) {
-                console.log('新しい投稿:', posts);
-                if (posts.length > 0) {
-                    posts.forEach(post => {
-                        if ($('#post-' + post.id).length === 0) { // 重複防止
-                            const postElement = `
-                                <div class="post mb-4 p-3 border rounded" id="post-${post.id}">
-                                                                    <!-- 投稿者のアイコンと名前 -->
-                                    <div class="d-flex align-items-center mb-2">
-                                        <img src="${post.user.icon_url}" alt="投稿者のアイコン" 
-                                             class="rounded-circle me-2" 
-                                             style="width: 40px; height: 40px;">
-                                        <strong>${post.user.name}</strong>
-                                    </div>
-                                    <p>${$('<div>').text(post.post).html()}</p>
-                                    <p class="text-muted">
-                                        <small>${new Date(post.created_at).toLocaleString()}</small>
-                                    </p>
-                                    ${post.image ? `<img src="/storage/${post.image}" class="img-fluid mb-2" alt="投稿画像">` : ''}
+    async function performFavoriteSearch(query) {
+        if (query.length === 0) {
+            favoriteList.hide().empty();
+            return;
+        }
 
-                                    <!-- 返信フォーム -->
-                                    <form class="replyForm" data-post-id="${post.id}">
-                                        <input type="hidden" name="post_id" value="${post.id}">
-                                        <div class="mb-2">
-                                            <textarea name="comment" class="form-control" placeholder="返信を書く" required></textarea>
-                                        </div>
-                                        <div class="mb-2">
-                                            <input type="file" name="image" accept="image/*" class="form-control">
-                                        </div>
-                                        <button type="submit" class="btn btn-sm btn-secondary">返信する</button>
-                                    </form>
-
-                                    <!-- 返信一覧 -->
-                                    <div class="replies mt-3" id="replies-${post.id}"></div>
-                                </div>
-                            `;
-                            $('#timeline').prepend(postElement);
-
-                            // 返信を取得して表示
-                            fetchReplies(post.id);
-                        }
-                    });
-                    lastFetchedPost = new Date().toISOString(); // 取得時刻を更新
-                }
-            },
-            error: function (xhr) {
-                console.error('新しい投稿の取得に失敗:', xhr.responseText);
+        try {
+            const response = await fetch(`/favorites/search?query=${encodeURIComponent(query)}`);
+            if (response.ok) {
+                const favorites = await response.json();
+                renderFavoriteList(favorites);
+            } else {
+                showError('検索中に問題が発生しました。');
             }
-        });
+        } catch (error) {
+            console.error('通信エラー:', error);
+            showError('通信エラーが発生しました。');
+        }
     }
 
-    // 返信を取得
-    function fetchReplies(postId) {
-        $.ajax({
-            url: `/reply/fetch/${postId}`,
-            type: 'GET',
-            success: function (replies) {
-                const repliesContainer = $(`#replies-${postId}`);
-                repliesContainer.empty(); // 既存の返信をクリア
-
-                replies.forEach(reply => {
-                    const replyElement = `
-                        <div class="reply mb-2 p-2 border rounded">
-                            <p>${reply.comment}</p>
-                            <small class="text-muted">${new Date(reply.created_at).toLocaleString()}</small>
-                            ${reply.image ? `<img src="/storage/${reply.image}" alt="返信画像" class="img-fluid">` : ''}
-                        </div>
-                    `;
-                    repliesContainer.append(replyElement);
-                });
-            },
-            error: function (xhr) {
-                console.error('返信の取得に失敗:', xhr.responseText);
-            }
-        });
+    function renderFavoriteList(favorites) {
+        favoriteList.empty();
+        if (favorites.length === 0) {
+            favoriteList.append('<li class="list-group-item text-muted">結果が見つかりません。</li>');
+        } else {
+            favorites.forEach(favorite => {
+                favoriteList.append(
+                    `<li class="list-group-item list-group-item-action" data-favorite-id="${favorite.id}">${favorite.name}</li>`
+                );
+            });
+        }
+        favoriteList.show();
     }
 
-    // 新規返信を取得
-    function fetchNewReplies() {
-        $.ajax({
-            url: '/reply/fetch-new-replies', // 新規返信を取得するAPIエンドポイント
-            type: 'GET',
-            data: { last_fetched: lastFetchedReply },
-            success: function (replies) {
-                console.log('新しい返信:', replies);
-                if (replies.length > 0) {
-                    replies.forEach(reply => {
-                        const postId = reply.post_id;
-                        const repliesContainer = $(`#replies-${postId}`);
-
-                        const replyElement = `
-                            <div class="reply mb-2 p-2 border rounded">
-                                <p>${reply.comment}</p>
-                                <small class="text-muted">${new Date(reply.created_at).toLocaleString()}</small>
-                                ${reply.image ? `<img src="/storage/${reply.image}" alt="返信画像" class="img-fluid">` : ''}
-                            </div>
-                        `;
-                        repliesContainer.append(replyElement);
-                    });
-                    lastFetchedReply = new Date().toISOString(); // 取得時刻を更新
-                }
-            },
-            error: function (xhr) {
-                console.error('新しい返信の取得に失敗:', xhr.responseText);
-            }
-        });
+    function showError(message) {
+        favoriteError.text(message).show();
     }
 
-    // 3秒ごとに新しい投稿をチェック
-    setInterval(fetchNewPosts, 3000);
-    // 3秒ごとに新しい返信をチェック
-    setInterval(fetchNewReplies, 3000);
+    favoriteList.on('click', 'li', function () {
+        const selectedName = $(this).text();
+        const selectedId = $(this).data('favorite-id');
+        favoriteSearchInput.val(selectedName);
+        favoriteIdInput.val(selectedId);
+        favoriteError.hide();
+        favoriteList.hide().empty();
+    });
 
-    // 返信フォームの非同期送信
-    $(document).on('submit', '.replyForm', function (e) {
+    /**
+     * 投稿フォームの送信処理
+     */
+    const postForm = $('#postForm');
+    postForm.on('submit', async function (e) {
         e.preventDefault();
 
-        const form = $(this);
-        const formData = new FormData(this);
-        const postId = form.data('post-id'); // データ属性からpost_idを取得
+        if (!favoriteIdInput.val()) {
+            showError('推しの名前を選択してください。');
+            return;
+        }
 
-        formData.append('post_id', postId);
-        const token = $('meta[name="csrf-token"]').attr('content'); // CSRFトークンをmetaタグから取得
+        const formData = new FormData(postForm[0]);
+        try {
+            const response = await fetch('/timeline/store', {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRF-TOKEN': csrfToken },
+            });
 
-        $.ajax({
-            url: '/reply/store', // 返信保存のルート
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                'X-CSRF-TOKEN': token // ヘッダーにCSRFトークンを追加
-            },
-            success: function (data) {
-                alert(data.message);
-                form[0].reset();
-                fetchReplies(postId); // 返信を再取得
-            },
-            error: function (xhr) {
-                alert('返信の保存に失敗しました: ' + xhr.responseJSON.message);
+            if (response.ok) {
+                const { post } = await response.json();
+                addPostToList(post);
+                postForm[0].reset();
+            } else {
+                alert('投稿に失敗しました。');
             }
+        } catch (error) {
+            console.error('通信エラー:', error);
+            alert('通信エラーが発生しました。');
+        }
+    });
+
+    function addPostToList(post) {
+        const postList = $('#timeline');
+        const postHtml = `
+            <div class="post border rounded p-3 mb-4" id="post-${post.id}">
+                <div class="d-flex align-items-center">
+                    <img src="${post.user.icon_url}" alt="${post.user.name}" class="rounded-circle me-2" style="width: 40px;">
+                    <strong>${post.user.name}</strong>
+                </div>
+                <p>${post.post}</p>
+                <button type="button" class="btn btn-sm btn-outline-primary reply-toggle" data-post-id="${ post.id }">返信する</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary-toggle" data-post-id="${post.id}">返信を見る</button>
+            </div>
+        `;
+        postList.prepend(postHtml);
+    }
+
+    /**
+     * モーダルの表示・非表示制御
+     */
+    $(document).on('click', '.reply-toggle', function () {
+        const postId = $(this).data('post-id');
+        replyFormModal.find('.send-reply').data('post-id', postId);
+        replyFormModal.show();
+    });
+
+    $(document).on('click', '.reply-show', async function () {
+        const postId = $(this).data('post-id');
+        try {
+            const response = await fetch(`/replies/${postId}`);
+            if (response.ok) {
+                const replies = await response.json();
+                renderReplyList(replies);
+                replyListModal.show();
+            } else {
+                alert('返信の取得に失敗しました。');
+            }
+        } catch (error) {
+            console.error('通信エラー:', error);
+            alert('通信エラーが発生しました。');
+        }
+    });
+
+    $('.close-reply-modal').on('click', () => replyFormModal.hide());
+    $('.close-reply-list-modal').on('click', () => replyListModal.hide());
+
+    /**
+     * 返信フォームの送信処理
+     */
+    $(document).on('click', '.send-reply', async function () {
+        const postId = $(this).data('post-id');
+        const replyForm = replyFormModal.find('.modal-body');
+        const comment = replyForm.find('.reply-comment').val();
+        const imageInput = replyForm.find('.reply-image')[0]?.files[0];
+        const errorDiv = replyForm.find('.reply-error');
+
+        if (!comment) {
+            errorDiv.text('返信内容を入力してください。').show();
+            return;
+        }
+        errorDiv.hide();
+
+        const formData = new FormData();
+        formData.append('post_id', postId);
+        formData.append('comment', comment);
+        if (imageInput) formData.append('image', imageInput);
+
+        try {
+            const response = await fetch('/replies/store', {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRF-TOKEN': csrfToken },
+            });
+
+            if (response.ok) {
+                const { reply } = await response.json();
+                addReplyToList(postId, reply);
+                replyFormModal.hide();
+                replyForm[0].reset();
+            } else {
+                const errorText = await response.text();
+                console.error('エラー内容:', errorText);
+                errorDiv.text('送信エラー: サーバーの応答が正しくありません。').show();
+            }
+        } catch (error) {
+            console.error('通信エラー:', error);
+            errorDiv.text('通信エラーが発生しました。').show();
+        }
+    });
+
+    function addReplyToList(postId, reply) {
+        const replyHtml = `
+            <div class="reply p-2 border rounded mb-2">
+                <strong>${reply.user.name}</strong>
+                <p>${reply.comment}</p>
+            </div>
+        `;
+        replyListBody.append(replyHtml).removeClass('d-none');
+    }
+
+    function renderReplyList(replies) {
+        replyListBody.empty();
+        replies.forEach(reply => {
+            replyListBody.append(`
+                <div class="reply p-2 border rounded mb-2">
+                    <strong>${reply.user.name}</strong>
+                    <p>${reply.comment}</p>
+                </div>
+            `);
         });
+    }
+});
+$(document).ready(function () {
+    // 返信フォームの表示・非表示
+    $(".reply-toggle").on("click", function () {
+        const postId = $(this).data("post-id");
+        const replyForm = $(`#reply-form-${postId}`);
+        replyForm.toggleClass("d-none");
+    });
+
+    // 返信リストの表示・非表示
+    $(".reply-show").on("click", function () {
+        const postId = $(this).data("post-id");
+        const replyList = $(`#reply-list-${postId}`);
+        replyList.toggleClass("d-none");
     });
 });
 $(document).ready(function () {
-    let searchTimeout;
+    const csrfToken = $('meta[name="csrf-token"]').attr('content'); // CSRFトークンの取得
 
-    // 🔍 検索機能
-    $('#searchInput').on('input', function () {
-        clearTimeout(searchTimeout); // 入力のたびにタイマーをクリア
-        const query = $(this).val();
+    // 投稿リストの描画（例として）
+    function addPostToList(post) {
+        const postList = $('#timeline');
+        const postHtml = `
+            <div class="post border rounded p-3 mb-4" id="post-${post.id}">
+                <div class="d-flex align-items-center">
+                    <img src="${post.user.icon_url}" alt="${post.user.name}" class="rounded-circle me-2" style="width: 40px;">
+                    <strong>${post.user.name}</strong>
+                </div>
+                <p>${post.post}</p>
+                <button type="button" class="btn btn-link reply-toggle" data-post-id="${post.id}">返信する</button>
+                <button type="button" class="btn btn-link reply-show" data-post-id="${post.id}">返信を見る</button>
+            </div>
+        `;
+        postList.prepend(postHtml);
+    }
 
-        if (query.length > 0) {
-            searchTimeout = setTimeout(() => {
-                searchPosts(query);
-            }, 500); // 0.5秒後に検索を実行
-        } else {
-            $('#searchResults').empty(); // フォームが空なら検索結果をクリア
+    // モーダルの表示・非表示制御
+    $(document).on('click', '.reply-toggle', function () {
+        const postId = $(this).data('post-id');
+        $('#reply-form-modal').find('.send-reply').data('post-id', postId);
+        $('#reply-form-modal').show();
+    });
+
+    $(document).on('click', '.reply-show', async function () {
+        const postId = $(this).data('post-id');
+        try {
+            const response = await fetch(`/replies/${postId}`);
+            if (response.ok) {
+                const replies = await response.json();
+                renderReplyList(replies);
+                $('#reply-list-modal').show();
+            } else {
+                alert('返信の取得に失敗しました。');
+            }
+        } catch (error) {
+            console.error('通信エラー:', error);
+            alert('通信エラーが発生しました。');
         }
     });
 
-    function searchPosts(query) {
-        $.ajax({
-            url: '/posts/search',
-            type: 'GET',
-            data: { query: query },
-            success: function (posts) {
-                $('#searchResults').empty(); // 結果をクリア
+    $('.close-reply-modal').on('click', () => $('#reply-form-modal').hide());
+    $('.close-reply-list-modal').on('click', () => $('#reply-list-modal').hide());
 
-                if (posts.length > 0) {
-                    posts.forEach(post => {
-                        const postElement = `
-                            <div class="post mb-4 p-3 border rounded" id="post-${post.id}">
-                                <p>${$('<div>').text(post.post).html()}</p>
-                                <p class="text-muted">
-                                    <small>${new Date(post.created_at).toLocaleString()}</small>
-                                </p>
-                                ${post.image ? `<img src="/storage/${post.image}" class="img-fluid mb-2" alt="投稿画像">` : ''}
-
-                                <!-- 返信フォーム -->
-                                <form class="replyForm" data-post-id="${post.id}">
-                                    <input type="hidden" name="post_id" value="${post.id}">
-                                    <div class="mb-2">
-                                        <textarea name="comment" class="form-control" placeholder="返信を書く" required></textarea>
-                                    </div>
-                                    <div class="mb-2">
-                                        <input type="file" name="image" accept="image/*" class="form-control">
-                                    </div>
-                                    <button type="submit" class="btn btn-sm btn-secondary">返信する</button>
-                                </form>
-
-                                <!-- 返信一覧 -->
-                                <div class="replies mt-3" id="replies-${post.id}"></div>
-                            </div>
-                        `;
-                        $('#searchResults').append(postElement);
-                    });
-                } else {
-                    $('#searchResults').html('<p>該当する投稿はありません。</p>');
-                }
-            },
-            error: function (xhr) {
-                console.error('検索に失敗:', xhr.responseText);
-            }
+    // 返信リストを描画
+    function renderReplyList(replies) {
+        const replyListBody = $('#reply-list-body');
+        replyListBody.empty();
+        replies.forEach(reply => {
+            replyListBody.append(`
+                <div class="reply p-2 border rounded mb-2">
+                    <strong>${reply.user.name}</strong>
+                    <p>${reply.comment}</p>
+                </div>
+            `);
         });
     }
-});
+
+    // 返信フォームの送信処理
+
+   $(document).on('click', '.send-reply', async function () {
+       const postId = $(this).data('post-id');
+       const replyForm = $(`#reply-form-${postId}`);
+       const comment = replyForm.find('.reply-comment').val();
+       const imageInput = replyForm.find('.reply-image')[0]?.files[0];
+       const errorDiv = replyForm.find('.reply-error');
+
+       if (!comment) {
+           errorDiv.text('返信内容を入力してください。').show();
+           return;
+       }
+       errorDiv.hide();
+
+       const formData = new FormData();
+       formData.append('post_id', postId);
+       formData.append('comment', comment);
+       if (imageInput) formData.append('image', imageInput);
+
+       try {
+           const response = await fetch('/replies/store', {
+               method: 'POST',
+               body: formData,
+               headers: { 'X-CSRF-TOKEN': csrfToken },
+           });
+
+           if (response.ok) {
+               const { reply } = await response.json();
+               addReplyToList(postId, reply);
+               replyForm[0].reset();
+           } else {
+               const errorText = await response.text();
+               console.error('エラー内容:', errorText);
+               errorDiv.text('送信エラー: サーバーの応答が正しくありません。').show();
+           }
+       } catch (error) {
+           console.error('通信エラー:', error);
+           errorDiv.text('通信エラーが発生しました。').show();
+       }
+   });
+    // 返信をリストに追加
+    function addReplyToList(postId, reply) {
+        const replyList = $(`#reply-list-${postId}`); // 返信リストを特定
+        const replyHtml = `
+            <div class="reply p-2 border rounded mb-2">
+                <div class="d-flex align-items-center">
+                    <img src="${reply.user?.icon_url || '/default-icon.png'}" 
+                         alt="${reply.user?.name || '匿名ユーザー'}" 
+                         class="rounded-circle me-2" 
+                         style="width: 30px; height: 30px;">
+                    <strong>${reply.user?.name || '匿名ユーザー'}</strong>
+                    <small class="text-muted ms-2">${new Date(reply.created_at).toLocaleString()}</small>
+                </div>
+                <p class="mt-2">${reply.comment}</p>
+                ${reply.image ? `<img src="/storage/${reply.image}" alt="返信画像" class="img-fluid mt-2">` : ''}
+            </div>
+        `;
+        replyList.append(replyHtml); // 返信リストに追加
+    }
+});    

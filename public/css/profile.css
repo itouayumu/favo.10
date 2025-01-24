@@ -1,3 +1,17 @@
+.card{
+    overflow-y: auto;
+    height: 380px;
+    margin-bottom: 30px;
+    /*IE(Internet Explorer)・Microsoft Edgeへの対応*/
+    -ms-overflow-style: none;
+    /*Firefoxへの対応*/
+    scrollbar-width: none;
+}
+
+.card::-webkit-scrollbar{
+    display: none;
+}
+
 .card-header{
     margin-top: 20px;
     display: flex;
