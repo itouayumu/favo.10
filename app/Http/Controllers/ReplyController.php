@@ -14,7 +14,7 @@ class ReplyController extends Controller
         try {
             $replies = Reply::where('post_id', $post_id)
                 ->where('delete_flag', false)
-                ->with('user:id,name')
+                ->with('user:id,name,image') // 必要なユーザー情報をロード
                 ->orderBy('created_at', 'asc')
                 ->get();
 
@@ -37,7 +37,7 @@ class ReplyController extends Controller
         // バリデーション
         try {
             $validatedData = $request->validate([
-                'post_id' => 'required',
+                'post_id' => 'required', // 存在する投稿IDであることを確認
                 'comment' => 'required|max:255',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
@@ -46,14 +46,15 @@ class ReplyController extends Controller
                 'errors' => $e->errors(),
             ], 422);
         }
+    
         Log::debug('リクエストデータ: ', $request->all());
-
+    
         // 画像保存
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('replies', 'public');
         }
-
+    
         // 返信作成
         try {
             $reply = Reply::create([
@@ -63,6 +64,9 @@ class ReplyController extends Controller
                 'image' => $imagePath,
                 'delete_flag' => false,
             ]);
+
+            // ユーザー情報をロード
+            $reply->load('user');
 
             return response()->json([
                 'message' => '返信が保存されました。',
