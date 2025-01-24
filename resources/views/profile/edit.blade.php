@@ -51,7 +51,7 @@
             @foreach ($user->tags()->wherePivot('hidden_flag', 0)->wherePivot('delete_flag', 0)->get() as $tag)
                 <li id="tag-{{ $tag->id }}">
                     <a href="#" class="tag-click" data-tag-id="{{ $tag->id }}">{{ $tag->name }}</a>
-                    (クリック数: <span id="click-count-{{ $tag->id }}">{{ $tag->pivot->count }}</span>)
+                    (<span id="click-count-{{ $tag->id }}">{{ $tag->pivot->count }}</span>)
                     <button class="btn btn-secondary" onclick="toggleVisibility({{ $tag->id }}, 1)">非公開にする</button>
                     <button class="btn btn-danger" onclick="deleteTag({{ $tag->id }})">削除</button>
                 </li>

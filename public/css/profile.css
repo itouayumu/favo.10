@@ -1,7 +1,7 @@
 .card{
     overflow-y: auto;
-    height: 380px;
-    margin-bottom: 30px;
+    height: 370px;
+    margin-bottom: 50px;
     /*IE(Internet Explorer)・Microsoft Edgeへの対応*/
     -ms-overflow-style: none;
     /*Firefoxへの対応*/
@@ -16,6 +16,7 @@
     margin-top: 20px;
     display: flex;
     justify-content: space-around;
+    align-items: flex-end;
     position: relative;
 }
 
@@ -24,6 +25,21 @@
     width: 80px;
     background-color: white;
     border-radius: 50%;
+}
+
+.username{
+    height: 50px;
+    width: 150px;
+    background-image: url('../img/nametag.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center; /* 水平方向に中央揃え */
+    align-items: center; /* 垂直方向に中央揃え */
+}
+
+.username h3{
+    color: #ffffff;
 }
 
 .tag{
@@ -50,4 +66,35 @@
 .intro_content p{
     margin: 0;
     overflow-wrap: break-word;
+}
+
+.tag{
+    display: flex;
+    justify-content: space-between;
+}
+
+.tag li{
+    height: 50px;
+    width: 110px;
+    list-style: none;
+    background-image: url("../img/tag.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center; /* 水平方向に中央揃え */
+    align-items: center; /* 垂直方向に中央揃え */
+    position: relative;
+}
+
+.tag a{
+    font-size: 12px;
+    color: black;
+    text-decoration: none;
+}
+
+.tag span{
+    position: absolute;
+    bottom: 0;
+    right: 3px;
 }
