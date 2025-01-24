@@ -124,11 +124,13 @@ Route::get('/recommends/create', [FavoriteController::class, 'create'])->name('r
 Route::post('/recommends', [FavoriteController::class, 'store'])->name('recommends.store'); // 新規登録処理
 
 Route::get('/api/fetch-timeline', [TimelineController::class, 'fetchTimeline'])->name('fetchTimeline');
+
 //おすすめ機能
 Route::middleware(['auth'])->group(function () {
     Route::get('/recommend', [OshiController::class, 'recommend'])->name('recommend');
     Route::post('/recommend/favorite/{oshiId}', [OshiController::class, 'addFavorite'])->name('addFavorite');
     Route::get('/recommend/next', [OshiController::class, 'nextRecommended'])->name('nextRecommended');
 });
+
 
 Route::get('/api/user-schedules', [ScheduleController::class, 'getUserSchedules'])->name('user-schedules');
