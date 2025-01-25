@@ -240,6 +240,7 @@ $(document).ready(function () {
     }
 });
 $(document).ready(function () {
+    // モーダル表示時に予定を取得
     $('#show-schedules').on('click', function () {
         $.ajax({
             url: '/schedules', // 予定取得のルート
@@ -259,6 +260,9 @@ $(document).ready(function () {
                             <strong>${schedule.title}</strong>
                             <p>推しの名前: ${schedule.favorite_id}</p>
                             ${schedule.image ? `<img src="/storage/${schedule.image}" alt="${schedule.title}" class="img-fluid mt-2">` : ''}
+                            <button type="button" class="btn btn-sm btn-primary mt-2 share-schedule" data-schedule-id="${schedule.id}">
+                                この予定を共有する
+                            </button>
                         </div>
                     `;
                     scheduleList.append(scheduleHtml);
@@ -271,5 +275,12 @@ $(document).ready(function () {
                 alert('予定の取得に失敗しました。');
             }
         });
+    });
+
+    // 「この予定を共有する」ボタンのクリック処理
+    $(document).on('click', '.share-schedule', function () {
+        const scheduleId = $(this).data('schedule-id');
+        $('#schedule_id').val(scheduleId); // hidden input にセット
+        $('#scheduleModal').modal('hide'); // モーダルを閉じる
     });
 });

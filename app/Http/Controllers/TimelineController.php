@@ -19,58 +19,67 @@ class TimelineController extends Controller
         return view('timeline', compact('posts'));
     }
 
-    // 新規投稿を保存（非同期）
+
+
     public function store(Request $request)
     {
-        Log::info('リクエストデータ:', $request->all()); // リクエストデータをログ出力
-
-        // バリデーションルールを修正してfavorite_idを追加
+        Log::info('リクエストデータ:', $request->all());
+    
+        // バリデーションルールを修正して schedule_id を追加
         $validatedData = $request->validate([
             'post' => 'required|max:255',
-            'favorite_id' => 'required|integer',  // favorite_idを必須、整数としてバリデーション
+            'favorite_id' => 'required|integer', // favorite_id は必須
+            'schedule_id' => 'nullable|integer|exists:schedules,id', // schedule_id は任意
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
             'favorite_id.required' => '推しの名前を選択してください。',
             'favorite_id.integer' => '推しのIDは数値である必要があります。',
+            'schedule_id.integer' => 'スケジュールIDは数値である必要があります。',
+            'schedule_id.exists' => '指定されたスケジュールが存在しません。',
         ]);
-
-        Log::info('Validated Data:', $validatedData); // バリデーション後のデータをログ出力
-
+    
+        Log::info('バリデーション後のデータ:', $validatedData);
+    
+        // 画像のアップロード処理
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('images', 'public');
         }
-
+    
         try {
-            // favorite_idを使用して投稿を保存
+            // 投稿を保存
             $post = Post::create([
                 'user_id' => auth()->id(),
-                'favorite_id' => $validatedData['favorite_id'], // 正しくfavorite_idを使う
+                'favorite_id' => $validatedData['favorite_id'],
+                'schedule_id' => $validatedData['schedule_id'] ?? null, // schedule_id があれば設定
                 'post' => $validatedData['post'],
                 'image' => $imagePath,
                 'delete_flag' => false,
             ]);
-
-            // 関連データをロードしてレスポンスに含める
-            $post->load('user', 'favorite');
-
+    
+            // 必要な関連データをロード
+            $post->load('user', 'favorite', 'schedule'); // schedule 関連をロード
+    
             return response()->json([
-                'message' => '投稿が保存されました',
+                'message' => '投稿が保存されました。',
                 'post' => $post,
             ]);
         } catch (\Exception $e) {
             Log::error('投稿保存エラー: ' . $e->getMessage());
-            return response()->json(['message' => '投稿の保存に失敗しました。'], 500);
+            return response()->json([
+                'message' => '投稿の保存に失敗しました。',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
-
+    
     public function fetchTimeline(Request $request)
     {
         $lastFetched = $request->input('last_fetched');
         $userId = auth()->id(); // ログイン中のユーザーのIDを取得
     
         // 投稿データのクエリを作成
-        $query = Post::with('user', 'replies.user')
+        $query = Post::with(['user', 'replies.user', 'schedule', 'schedule.favorite']) // 'favorite' リレーションを追加
                      ->where('delete_flag', false);
     
         // 最後に取得した時間が指定されていれば、その後の投稿を取得
@@ -83,17 +92,32 @@ class TimelineController extends Controller
         $posts = $query->orderBy('created_at', 'desc')->get();
     
         // ユーザーのスケジュールデータを取得
-        $schedules = Schedule::where('user_id', $userId) // ログインユーザーに関連付けられたスケジュール
+        $schedules = Schedule::with('favorite') // 'favorite' 情報もロード
+                             ->where('user_id', $userId) // ログインユーザーに関連付けられたスケジュール
                              ->where('start_date', '>=', Carbon::today()) // 今日以降のスケジュールを取得
                              ->orderBy('start_date', 'asc') // 開始日順で並べる
                              ->get();
     
+        // 投稿データにスケジュール情報を追加
+        $postsWithSchedules = $posts->map(function ($post) {
+            if ($post->schedule && $post->schedule->favorite) {
+                $post->schedule_info = [
+                    'favorite_icon' => $post->schedule->favorite->image_1 ?? null,  // 推しのアイコン画像
+                    'favorite_name' => $post->schedule->favorite->name ?? null,      // 推しの名前
+                    'title' => $post->schedule->title,
+                    'image' => $post->schedule->image ? asset('storage/' . $post->schedule->image) : null,
+                ];
+            }
+            return $post;
+        });
+    
         // タイムラインデータとスケジュールデータを統合して返却
         return response()->json([
-            'posts' => $posts,
+            'posts' => $postsWithSchedules,
             'schedules' => $schedules,
         ]);
     }
+    
 
     // 投稿検索
     public function search(Request $request)
