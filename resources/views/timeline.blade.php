@@ -29,6 +29,27 @@
             <label for="image" class="form-label">画像 (任意)</label>
             <input type="file" id="image" name="image" class="form-control">
         </div>
+        <div class="mb-3">
+    <button type="button" id="show-schedules" class="btn btn-outline-secondary">予定を投稿する</button>
+</div>
+
+<!-- 予定リストモーダル -->
+<div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="scheduleModalLabel">登録済みの予定</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="schedule-list">
+                    <!-- Ajaxで取得した予定がここに表示されます -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
         <button type="submit" class="btn btn-primary">投稿する</button>
     </form>
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
 {
@@ -147,4 +148,15 @@ class ScheduleController extends Controller
 
         return redirect('/schedules')->with('success', 'スケジュールが削除されました');
     }
+    public function fetchSchedules()
+{
+    $userId = Auth::id(); // ログインユーザーのIDを取得
+
+    // ログインユーザーの予定を取得
+    $schedules = Schedule::where('user_id', $userId)
+                         ->orderBy('start_date', 'asc')
+                         ->get();
+
+    return response()->json($schedules);
+}
 }

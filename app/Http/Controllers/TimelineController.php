@@ -8,6 +8,7 @@ use App\Models\Reply;
 use App\Models\Favorite;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Models\Schedule;
 
 class TimelineController extends Controller
 {
@@ -63,22 +64,35 @@ class TimelineController extends Controller
         }
     }
 
-    // タイムラインデータ取得 (非同期対応)
     public function fetchTimeline(Request $request)
     {
         $lastFetched = $request->input('last_fetched');
-
+        $userId = auth()->id(); // ログイン中のユーザーのIDを取得
+    
+        // 投稿データのクエリを作成
         $query = Post::with('user', 'replies.user')
                      ->where('delete_flag', false);
-
+    
+        // 最後に取得した時間が指定されていれば、その後の投稿を取得
         if ($lastFetched) {
             $lastFetchedTime = Carbon::parse($lastFetched);
             $query->where('created_at', '>', $lastFetchedTime);
         }
-
+    
+        // 投稿データを取得（作成日時の降順）
         $posts = $query->orderBy('created_at', 'desc')->get();
-
-        return response()->json($posts);
+    
+        // ユーザーのスケジュールデータを取得
+        $schedules = Schedule::where('user_id', $userId) // ログインユーザーに関連付けられたスケジュール
+                             ->where('start_date', '>=', Carbon::today()) // 今日以降のスケジュールを取得
+                             ->orderBy('start_date', 'asc') // 開始日順で並べる
+                             ->get();
+    
+        // タイムラインデータとスケジュールデータを統合して返却
+        return response()->json([
+            'posts' => $posts,
+            'schedules' => $schedules,
+        ]);
     }
 
     // 投稿検索

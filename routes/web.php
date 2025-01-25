@@ -99,6 +99,7 @@ Route::get('/timeline/fetch-timeline', [TimelineController::class, 'fetchTimelin
 Route::post('/store', [TimelineController::class, 'store'])->name('timeline.store');
 Route::get('/posts/search', [TimelineController::class, 'search'])->name('timeline.search');
 Route::post('/timeline/store', [TimelineController::class, 'store'])->name('timeline.store');
+Route::get('/schedules', [ScheduleController::class, 'fetchSchedules'])->name('schedules.fetch');
 
 
 

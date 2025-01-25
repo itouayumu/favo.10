@@ -239,3 +239,37 @@ $(document).ready(function () {
         replyList.append(replyHtml);
     }
 });
+$(document).ready(function () {
+    $('#show-schedules').on('click', function () {
+        $.ajax({
+            url: '/schedules', // 予定取得のルート
+            method: 'GET',
+            success: function (data) {
+                const scheduleList = $('#schedule-list');
+                scheduleList.empty();
+
+                if (data.length === 0) {
+                    scheduleList.append('<p>登録された予定がありません。</p>');
+                    return;
+                }
+
+                data.forEach(schedule => {
+                    const scheduleHtml = `
+                        <div class="schedule-item border rounded p-3 mb-3">
+                            <strong>${schedule.title}</strong>
+                            <p>推しの名前: ${schedule.favorite_id}</p>
+                            ${schedule.image ? `<img src="/storage/${schedule.image}" alt="${schedule.title}" class="img-fluid mt-2">` : ''}
+                        </div>
+                    `;
+                    scheduleList.append(scheduleHtml);
+                });
+
+                // モーダルを表示
+                $('#scheduleModal').modal('show');
+            },
+            error: function () {
+                alert('予定の取得に失敗しました。');
+            }
+        });
+    });
+});
