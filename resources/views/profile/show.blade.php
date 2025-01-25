@@ -10,9 +10,9 @@
         <div class="card-header">
             <img src="{{ $user->image ? asset('storage/' . $user->image) : 'https://via.placeholder.com/150' }}"
                  alt="Profile Image" class="icon" width="150">
-                 <div class="username">
-                     <h3>{{ $user->name }}</h3>
-                 </div>
+            <div class="username">
+                <h3>{{ $user->name }}</h3>
+            </div>
         </div>
 
         <!-- Tags Section -->
@@ -43,8 +43,8 @@
             <!-- Favorite Oshi Section -->
             <h4>公開されたお気に入りの推し</h4>
             <div class="favorites">
-                @if ($user->favorites()->where('hidden_flag', 0)->exists())
-                    @foreach ($user->favorites()->where('hidden_flag', 0)->get() as $favorite)
+                @if ($user->favorites()->wherePivot('hidden_flag', 0)->exists()) <!-- 修正箇所 -->
+                    @foreach ($user->favorites()->wherePivot('hidden_flag', 0)->get() as $favorite)
                         <div class="favorite-item">
                             <h5>{{ $favorite->name }}</h5>
                             <p>{{ $favorite->introduction }}</p>
@@ -78,6 +78,14 @@
                                     <p>タグはありません。</p>
                                 @endif
                             </div>
+
+                            <!-- Visibility toggle button (非公開の推しを公開する) -->
+                            @if ($favorite->pivot->hidden_flag == 1) <!-- pivotのhidden_flagを参照 -->
+                                <form action="{{ route('oshi.toggleVisibility', $favorite->pivot->id) }}" method="POST" style="display: inline;">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success">公開する</button>
+                                </form>
+                            @endif
                         </div>
                     @endforeach
                 @else
