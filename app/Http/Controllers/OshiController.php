@@ -151,9 +151,9 @@ class OshiController extends Controller
                 ->first();
     
             if ($favorite) {
-                // 公開/非公開の切り替え (hidden_flag)
-                $newHiddenFlag = $favorite->favorite->hidden_flag == 0 ? 1 : 0;
-                $favorite->favorite->update(['hidden_flag' => $newHiddenFlag]);
+                // 公開/非公開の切り替え (ToFavoriteのhidden_flag)
+                $newHiddenFlag = $favorite->hidden_flag == 0 ? 1 : 0;
+                $favorite->update(['hidden_flag' => $newHiddenFlag]);
     
                 DB::commit();
                 return redirect()->route('profile.edit')->with('message', '公開設定を変更しました!');

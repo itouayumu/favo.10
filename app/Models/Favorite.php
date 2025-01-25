@@ -26,11 +26,21 @@ class Favorite extends Model
 
     // 多対多リレーション
     public function tags()
-{
-    return $this->belongsToMany(Tag::class, 'favorite_tag', 'favorite_id', 'tags_id')
-                ->withPivot('sort_id', 'count', 'hidden_flag', 'delete_flag')
-                ->wherePivot('delete_flag', 0); // 削除されていないタグのみ
-}
+    {
+        return $this->belongsToMany(Tag::class, 'favorite_tag', 'favorite_id', 'tags_id')
+                    ->withPivot('sort_id', 'count', 'hidden_flag', 'delete_flag')
+                    ->wherePivot('delete_flag', 0); // 削除されていないタグのみ
+    }
 
+    public function toFavorites()
+    {
+        return $this->hasMany(ToFavorite::class, 'favorite_id');
+    }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'to_favorite')
+                    ->withPivot('hidden_flag', 'favorite_flag')
+                    ->withTimestamps();
+    }
 }

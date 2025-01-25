@@ -17,6 +17,7 @@ class ToFavorite extends Model
         'sort_id',
         'favorite_flag',
         'delete_flag',
+        'hidden_flag',
     ];
 
     /**
@@ -29,6 +30,7 @@ class ToFavorite extends Model
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class, 'favorite_tag'); // 推しタグとのリレーション
+        return $this->belongsToMany(Tag::class, 'favorite_tag', 'favorite_id', 'tags_id')
+                    ->withPivot('hidden_flag', 'delete_flag', 'count');
     }
 }
