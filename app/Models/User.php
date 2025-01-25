@@ -45,7 +45,9 @@ public function getImageUrlAttribute()
     // お気に入りの推し (Favorite モデルとのリレーション)
     public function favorites()
     {
-        return $this->hasMany(Favorite::class, 'user_id'); // `favorite` テーブルとのリレーション
+        return $this->belongsToMany(Favorite::class, 'to_favorite')
+                    ->withPivot('hidden_flag', 'favorite_flag')
+                    ->withTimestamps();
     }
 
     // お気に入りの推し (ToFavorite モデルとのリレーション)
