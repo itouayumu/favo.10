@@ -9,15 +9,42 @@ use App\Models\Favorite;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Models\Schedule;
-
+use App\Models\ToSchedule; 
 class TimelineController extends Controller
 {
-    // タイムライン表示
-    public function index()
-    {
-        $posts = Post::with('user')->where('delete_flag', false)->orderBy('created_at', 'desc')->get();
-        return view('timeline', compact('posts'));
+// コントローラ内
+public function index()
+{
+    $user = auth()->user(); // 現在ログインしているユーザーを取得
+
+    // 投稿データを取得
+    $posts = Post::with(['user', 'schedule', 'replies']) // 必要なリレーションをロード
+        ->where('delete_flag', false) // 論理削除されていない投稿のみ
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    // 現在のユーザーが登録しているスケジュールIDを取得
+    $registeredSchedules = ToSchedule::where('user_id', $user->id)
+        ->where('delete_flag', false) // 論理削除されていないもの
+        ->pluck('schedule_id') // スケジュールIDのコレクション
+        ->toArray();
+
+    // 投稿データに登録状態フラグを追加
+    foreach ($posts as $post) {
+        if ($post->schedule) {
+            // 自分が作成した予定かどうか
+            $post->schedule->is_own_schedule = $post->schedule->user_id === $user->id;
+
+            // 他人が作成した予定で、登録済みかどうかを判定
+            $post->schedule->is_registered = in_array($post->schedule->id, $registeredSchedules);
+        }
     }
+
+    return view('timeline', compact('posts'));
+}
+
+
+
 
 
 
@@ -76,11 +103,16 @@ class TimelineController extends Controller
     public function fetchTimeline(Request $request)
     {
         $lastFetched = $request->input('last_fetched');
-        $userId = auth()->id(); // ログイン中のユーザーのIDを取得
+        $userId = auth()->id();
     
         // 投稿データのクエリを作成
-        $query = Post::with(['user', 'replies.user', 'schedule', 'schedule.favorite']) // 'favorite' リレーションを追加
-                     ->where('delete_flag', false);
+        $query = Post::with([
+            'user:id,name,icon_url',  // 投稿者の必要な情報のみ
+            'replies.user:id,name,icon_url',
+            'schedule:id,title,image,favorite_id',
+            'schedule.favorite:id,name,image_1'
+        ])
+        ->where('delete_flag', false);
     
         // 最後に取得した時間が指定されていれば、その後の投稿を取得
         if ($lastFetched) {
@@ -88,22 +120,22 @@ class TimelineController extends Controller
             $query->where('created_at', '>', $lastFetchedTime);
         }
     
-        // 投稿データを取得（作成日時の降順）
+        // 投稿データを取得
         $posts = $query->orderBy('created_at', 'desc')->get();
     
         // ユーザーのスケジュールデータを取得
-        $schedules = Schedule::with('favorite') // 'favorite' 情報もロード
-                             ->where('user_id', $userId) // ログインユーザーに関連付けられたスケジュール
-                             ->where('start_date', '>=', Carbon::today()) // 今日以降のスケジュールを取得
-                             ->orderBy('start_date', 'asc') // 開始日順で並べる
-                             ->get();
+        $schedules = Schedule::with('favorite:id,name,image_1') // 必要なデータのみ取得
+            ->where('user_id', $userId)
+            ->where('start_date', '>=', Carbon::today())
+            ->orderBy('start_date', 'asc')
+            ->get();
     
         // 投稿データにスケジュール情報を追加
         $postsWithSchedules = $posts->map(function ($post) {
             if ($post->schedule && $post->schedule->favorite) {
                 $post->schedule_info = [
-                    'favorite_icon' => $post->schedule->favorite->image_1 ?? null,  // 推しのアイコン画像
-                    'favorite_name' => $post->schedule->favorite->name ?? null,      // 推しの名前
+                    'favorite_icon' => $post->schedule->favorite->image_1 ?? null,
+                    'favorite_name' => $post->schedule->favorite->name ?? null,
                     'title' => $post->schedule->title,
                     'image' => $post->schedule->image ? asset('storage/' . $post->schedule->image) : null,
                 ];
@@ -111,12 +143,13 @@ class TimelineController extends Controller
             return $post;
         });
     
-        // タイムラインデータとスケジュールデータを統合して返却
+        // タイムラインデータとスケジュールデータを返却
         return response()->json([
             'posts' => $postsWithSchedules,
             'schedules' => $schedules,
         ]);
     }
+    
     
 
     // 投稿検索
