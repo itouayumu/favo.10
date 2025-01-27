@@ -1,9 +1,10 @@
 @extends('layouts.app')
+
 @section('css')
 <link rel="stylesheet" href="{{ asset('css/timeline.css') }}">
 @endsection
+
 @section('content')
-<div class="container mt-5">
     <h1 class="heading">タイムライン</h1>
 
     <!-- 投稿検索 -->
@@ -122,7 +123,6 @@
             </div>
         @endforeach
     </div>
-</div>
 @endsection
 
 @section('scripts')
