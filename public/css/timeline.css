@@ -1,23 +1,48 @@
-.heading{
-    background-image: url('../img/fs11.png');
-    background-size: cover;
-    background-repeat: no-repeat;
-    padding: 5px;
-    padding-top: 15px;
-    padding-left: 10px;
-    margin: 0;
-    margin-bottom: 3px;
-    height: 50px;
-    width: 180px;
-    font-size: 25px;
+.container{
+    overflow-y: hidden;
+    height: 465px;
+    overflow-y: auto;
+    scrollbar-width: none;
 }
 
-.p_content{
-    background-image: url('../img/me06g.png');
-    background-size: cover;
-    background-repeat: no-repeat;
-    padding: 10px;
+.mt-5 {
+    margin-top: 0; 
+
 }
-.d-none {
-    display: none !important;
+#postForm{
+background-color: rgb(246, 246, 246);
+padding: 5px;
+}
+.post{
+    background-color: rgb(246, 246, 246);
+}
+/* 右下のボタンを丸くする */
+.btn-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px; /* アイコンのサイズ調整 */
+}
+
+/* ボタンを右下に固定 */
+.btn-floating {
+    position: fixed;
+    bottom: 70px;
+    right: 470px;
+    z-index: 1050; /* 他の要素より前面に表示 */
+}
+
+/* ボタンの色をカスタマイズ (任意) */
+.btn-primary {
+    background-color: #1DA1F2; /* ツイッター風の青 */
+    border-color: #1DA1F2;
+}
+
+.btn-primary:hover {
+    background-color: #0d95e8;
+    border-color: #0d95e8;
 }

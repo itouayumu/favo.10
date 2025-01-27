@@ -37,5 +37,13 @@ class Post extends Model
     {
         return $this->belongsTo(Favorite::class, 'favorite_id');  // favorite_idをキーにFavoriteモデルと関連付け
     }
+    // App\Models\Post
+    public function schedule()
+    {
+        return $this->belongsTo(Schedule::class, 'schedule_id', 'id'); // 'schedule_id' が正しい外部キーであることを指定
+    }
+    
+
+
 }
 

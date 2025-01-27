@@ -104,25 +104,59 @@ $(document).ready(function () {
     function addPostToList(post) {
         const postList = $('#timeline');
         const postHtml = `
-            <div class="post border rounded p-3 mb-4" id="post-${post.id}">
+    <div class="post border rounded p-3 mb-4" id="post-${post.id}">
+        <!-- 投稿者情報 -->
+        <div class="d-flex align-items-center">
+            <img src="${post.user.icon_url}" alt="${post.user.name}" class="rounded-circle me-2" style="width: 40px;">
+            <strong>${post.user.name}</strong>
+        </div>
+        
+        <!-- 投稿内容 -->
+        <p>${post.post}</p>
+        
+        <!-- 投稿画像 -->
+        ${post.image ? `<img src="storage/${post.image}" alt="投稿画像" class="img-fluid mt-2">` : ''}
+
+        <!-- スケジュール情報 -->
+        ${post.schedule ? `
+            <div class="schedule-info mt-3 border rounded p-3">
+                <h5 class="mb-2">予定情報</h5>
                 <div class="d-flex align-items-center">
-                    <img src="${post.user.icon_url}" alt="${post.user.name}" class="rounded-circle me-2" style="width: 40px;">
-                    <strong>${post.user.name}</strong>
+                    ${post.schedule.favorite && post.schedule.favorite.icon_url ? `
+                        <img src="${post.schedule.favorite.icon_url}" alt="${post.schedule.favorite.name}" class="rounded-circle me-2" style="width: 30px;">
+                    ` : ''}
+                    <strong>${post.favorite ? post.favorite.name : '未設定'}</strong>
                 </div>
-                <p>${post.post}</p>
-                <div class="mt-3">
-                    <button type="button" class="btn btn-sm btn-outline-primary reply-toggle" data-post-id="${post.id}">返信する</button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary reply-show" data-post-id="${post.id}">返信を見る</button>
+                <div class="mt-2">
+                    <strong>タイトル:</strong> ${post.schedule.title || 'タイトルなし'}<br>
+                    <strong>内容:</strong> ${post.schedule.content || '内容なし'}<br>
+                    <strong>開始日時:</strong> ${post.schedule.start_date || '未設定'} ${post.schedule.start_time || ''}<br>
+                    <strong>終了日時:</strong> ${post.schedule.end_date || '未設定'} ${post.schedule.end_time || ''}<br>
+                    ${post.schedule.url ? `<a href="${post.schedule.url}" target="_blank">リンクはこちら</a>` : ''}
                 </div>
-                <form id="reply-form-${post.id}" class="d-none mt-3">
-                    <textarea class="form-control reply-comment" rows="2" placeholder="返信を入力"></textarea>
-                    <input type="file" class="form-control mt-2 reply-image" accept="image/*">
-                    <button type="button" class="btn btn-secondary btn-sm mt-2 send-reply" data-post-id="${post.id}">返信する</button>
-                    <div class="reply-error text-danger mt-2" style="display: none;"></div>
-                </form>
-                <div id="reply-list-${post.id}" class="reply-list mt-3 d-none"></div>
+                ${post.schedule.image ? `<img src="storage/${post.schedule.image}" alt="スケジュール画像" class="img-fluid mt-2">` : ''}
             </div>
-        `;
+        ` : ''}
+        
+        <!-- ボタン -->
+        <div class="mt-3">
+            <button type="button" class="btn btn-sm btn-outline-primary reply-toggle" data-post-id="${post.id}">返信する</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary reply-show" data-post-id="${post.id}">返信を見る</button>
+        </div>
+        
+        <!-- 返信フォーム -->
+        <form id="reply-form-${post.id}" class="d-none mt-3">
+            <textarea class="form-control reply-comment" rows="2" placeholder="返信を入力"></textarea>
+            <input type="file" class="form-control mt-2 reply-image" accept="image/*">
+            <button type="button" class="btn btn-secondary btn-sm mt-2 send-reply" data-post-id="${post.id}">返信する</button>
+            <div class="reply-error text-danger mt-2" style="display: none;"></div>
+        </form>
+        
+        <!-- 返信リスト -->
+        <div id="reply-list-${post.id}" class="reply-list mt-3 d-none"></div>
+    </div>
+`;
+
         postList.prepend(postHtml);
     }
 
@@ -240,6 +274,7 @@ $(document).ready(function () {
     }
 });
 $(document).ready(function () {
+    // モーダル表示時に予定を取得
     $('#show-schedules').on('click', function () {
         $.ajax({
             url: '/schedules', // 予定取得のルート
@@ -259,6 +294,9 @@ $(document).ready(function () {
                             <strong>${schedule.title}</strong>
                             <p>推しの名前: ${schedule.favorite_id}</p>
                             ${schedule.image ? `<img src="/storage/${schedule.image}" alt="${schedule.title}" class="img-fluid mt-2">` : ''}
+                            <button type="button" class="btn btn-sm btn-primary mt-2 share-schedule" data-schedule-id="${schedule.id}">
+                                この予定を共有する
+                            </button>
                         </div>
                     `;
                     scheduleList.append(scheduleHtml);
@@ -269,6 +307,103 @@ $(document).ready(function () {
             },
             error: function () {
                 alert('予定の取得に失敗しました。');
+            }
+        });
+    });
+
+    // 「この予定を共有する」ボタンのクリック処理
+    $(document).on('click', '.share-schedule', function () {
+        const scheduleId = $(this).data('schedule-id');
+        $('#schedule_id').val(scheduleId); // hidden input にセット
+        $('#scheduleModal').modal('hide'); // モーダルを閉じる
+    });
+});
+document.querySelectorAll('.register-schedule').forEach(button => {
+    button.addEventListener('click', async () => {
+        const scheduleId = button.dataset.scheduleId;
+
+        try {
+            const response = await fetch('/register-schedule', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                },
+                body: JSON.stringify({ schedule_id: scheduleId }),
+            });
+
+            if (!response.ok) {
+                throw new Error('スケジュール登録に失敗しました。');
+            }
+
+            const data = await response.json();
+            alert(data.message);
+
+            // 登録完了後の処理（例: ボタンを無効化）
+            button.disabled = true;
+            button.textContent = '登録済み';
+        } catch (error) {
+            console.error(error);
+            alert('エラーが発生しました。もう一度お試しください。');
+        }
+    });
+});
+$(document).ready(function() {
+    // 右下のボタンがクリックされた時にモーダルを開く
+    $('.btn-floating').click(function() {
+        $('#postModal').modal('show');
+    });
+
+    // モーダル外をクリックした場合もモーダルを閉じる
+    $('#postModal').on('click', function(e) {
+        if ($(e.target).hasClass('modal')) {
+            $('#postModal').modal('hide');
+        }
+    });
+
+    // モーダルが閉じられた時に、フォームをリセット
+    $('#postModal').on('hidden.bs.modal', function() {
+        $('#postForm')[0].reset();
+        $('#favorite-list').hide();
+        $('#favorite_id').val('');
+    });
+
+    // 投稿するボタンがクリックされたときの処理
+    $('#postForm').submit(function(e) {
+        e.preventDefault(); // フォームのデフォルトの送信をキャンセル
+
+        // ここで必要に応じて入力内容を確認
+        const postContent = $('#post').val();
+        if (!postContent.trim()) {
+            alert('投稿内容を入力してください');
+            return;
+        }
+
+        // 投稿するボタンを無効化して、送信中であることを示す
+        $('#postModal button[type="submit"]').prop('disabled', true);
+        $('#postModal button[type="submit"]').text('送信中...');
+
+        // フォームのデータをAjaxで送信
+        $.ajax({
+            url: $('#postForm').attr('action'),
+            type: 'POST',
+            data: new FormData($('#postForm')[0]),
+            processData: false, 
+            contentType: false,
+            success: function(response) {
+                // 投稿が成功した場合
+                alert('投稿が成功しました！');
+                $('#postModal').modal('hide'); // モーダルを閉じる
+                $('#postForm')[0].reset(); // フォームをリセット
+            },
+            error: function(xhr, status, error) {
+                // 投稿が失敗した場合
+                alert('投稿に失敗しました。もう一度試してください。');
+            },
+            complete: function() {
+                // 投稿ボタンを再度有効化
+                $('#postModal button[type="submit"]').prop('disabled', false);
+                $('#postModal button[type="submit"]').text('投稿する');
             }
         });
     });

@@ -69,6 +69,8 @@ Route::get('/profile/user/{user}', [ProfileController::class, 'show'])->name('pr
 Route::get('/profile/user/{id}', [ProfileController::class, 'showUser'])
     ->name('profile.showUser')
     ->middleware('auth');
+ Route::post('/register-schedule', [ScheduleController::class, 'registerSchedule'])->name('register.schedule');
+    
 
 // ホーム画面（デフォルトのリダイレクト先
 Route::get('/home', [ScheduleController::class, 'schedule']);

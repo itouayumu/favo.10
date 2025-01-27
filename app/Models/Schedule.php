@@ -21,4 +21,17 @@ class Schedule extends Model
         'end_time',
         'url',
     ];
+    // Scheduleモデルに推し情報へのリレーション
+
+public function favorite()
+{
+    return $this->belongsTo(Favorite::class, 'favorite_id');  // favorite_idをキーにFavoriteモデルと関連付け
 }
+public function posts()
+{
+    return $this->hasMany(Post::class, 'schedule_id', 'id'); // 'schedule_id' がリレーションキーであることを指定
+}
+
+
+}
+

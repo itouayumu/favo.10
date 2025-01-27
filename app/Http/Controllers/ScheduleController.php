@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use App\Models\ToSchedule; 
 use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
@@ -159,4 +160,28 @@ class ScheduleController extends Controller
 
     return response()->json($schedules);
 }
+
+public function registerSchedule(Request $request)
+{
+    // バリデーション
+    $validated = $request->validate([
+        'schedule_id' => 'required|exists:schedules,id',
+    ]);
+
+    $userId = auth()->id();
+
+    // データの保存
+    $toSchedule = ToSchedule::create([
+        'user_id' => $userId,
+        'schedule_id' => $validated['schedule_id'],
+        'delete_flag' => false,
+    ]);
+
+    // レスポンスを返す
+    return response()->json([
+        'message' => 'スケジュールが登録されました。',
+        'data' => $toSchedule,
+    ]);
+}
+
 }
