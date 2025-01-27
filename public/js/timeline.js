@@ -158,6 +158,8 @@ $(document).ready(function () {
 `;
 
         postList.prepend(postHtml);
+              // 10秒ごとに投稿を取得（ミリ秒単位で指定）
+      setInterval(addPostToList, 1000);
     }
 
     /**
@@ -383,28 +385,10 @@ $(document).ready(function() {
         $('#postModal button[type="submit"]').prop('disabled', true);
         $('#postModal button[type="submit"]').text('送信中...');
 
-        // フォームのデータをAjaxで送信
-        $.ajax({
-            url: $('#postForm').attr('action'),
-            type: 'POST',
-            data: new FormData($('#postForm')[0]),
-            processData: false, 
-            contentType: false,
-            success: function(response) {
-                // 投稿が成功した場合
-                alert('投稿が成功しました！');
-                $('#postModal').modal('hide'); // モーダルを閉じる
-                $('#postForm')[0].reset(); // フォームをリセット
-            },
-            error: function(xhr, status, error) {
-                // 投稿が失敗した場合
-                alert('投稿に失敗しました。もう一度試してください。');
-            },
-            complete: function() {
-                // 投稿ボタンを再度有効化
-                $('#postModal button[type="submit"]').prop('disabled', false);
-                $('#postModal button[type="submit"]').text('投稿する');
-            }
+
         });
     });
-});
+
+      
+
+      
