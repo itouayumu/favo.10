@@ -59,10 +59,7 @@ public function index()
             'schedule_id' => 'nullable|integer|exists:schedules,id', // schedule_id は任意
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ], [
-            'favorite_id.required' => '推しの名前を選択してください。',
-            'favorite_id.integer' => '推しのIDは数値である必要があります。',
-            'schedule_id.integer' => 'スケジュールIDは数値である必要があります。',
-            'schedule_id.exists' => '指定されたスケジュールが存在しません。',
+
         ]);
     
         Log::info('バリデーション後のデータ:', $validatedData);
