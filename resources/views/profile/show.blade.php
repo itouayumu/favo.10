@@ -41,19 +41,19 @@
             <hr>
 
             <!-- Favorite Oshi Section -->
-            <h4>公開されたお気に入りの推し</h4>
+            <h4 class="heading">お気に入りの推し</h4>
             <div class="favorites">
                 @if ($user->favorites()->wherePivot('hidden_flag', 0)->exists()) <!-- 修正箇所 -->
                     @foreach ($user->favorites()->wherePivot('hidden_flag', 0)->get() as $favorite)
                         <div class="favorite-item">
-                            <h5>{{ $favorite->name }}</h5>
-                            <p>{{ $favorite->introduction }}</p>
-                            <img 
-                                src="{{ $favorite->image_1 && Storage::exists('public/' . $favorite->image_1) 
-                                ? Storage::url($favorite->image_1) 
-                                : asset('img/default.png') }}"  
-                                style="width: 100px; height: 100px;" >
-                            <!-- 関連するタグを表示 -->
+                            <div class="img-name">
+                                <img
+                                    src="{{ $favorite->image_1 && Storage::exists('public/' . $favorite->image_1) 
+                                    ? Storage::url($favorite->image_1) 
+                                    : asset('img/default.png') }}" >
+                            </div>
+                                <h5>{{ $favorite->name }}</h5>
+                            <!-- 関連するタグを表示
                             <div class="favorite-tags">
                                 @php
                                     // 推しに関連付けられた非公開でないタグを取得
@@ -76,8 +76,8 @@
                                     @endforeach
                                 @else
                                     <p>タグはありません。</p>
-                                @endif
-                            </div>
+                                @endif -->
+                        </div>
 
                             <!-- Visibility toggle button (非公開の推しを公開する) -->
                             @if ($favorite->pivot->hidden_flag == 1) <!-- pivotのhidden_flagを参照 -->
