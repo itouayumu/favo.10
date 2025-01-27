@@ -1,0 +1,239 @@
+html{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    height: 100%;
+    overflow-y: hidden;
+}
+
+header{
+    width: 375px;
+    height: 70px;
+    background-image: url('../img/frame.png');
+}
+
+header .rogo{
+    height: 80px;
+    width: 170px;
+    object-fit: cover;
+}
+
+.content{
+    background-image: url('../img/frame.png');
+    background-position: center top; /* 上部から左右に配置 */
+    background-size: 380px 100%; /* 画面の高さいっぱいに */
+    background-repeat: no-repeat;
+    position: relative;
+    height: 500px;
+}
+
+.content .heading{
+    background-image: url('../img/fs11.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 5px;
+    padding-top: 15px;
+    padding-left: 10px;
+    margin: 0;
+    margin-bottom: 3px;
+    height: 50px;
+    width: 180px;
+    font-size: 23px;
+}
+
+.favos{
+    position: relative;
+}
+
+.favos .f_name{
+    height: 30px;
+    width: 110px;
+    margin: 0;
+    padding: 5px;
+    padding-top: 15px;
+    padding-left: 10px;
+    background-image: url('../img/fs12.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-size: 15px;
+    position: absolute;
+    top: 50px;
+    right: 15px;
+}
+
+.favos .f_intro{
+    height: 30px;
+    width: 110px;
+    margin: 0;
+    padding: 5px;
+    padding-top: 15px;
+    padding-left: 10px;
+    background-image: url('../img/fs13.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-size: 15px;
+    position: absolute;
+    top: 100px;
+    right: 10px;
+}
+
+.favos .f_count{
+    height: 30px;
+    width: 110px;
+    margin: 0;
+    padding: 5px;
+    padding-top: 15px;
+    padding-left: 10px;
+    background-image: url('../img/fs11.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-size: 15px;
+    position: absolute;
+    top: 150px;
+    right: 15px;
+}
+
+.content .favo_img{
+    position: relative;
+    max-width: 280px;
+    height: 300px;
+    margin-left: 25px;
+    background-image: url('../img/nt07.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center; /* 水平方向に中央揃え */
+    align-items: center; /* 垂直方向に中央揃え */
+}
+
+.slide {
+    display: none;
+}
+
+.content .prev, .content .next {
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: 40px;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    font-size: 30px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.prev {
+    left: -5px;
+}
+
+.next {
+    right: -5px;
+}
+
+.content .favo_img img{
+    width: 180px;
+    height: 210px;
+    object-fit: cover;
+    border: solid 1px #000;
+}
+
+.btn{
+    display: flex;
+    justify-content: space-around;
+}
+
+.btn .reg button{
+    height: 60px;
+    width: 60px;
+    border: solid 1px #ff9595;;
+    border-radius: 50%;
+    background-color: #ff9595;
+    cursor: pointer;
+    font-size: 20px;
+    margin-right: 20px;
+}
+
+.btn .nex button{
+    height: 60px;
+    width: 60px;
+    border: solid 1px #88b6ff;
+    border-radius: 50%;
+    background-color: #88b6ff;
+    cursor: pointer;
+    font-size: 20px;
+    margin-left: 20px;
+}
+
+footer{
+    position: fixed;
+    bottom: 0;
+}
+
+footer ul{
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+}
+
+footer li{
+    list-style: none;
+    background-color: #ffffff;
+}
+
+footer .profile{
+    padding: 0px 10px;
+    border: solid 1px hsl(0, 0%, 0%);
+    border-width: 1.5px 0px 1.5px 1.5px;
+}
+
+footer .timeline{
+    padding: 0px 10px;
+    border: solid 1px #000;
+    border-width: 1.5px 0.5px 1.5px 1px;
+}
+
+footer .search{
+    padding: 0px 10px;
+    border: solid 1px #000;
+    border-width: 1.5px 0px 1.5px 0.5px;
+}
+
+footer .shop{
+    padding: 0px 10px;
+    border: solid 1px #000;
+    border-width: 1.5px 1.5px 1.5px 1px;
+}
+
+footer .schedule{
+    padding: 15px 32px 0px 32px;
+    border: solid 1px #000;
+    border-width: 1.5px 0.5px 1.5px 0.5px;
+    border-radius: 50% 50% 0 0;
+}
+
+footer .profile img , footer .timeline img , footer .search img, footer .shop img{
+    height: 40px;
+    width: 40px;
+}
+
+footer .schedule img{
+    height: 60px;
+    width: 60px;
+}
+
+footer .profile p, footer .timeline p, footer .search p, footer .shop p{
+    font-size: 7px;
+    text-align: center;
+    margin: 3px 0px 0px 0px;
+}
+
+footer .schedule p{
+    font-size: 7px;
+    text-align: center;
+    margin: 5px 0px 3px 0px;
+}
