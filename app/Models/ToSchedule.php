@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,25 +9,26 @@ class ToSchedule extends Model
 {
     use HasFactory;
 
-    // テーブル名がデフォルトでない場合（例: 'to_schedules' としている場合）指定します
-    protected $table = 'to_schedules';
+    protected $table = 'to_schedule'; // テーブル名を指定
 
-    // マスアサインメント可能なカラムを指定
     protected $fillable = [
         'user_id',
         'schedule_id',
         'delete_flag',
     ];
 
-    // リレーション: ToSchedule は Schedule に属する
-    public function schedule()
-    {
-        return $this->belongsTo(Schedule::class);
-    }
+   public function user()
+   {
+       return $this->belongsTo(User::class, 'user_id');
+   }
 
-    // リレーション: ToSchedule は User に属する
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+   /**
+    * スケジュールリレーション
+    */
+   public function schedule()
+   {
+       return $this->belongsTo(Schedule::class, 'schedule_id');
+   }
 }
+
+
