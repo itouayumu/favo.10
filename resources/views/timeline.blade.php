@@ -1,15 +1,23 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Document</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{asset('css/scal.css')}}">
+    <link rel="stylesheet" href="{{ asset('css/timeline.css') }}">
+</head>
+<body>
+    <header>
+        <img src="{{ asset('img/rogo.png') }}" alt="ロゴ" class="rogo">
+    </header>
 
-@section('css')
-<!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="{{ asset('css/app.css') }}">
-<link rel="stylesheet" href="{{asset('css/scal.css')}}">
-<link rel="stylesheet" href="{{ asset('css/timeline.css') }}">
-@endsection
-
-@section('content')
-<div class="mt-5">
+    <div class="container">
+    <div class="mt-5">
     <!-- 投稿検索
     <div class="mb-4">
         <input type="text" id="searchInput" class="form-control" placeholder="投稿を検索...">
@@ -17,7 +25,10 @@
     </div> -->
     <div class="tim_main">
   
-
+<!-- 右下の丸いボタン -->
+<button class="btn btn-primary btn-circle btn-floating" id="postButton" aria-label="投稿する">
+    <span class="btn-plus">+</span> <!-- プラスマークをテキストとして追加 -->
+</button>
 
 
 <!-- エラーメッセージ -->
@@ -142,10 +153,7 @@
 </div>
     </div>
 </div>
-<!-- 右下の丸いボタン -->
-<button class="btn btn-primary btn-circle btn-floating" id="postButton" aria-label="投稿する">
-    <span class="btn-plus">+</span> <!-- プラスマークをテキストとして追加 -->
-</button>
+
 
 <!-- 投稿フォームのモーダル -->
 <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
@@ -198,17 +206,26 @@
             </div>
         </div>
     </div>
-@endsection
+</div>
 
-@section('scripts')
+    <footer>
+        <ul>
+            <li class="profile"><p>プロフィール</p><a href="/profile"><img src="{{asset('img/profile.png')}}" alt="プロフィール"></a></li>
+            <li class="timeline"><p>タイムライン</p><a href="/timeline"><img src="{{asset('img/timeline.png')}}" alt="タイムライン"></a></li>
+            <li class="schedule"><p>予定表</p><a href="/home"><img src="{{asset('img/schedule.png')}}" alt="予定表"></a></li>
+            <li class="search"><p>検索</p><a href="/recommend"><img src="{{asset('img/search.png')}}" alt="検索"></a></li>
+            <li class="shop"><p>ショップ</p><a href=""><img src="{{asset('img/shop.png')}}" alt="ショップ"></a></li>
+        </ul>
+    </footer>
 
+    <script src="{{ asset('js/app.js') }}"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Bootstrap JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="{{ asset('js/timeline.js') }}"></script>
-<script src="{{ asset('js/serch_favorite.js') }}"></script>
-<!-- 右下ボタン用のアイコン（Bootstrap Icons） -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-@endsection
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ asset('js/timeline.js') }}"></script>
+    <script src="{{ asset('js/serch_favorite.js') }}"></script>
+    <!-- 右下ボタン用のアイコン（Bootstrap Icons） -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</body>
+</html>

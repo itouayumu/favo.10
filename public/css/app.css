@@ -31,7 +31,10 @@ header .rogo{
 
 footer{
     position: fixed;
-    bottom: 0;
+    left: 50%; /* 横方向で中央 */
+    bottom: 0; /* 縦方向で下 */
+    transform: translateX(-50%); /* 左右中央揃えのための補正 */
+    width: 375px; /* スマホの幅に固定 */
 }
 
 footer ul{
