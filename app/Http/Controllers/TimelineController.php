@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Models\Schedule;
 use App\Models\ToSchedule; 
+use Illuminate\Support\Facades\Http;
+
 class TimelineController extends Controller
 {
 // コントローラ内
@@ -29,6 +31,16 @@ public function index()
         ->pluck('schedule_id') // スケジュールIDのコレクション
         ->toArray();
 
+    // 各投稿からリンクプレビューを生成
+    $posts->map(function ($post) {
+        $url = $this->extractUrl($post->post); // 投稿内容からURLを抽出
+        if ($url) {
+            $ogpData = $this->fetchOGP($url); // OGPデータを取得
+            $post->link_preview = $ogpData;  // 投稿にリンクプレビュー情報を追加
+        }
+        return $post;
+    });
+
     // 投稿データに登録状態フラグを追加
     foreach ($posts as $post) {
         if ($post->schedule) {
@@ -42,6 +54,39 @@ public function index()
 
     return view('timeline', compact('posts'));
 }
+
+private function extractUrl($text)
+{
+    // 正規表現でURLを抽出
+    preg_match('/https?:\/\/[^\s]+/', $text, $matches);
+    return $matches[0] ?? null;
+}
+
+private function fetchOGP($url)
+{
+    try {
+        $response = Http::get($url); // URLからHTMLを取得
+        $html = $response->body();
+
+        // OGPデータを解析
+        return [
+            'title' => $this->getMetaTag($html, 'og:title') ?? 'タイトル不明',
+            'description' => $this->getMetaTag($html, 'og:description') ?? '説明なし',
+            'image' => $this->getMetaTag($html, 'og:image') ?? null,
+            'url' => $url,
+        ];
+    } catch (\Exception $e) {
+        // エラーが発生した場合はnullを返す
+        return null;
+    }
+}
+
+private function getMetaTag($html, $property)
+{
+    preg_match('/<meta property="' . preg_quote($property, '/') . '" content="([^"]+)"/', $html, $matches);
+    return $matches[1] ?? null;
+}
+
 
 
 
