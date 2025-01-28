@@ -43,4 +43,9 @@ class Favorite extends Model
                     ->withPivot('hidden_flag', 'favorite_flag')
                     ->withTimestamps();
     }
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

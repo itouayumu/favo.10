@@ -1,3 +1,7 @@
+body{
+ position: relative;
+}
+
 .container{
     overflow-y: hidden;
     height: 465px;
@@ -6,9 +10,9 @@
 }
 
 .mt-5 {
-    margin-top: 0; 
-
+    margin-top: 0;
 }
+
 #postForm{
 background-color: rgb(246, 246, 246);
 padding: 5px;
@@ -30,9 +34,9 @@ padding: 5px;
 
 /* ボタンを右下に固定 */
 .btn-floating {
-    position: fixed;
-    bottom: 70px;
-    right: 470px;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
     z-index: 1050; /* 他の要素より前面に表示 */
 }
 
@@ -45,4 +49,29 @@ padding: 5px;
 .btn-primary:hover {
     background-color: #0d95e8;
     border-color: #0d95e8;
+}
+.preview-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.preview-box img {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+.link-preview {
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+}
+.linkimg{
+    width: 270px;
+}
+.textcontent{
+    word-break: break-all;
+}
+.textcontent a{
+    word-break: break-all;
 }

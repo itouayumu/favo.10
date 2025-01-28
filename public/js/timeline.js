@@ -388,7 +388,66 @@ $(document).ready(function() {
 
         });
     });
-
-      
-
-      
+    document.addEventListener('DOMContentLoaded', function () {
+        const postContents = document.querySelectorAll('.post-content');
+    
+        postContents.forEach(content => {
+            const originalText = content.textContent;
+            const linkifiedText = originalText.replace(
+                /(https?:\/\/[^\s]+)/g,
+                '<a href="$1" class="external-link" data-url="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+            );
+            content.innerHTML = linkifiedText;
+        });
+    
+        // 確認ページを挟む処理
+        const links = document.querySelectorAll('.external-link');
+        links.forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault(); // デフォルトのリンク遷移を無効化
+                const originalUrl = this.dataset.url; // 元のリンクURL
+                const confirmPageUrl = `/confirm?url=${encodeURIComponent(originalUrl)}`; // 確認ページのURLを生成
+                window.location.href = confirmPageUrl; // 確認ページにリダイレクト
+            });
+        });
+    });
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        // リンクプレビュー対象を取得
+        const linkPreviews = document.querySelectorAll('.link-preview');
+    
+        linkPreviews.forEach(link => {
+            const url = link.dataset.url;
+    
+            fetch(`/fetch-ogp?url=${encodeURIComponent(url)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('OGP取得エラー:', data.error);
+                        return;
+                    }
+    
+                    // プレビューHTMLを生成
+                    const previewHTML = `
+                        <div class="preview-box border rounded d-flex p-2 mt-2">
+                            <img src="${data.image || '/path/to/default-image.jpg'}" 
+                                 alt="${data.title}" 
+                                 class="preview-image me-3" 
+                                 style="width: 80px; height: 80px; object-fit: cover;">
+                            <div>
+                                <strong>${data.title}</strong>
+                                <p class="text-muted">${data.description}</p>
+                            </div>
+                        </div>
+                    `;
+    
+                    // プレビューを挿入
+                    const previewContainer = link.closest('.post').querySelector('.ogp-preview-container');
+                    previewContainer.insertAdjacentHTML('beforeend', previewHTML);
+                })
+                .catch(error => {
+                    console.error('OGP情報の取得に失敗しました:', error);
+                });
+        });
+    });
+    
