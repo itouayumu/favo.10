@@ -37,10 +37,15 @@ class Favorite extends Model
         return $this->hasMany(ToFavorite::class, 'favorite_id');
     }
 
-    public function users()
+    public function followers()
     {
         return $this->belongsToMany(User::class, 'to_favorite')
                     ->withPivot('hidden_flag', 'favorite_flag')
                     ->withTimestamps();
+    }
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

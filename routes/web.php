@@ -92,7 +92,9 @@ Route::post('/oshi/{favorite}/toggleVisibility', [OshiController::class, 'toggle
 Route::post('/users/{user}/tags', [TagController::class, 'attachTag'])->name('users.tags.attach');
 
 Route::post('favorites/{favorite_id}/tags', [OshiTagController::class, 'createTag'])->name('oshi.createTag');;
-
+Route::get('oshi/{id}', [OshiController::class, 'show'])->name('oshi.show');
+Route::get('oshi/{id}/edit', [OshiController::class, 'edit'])->name('oshi.edit');
+Route::post('oshi/{id}/update', [OshiController::class, 'update'])->name('oshi.update');
 Route::post('oshi/{favoriteId}/tag/{tagId}/toggleVisibility', [OshiTagController::class, 'toggleTagVisibility'])->name('oshi.toggleTagVisibility');
 Route::get('/oshiTag/increment/{favoriteId}/{tagId}', [OshiTagController::class, 'incrementTagCount'])->name('oshiTag.increment');
 Route::post('oshi/{favoriteId}/tag/{tagId}/delete', [OshiTagController::class, 'deleteTag'])->name('oshi.deleteTag');
