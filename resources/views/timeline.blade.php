@@ -48,12 +48,8 @@
             <!-- 投稿内容 -->
              <div class="textcontent">
                  <p class="post-content" style="white-space: pre-wrap;">{{ $post->post }}</p>
-                 <small class="text-muted">{{ $post->created_at }}</small>
+
             </div>
-            <!-- 投稿画像 -->
-            @if ($post->image)
-                <img src="{{ asset('storage/' . $post->image) }}" alt="投稿画像" class="img-fluid mt-2">
-            @endif
 
             @if (isset($post->link_preview))
             <div class="link-preview">
@@ -68,6 +64,13 @@
                 </a>
             </div>
         @endif
+
+            <!-- 投稿画像 -->
+            @if ($post->image)
+                <img src="{{ asset('storage/' . $post->image) }}" alt="投稿画像" class="img-fluid mt-2"><br>
+            @endif
+                 <small class="text-muted">{{ $post->created_at }}</small>
+           
 
  <!-- スケジュール情報 -->
  @if ($post->schedule)

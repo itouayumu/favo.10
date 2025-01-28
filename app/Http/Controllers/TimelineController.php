@@ -253,4 +253,19 @@ private function getMetaTag($html, $property)
 
         return response()->json($replies);
     }
+    public function getNewPosts(Request $request)
+{
+    // 最後に確認した時刻を取得（セッションやクッキーから）
+    $lastChecked = $request->session()->get('last_checked', now()->subMinutes(5));
+
+    // 新規投稿を取得
+    $newPosts = Post::where('created_at', '>', $lastChecked)
+                    ->with('user') // 投稿者情報を含める
+                    ->get();
+
+    // 現在時刻をセッションに保存
+    $request->session()->put('last_checked', now());
+
+    return response()->json($newPosts);
+}
 }

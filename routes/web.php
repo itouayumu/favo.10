@@ -186,6 +186,6 @@ Route::get('/fetch-ogp', function (Illuminate\Http\Request $request) {
 
 
 Route::get('/fetch-ogp', [OGPController::class, 'fetchOGP']);
-
+Route::get('/timeline/new-posts', [TimelineController::class, 'getNewPosts']);
 
 
