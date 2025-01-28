@@ -18,11 +18,11 @@
 
     <div class="container">
     <div class="mt-5">
-    <!-- 投稿検索
+
     <div class="mb-4">
         <input type="text" id="searchInput" class="form-control" placeholder="投稿を検索...">
         <div id="searchResults" class="mt-3"></div>
-    </div> -->
+    </div>
     <div class="tim_main">
   
 <!-- 右下の丸いボタン -->
@@ -48,7 +48,7 @@
         <div class="post border rounded p-3 mb-4" id="post-{{ $post->id }}">
             <!-- 投稿者情報 -->
             <div class="d-flex align-items-center mb-2">
-                <a href="{{ route('profile.showUser', ['id' => $post->user->id]) }}">
+                <a href="{{ route('user.profile', ['id' => $post->user->id]) }}">
                     <img src="{{ $post->user->icon_url }}" 
                          alt="{{ $post->user->name }}のアイコン" 
                          class="rounded-circle me-2" style="width: 40px; height: 40px;">
@@ -57,13 +57,28 @@
             </div>
 
             <!-- 投稿内容 -->
-            <p>{{ $post->post }}</p>
-            <small class="text-muted">{{ $post->created_at }}</small>
-
+             <div class="textcontent">
+                 <p class="post-content" style="white-space: pre-wrap;">{{ $post->post }}</p>
+                 <small class="text-muted">{{ $post->created_at }}</small>
+            </div>
             <!-- 投稿画像 -->
             @if ($post->image)
                 <img src="{{ asset('storage/' . $post->image) }}" alt="投稿画像" class="img-fluid mt-2">
             @endif
+
+            @if (isset($post->link_preview))
+            <div class="link-preview">
+                <a href="{{ $post->link_preview['url'] }}" target="_blank">
+                    <div class="link-preview-image">
+                        <img src="{{ $post->link_preview['image'] ?? '/default-preview.jpg' }}" alt="Preview Image" class="linkimg">
+                    </div>
+                    <div class="link-preview-details">
+                        <h4>{{ $post->link_preview['title'] }}</h4>
+
+                    </div>
+                </a>
+            </div>
+        @endif
 
  <!-- スケジュール情報 -->
  @if ($post->schedule)

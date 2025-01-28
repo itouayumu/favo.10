@@ -16,6 +16,8 @@ use App\Http\Controllers\searchcontroller;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\OshiController;
 use App\Http\Controllers\OshiTagController;
+use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\OGPController;
 
 // ホームページ
 Route::get('/', [UserMainController::class, 'index'])->name('home');
@@ -33,7 +35,10 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); // �
 Route::get('/profile', [ProfileController::class, 'show'])
     ->name('profile.show')
     ->middleware('auth');
-
+    
+    Route::get('/prof/{id}', [ProfileController::class, 'showUser'])
+        ->name('user.profile')
+        ->middleware('auth');
 
 Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
@@ -87,7 +92,9 @@ Route::post('/oshi/{favorite}/toggleVisibility', [OshiController::class, 'toggle
 Route::post('/users/{user}/tags', [TagController::class, 'attachTag'])->name('users.tags.attach');
 
 Route::post('favorites/{favorite_id}/tags', [OshiTagController::class, 'createTag'])->name('oshi.createTag');;
-
+Route::get('oshi/{id}', [OshiController::class, 'show'])->name('oshi.show');
+Route::get('oshi/{id}/edit', [OshiController::class, 'edit'])->name('oshi.edit');
+Route::post('oshi/{id}/update', [OshiController::class, 'update'])->name('oshi.update');
 Route::post('oshi/{favoriteId}/tag/{tagId}/toggleVisibility', [OshiTagController::class, 'toggleTagVisibility'])->name('oshi.toggleTagVisibility');
 Route::get('/oshiTag/increment/{favoriteId}/{tagId}', [OshiTagController::class, 'incrementTagCount'])->name('oshiTag.increment');
 Route::post('oshi/{favoriteId}/tag/{tagId}/delete', [OshiTagController::class, 'deleteTag'])->name('oshi.deleteTag');
@@ -143,8 +150,44 @@ Route::get('/recommends/create', [FavoriteController::class, 'create'])->name('r
 // 推しの新規登録処理
 Route::post('/recommends/store', [FavoriteController::class, 'store'])->name('recommends.store');
 
+//url確認ページ
+Route::get('/confirm', function (Illuminate\Http\Request $request) {
+    $url = $request->query('url'); // クエリパラメータからURLを取得
+    if (!$url) {
+        return redirect()->back()->with('error', 'リンク先が指定されていません。');
+    }
+    return view('confirm', ['url' => $url]);
+})->name('confirm');
 
 
+Route::get('/fetch-ogp', function (Illuminate\Http\Request $request) {
+    $url = $request->query('url');
+    if (!$url) {
+        return response()->json(['error' => 'URLが指定されていません。'], 400);
+    }
+
+    try {
+        $response = Http::get($url);
+        $html = $response->body();
+
+        // メタ情報を取得する
+        preg_match('/<meta property="og:title" content="([^"]+)"/', $html, $titleMatch);
+        preg_match('/<meta property="og:description" content="([^"]+)"/', $html, $descriptionMatch);
+        preg_match('/<meta property="og:image" content="([^"]+)"/', $html, $imageMatch);
+
+        return response()->json([
+            'title' => $titleMatch[1] ?? 'タイトルなし',
+            'description' => $descriptionMatch[1] ?? '説明なし',
+            'image' => $imageMatch[1] ?? null,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'OGP情報の取得に失敗しました。'], 500);
+    }
+})->name('fetch-ogp');
+
+
+
+Route::get('/fetch-ogp', [OGPController::class, 'fetchOGP']);
 
 
 

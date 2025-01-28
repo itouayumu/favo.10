@@ -50,3 +50,28 @@ padding: 5px;
     background-color: #0d95e8;
     border-color: #0d95e8;
 }
+.preview-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.preview-box img {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+.link-preview {
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+}
+.linkimg{
+    width: 270px;
+}
+.textcontent{
+    word-break: break-all;
+}
+.textcontent a{
+    word-break: break-all;
+}

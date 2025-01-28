@@ -43,44 +43,23 @@
             <!-- Favorite Oshi Section -->
             <h4 class="heading">お気に入りの推し</h4>
             <div class="favorites">
-                @if ($user->favorites()->wherePivot('hidden_flag', 0)->exists()) <!-- 修正箇所 -->
+                @if ($user->favorites()->wherePivot('hidden_flag', 0)->exists())
                     @foreach ($user->favorites()->wherePivot('hidden_flag', 0)->get() as $favorite)
                         <div class="favorite-item">
                             <div class="img-name">
-                                <img
-                                    src="{{ $favorite->image_1 && Storage::exists('public/' . $favorite->image_1) 
-                                    ? Storage::url($favorite->image_1) 
-                                    : asset('img/default.png') }}" >
+                                <!-- 推しの詳細ページへのリンク -->
+                                <a href="{{ route('oshi.show', $favorite->id) }}">
+                                    <img
+                                        src="{{ $favorite->image_1 && Storage::exists('public/' . $favorite->image_1) 
+                                        ? Storage::url($favorite->image_1) 
+                                        : asset('img/default.png') }}" 
+                                        alt="{{ $favorite->name }}" class="favorite-img">
+                                </a>
                             </div>
-                                <h5>{{ $favorite->name }}</h5>
-                            <!-- 関連するタグを表示
-                            <div class="favorite-tags">
-                                @php
-                                    // 推しに関連付けられた非公開でないタグを取得
-                                    $favoriteTags = $favorite->tags()
-                                        ->wherePivot('hidden_flag', 0)
-                                        ->wherePivot('delete_flag', 0)
-                                        ->get();
-                                @endphp
+                            <h5>{{ $favorite->name }}</h5>
 
-                                @if ($favoriteTags->isNotEmpty())
-                                    @foreach ($favoriteTags as $favoriteTag)
-                                        <a href="javascript:void(0);" 
-                                           class="tag-link" 
-                                           data-favorite-id="{{ $favorite->id }}" 
-                                           data-tag-id="{{ $favoriteTag->id }}"
-                                           style="margin-right: 10px;">
-                                            {{ $favoriteTag->name }} 
-                                            (<span class="tag-count">{{ $favoriteTag->pivot->count }}</span>)
-                                        </a>
-                                    @endforeach
-                                @else
-                                    <p>タグはありません。</p>
-                                @endif -->
-                        </div>
-
-                            <!-- Visibility toggle button (非公開の推しを公開する) -->
-                            @if ($favorite->pivot->hidden_flag == 1) <!-- pivotのhidden_flagを参照 -->
+                            <!-- Visibility toggle button -->
+                            @if ($favorite->pivot->hidden_flag == 1)
                                 <form action="{{ route('oshi.toggleVisibility', $favorite->pivot->id) }}" method="POST" style="display: inline;">
                                     @csrf
                                     <button type="submit" class="btn btn-success">公開する</button>
@@ -102,7 +81,6 @@
                     @csrf
                     <button type="submit">ログアウト</button>
                 </form>
-                <!-- <a href="{{ url()->previous() }}" class="btn btn-secondary">戻る</a> -->
             </div>
         </div>
     </div>
