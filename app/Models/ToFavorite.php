@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,8 +8,10 @@ class ToFavorite extends Model
 {
     use HasFactory;
 
-    protected $table = 'to_favorite'; // 中間テーブル名を指定
+    // テーブル名がデフォルトでない場合（例: 'to_favorites' としている場合）指定します
+    protected $table = 'to_favorites';
 
+    // マスアサインメント可能なカラムを指定
     protected $fillable = [
         'user_id',
         'favorite_id',
@@ -20,17 +21,15 @@ class ToFavorite extends Model
         'hidden_flag',
     ];
 
-    /**
-     * Favoriteテーブルとのリレーション
-     */
-    public function favorite()
+    // リレーション: ToFavorite は User に属する
+    public function user()
     {
-        return $this->belongsTo(Favorite::class, 'favorite_id');
+        return $this->belongsTo(User::class);
     }
 
-    public function tags()
+    // リレーション: ToFavorite は Favorite に属する
+    public function favorite()
     {
-        return $this->belongsToMany(Tag::class, 'favorite_tag', 'favorite_id', 'tags_id')
-                    ->withPivot('hidden_flag', 'delete_flag', 'count');
+        return $this->belongsTo(Favorite::class);
     }
 }
