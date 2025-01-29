@@ -29,13 +29,13 @@
     <input type="date" id="start_date" name="start_date" required value="{{ old('start_date') }}"><br><br>
 
     <label for="start_time">開始時間</label><br>
-    <input type="time" id="start_time" name="start_time" required value="{{ old('start_time') }}"><br><br>
+    <input type="time" id="start_time" name="start_time" required value="00:00" step="300"><br><br>
 
     <label for="end_date">終了日</label><br>
     <input type="date" id="end_date" name="end_date" required value="{{ old('end_date') }}"><br><br>
 
     <label for="end_time">終了時間</label><br>
-    <input type="time" id="end_time" name="end_time" required value="{{ old('end_time') }}"><br><br>
+    <input type="time" id="end_time" name="end_time" required value="00:00" step="300"><br><br>
 
     <label for="thumbnail">サムネイル画像</label><br>
     <div class="preview">
