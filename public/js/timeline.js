@@ -235,49 +235,57 @@ $(document).ready(function () {
             replyList.append(replyHtml);
         });
     }
+/**
+ * 返信フォームの送信処理
+ */
+$(document).on('click', '.send-reply', async function () {
+    const postId = $(this).data('post-id');
+    const replyForm = $(`#reply-form-${postId}`);
+    const comment = replyForm.find('.reply-comment').val();
+    const imageInput = replyForm.find('.reply-image')[0]?.files[0];
+    const errorDiv = replyForm.find('.reply-error');
 
-    /**
-     * 返信フォームの送信処理
-     */
-    $(document).on('click', '.send-reply', async function () {
-        const postId = $(this).data('post-id');
-        const replyForm = $(`#reply-form-${postId}`);
-        const comment = replyForm.find('.reply-comment').val();
-        const imageInput = replyForm.find('.reply-image')[0]?.files[0];
-        const errorDiv = replyForm.find('.reply-error');
+    if (!comment) {
+        errorDiv.text('返信内容を入力してください。').show();
+        return;
+    }
+    errorDiv.hide();
 
-        if (!comment) {
-            errorDiv.text('返信内容を入力してください。').show();
-            return;
+    const formData = new FormData();
+    formData.append('post_id', postId);
+    formData.append('comment', comment);
+    if (imageInput) formData.append('image', imageInput);
+
+    try {
+        const response = await fetch('/replies/store', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-CSRF-TOKEN': csrfToken },
+        });
+
+        if (response.ok) {
+            const { reply } = await response.json();
+            addReplyToList(postId, reply);
+            replyForm[0].reset();
+
+            // 返信が完了したことを知らせるメッセージを表示
+            const successMessage = $('<div class="alert alert-success mt-2">返信しました。</div>');
+            replyForm.append(successMessage);
+
+            // 5秒後にメッセージを非表示にする
+            setTimeout(() => {
+                successMessage.fadeOut();
+            }, 5000);
+        } else {
+            const errorText = await response.text();
+            console.error('エラー内容:', errorText);
+            errorDiv.text('送信エラー: サーバーの応答が正しくありません。').show();
         }
-        errorDiv.hide();
-
-        const formData = new FormData();
-        formData.append('post_id', postId);
-        formData.append('comment', comment);
-        if (imageInput) formData.append('image', imageInput);
-
-        try {
-            const response = await fetch('/replies/store', {
-                method: 'POST',
-                body: formData,
-                headers: { 'X-CSRF-TOKEN': csrfToken },
-            });
-
-            if (response.ok) {
-                const { reply } = await response.json();
-                addReplyToList(postId, reply);
-                replyForm[0].reset();
-            } else {
-                const errorText = await response.text();
-                console.error('エラー内容:', errorText);
-                errorDiv.text('送信エラー: サーバーの応答が正しくありません。').show();
-            }
-        } catch (error) {
-            console.error('通信エラー:', error);
-            errorDiv.text('通信エラーが発生しました。').show();
-        }
-    });
+    } catch (error) {
+        console.error('通信エラー:', error);
+        errorDiv.text('通信エラーが発生しました。').show();
+    }
+});
 
     function addReplyToList(postId, reply) {
         const replyList = $(`#reply-list-${postId}`);

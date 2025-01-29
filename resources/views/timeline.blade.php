@@ -19,10 +19,10 @@
     <div class="container">
     <div class="mt-5">
 
-    <div class="mb-4">
+    <!-- <div class="mb-4">
         <input type="text" id="searchInput" class="form-control" placeholder="投稿を検索...">
         <div id="searchResults" class="mt-3"></div>
-    </div>
+    </div> -->
     <div class="tim_main">
   
 <!-- 右下の丸いボタン -->
