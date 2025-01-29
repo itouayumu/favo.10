@@ -63,7 +63,7 @@ Route::post('/tags/{tagId}/visibility', [TagController::class, 'toggleVisibility
 
 
 // スケジュール関連
-Route::get('/schedules', [ScheduleController::class, 'schedule']);
+// Route::get('/schedules', [ScheduleController::class, 'schedule']);
 Route::get('/schedules/create', [ScheduleController::class, 'create']);
 Route::post('/schedules', [ScheduleController::class, 'store']);
 Route::get('/schedules/{id}', [ScheduleController::class, 'show']);
