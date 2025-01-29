@@ -71,36 +71,7 @@ $(document).ready(function () {
     /**
      * 投稿フォームの送信処理
      */
-    const postForm = $('#postForm');
-    postForm.on('submit', async function (e) {
-        e.preventDefault();
-
-        if (!favoriteIdInput.val()) {
-            showError('推しの名前を選択してください。');
-            return;
-        }
-
-        const formData = new FormData(postForm[0]);
-        try {
-            const response = await fetch('/timeline/store', {
-                method: 'POST',
-                body: formData,
-                headers: { 'X-CSRF-TOKEN': csrfToken },
-            });
-
-            if (response.ok) {
-                const { post } = await response.json();
-                addPostToList(post);
-                postForm[0].reset();
-            } else {
-                alert('投稿に失敗しました。');
-            }
-        } catch (error) {
-            console.error('通信エラー:', error);
-            alert('通信エラーが発生しました。');
-        }
-    });
-
+   
     function extractUrls(text) {
         const urlPattern = /(https?:\/\/[^\s]+)/g;
         return text.match(urlPattern);
@@ -400,6 +371,10 @@ document.querySelectorAll('.register-schedule').forEach(button => {
     });
 });
 $(document).ready(function() {
+    const postForm = $('#postForm');
+    const submitButton = $('#postModal button[type="submit"]');
+    const favoriteIdInput = $('#favorite_id');
+
     // 右下のボタンがクリックされた時にモーダルを開く
     $('.btn-floating').click(function() {
         $('#postModal').modal('show');
@@ -414,29 +389,54 @@ $(document).ready(function() {
 
     // モーダルが閉じられた時に、フォームをリセット
     $('#postModal').on('hidden.bs.modal', function() {
-        $('#postForm')[0].reset();
+        postForm[0].reset();
         $('#favorite-list').hide();
-        $('#favorite_id').val('');
+        favoriteIdInput.val('');
     });
 
-    // 投稿するボタンがクリックされたときの処理
-    $('#postForm').submit(function(e) {
-        e.preventDefault(); // フォームのデフォルトの送信をキャンセル
+    // 投稿フォームの送信処理
+    postForm.on('submit', async function(e) {
+        e.preventDefault();
 
-        // ここで必要に応じて入力内容を確認
-        const postContent = $('#post').val();
-        if (!postContent.trim()) {
+        const postContent = $('#post').val().trim();
+        if (!postContent) {
             alert('投稿内容を入力してください');
             return;
         }
 
-        // 投稿するボタンを無効化して、送信中であることを示す
-        $('#postModal button[type="submit"]').prop('disabled', true);
-        $('#postModal button[type="submit"]').text('送信中...');
+        if (!favoriteIdInput.val()) {
+            alert('推しの名前を選択してください。');
+            return;
+        }
 
+        // 投稿ボタンを無効化して送信中の状態にする
+        submitButton.prop('disabled', true).text('送信中...');
 
-        });
+        const formData = new FormData(postForm[0]);
+
+        try {
+            const response = await fetch(postForm.attr('action'), {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            });
+
+            if (response.ok) {
+                const { post } = await response.json();
+                postForm[0].reset();
+                $('#postModal').modal('hide'); // 投稿後モーダルを閉じる
+            } else {
+                alert('投稿に失敗しました。');
+            }
+        } catch (error) {
+            console.error('通信エラー:', error);
+            alert('通信エラーが発生しました。');
+        } finally {
+            submitButton.prop('disabled', false).text('投稿する'); // ボタンを元に戻す
+        }
     });
+});
+
     document.addEventListener('DOMContentLoaded', function () {
         const postContents = document.querySelectorAll('.post-content');
     
@@ -499,6 +499,11 @@ $(document).ready(function() {
                 });
         });
     });
+    function extractUrls(text) {
+        // URL を抽出するための正規表現
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        return text.match(urlRegex) || [];
+    }
 
     function addPostToList(post) {
         const postList = $('#timeline');
@@ -611,4 +616,4 @@ $(document).ready(function() {
             }
         }, 5000);  // 5秒ごとに新規投稿を確認
     });
-    
+    postForm

@@ -64,7 +64,9 @@
 
             @if (isset($post->link_preview))
             <div class="link-preview">
-                <a href="{{ $post->link_preview['url'] }}" target="_blank">
+
+
+                <a  href="{{ route('confirm', ['url' => $post->link_preview['url']])  }}" target="_blank">
                     <div class="link-preview-image">
                         <img src="{{ $post->link_preview['image'] ?? '/default-preview.jpg' }}" alt="Preview Image" class="linkimg">
                     </div>
@@ -73,6 +75,8 @@
 
                     </div>
                 </a>
+
+
             </div>
         @endif
 
