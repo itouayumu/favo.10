@@ -1,23 +1,32 @@
-document.querySelectorAll('.tag-link').forEach(function(tagLink) {
-    tagLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        const favoriteId = e.target.dataset.favoriteId;
-        const tagId = e.target.dataset.tagId;
+// タグのクリックイベント処理
+document.querySelectorAll('.tag-click').forEach(tagElement => {
+    tagElement.addEventListener('click', function(event) {
+        event.preventDefault();  // デフォルトのリンク動作を無効化
 
-        // AJAXリクエストでカウントをインクリメント
+        let tagId = this.dataset.tagId;
+        let favoriteId = this.dataset.favoriteId;
+
+        // AJAXリクエストでクリック数を増加
         fetch(`/oshiTag/increment/${favoriteId}/${tagId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
             }
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // カウントを更新
-                e.target.querySelector('.tag-count').textContent = data.newCount;
+                // 新しいカウントをDOMに反映
+                let countElement = document.querySelector(`#click-count-${tagId}`);
+                if (countElement) {
+                    countElement.textContent = data.newCount; // 新しいカウントを表示
+                }
+            } else {
+                console.error('タグのカウントの増加に失敗しました');
             }
+        })
+        .catch(error => {
+            console.error('エラー:', error);
         });
     });
 });

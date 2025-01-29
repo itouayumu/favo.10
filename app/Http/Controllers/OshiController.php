@@ -171,7 +171,7 @@ class OshiController extends Controller
     public function show($id)
     {
         // favoriteテーブルからデータを取得
-        $favorite = Favorite::findOrFail($id);
+        $favorite = Favorite::with('tags')->findOrFail($id);
 
         // 詳細ページにデータを渡す
         return view('Oshi.detail', compact('favorite'));
