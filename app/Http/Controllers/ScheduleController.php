@@ -112,7 +112,7 @@ public function store(Request $request)
         'delete_flag' => false, // 必要に応じて適切な値を設定
     ]);
 
-    return redirect('/schedules')->with('success', 'スケジュールが作成されました');
+    return redirect('/home')->with('success', 'スケジュールが作成されました');
 }
 
 
@@ -171,7 +171,7 @@ public function store(Request $request)
 
         $schedule->delete();
 
-        return redirect('/schedules')->with('success', 'スケジュールが削除されました');
+        return redirect('/home')->with('success', 'スケジュールが削除されました');
     }
     public function fetchSchedules()
 {
