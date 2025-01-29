@@ -101,67 +101,116 @@ $(document).ready(function () {
         }
     });
 
-    function addPostToList(post) {
-        const postList = $('#timeline');
-        const postHtml = `
-    <div class="post border rounded p-3 mb-4" id="post-${post.id}">
-        <!-- 投稿者情報 -->
-        <div class="d-flex align-items-center">
-            <img src="${post.user.icon_url}" alt="${post.user.name}" class="rounded-circle me-2" style="width: 40px;">
-            <strong>${post.user.name}</strong>
-        </div>
-        
-        <!-- 投稿内容 -->
-        <p>${post.post}</p>
-        
-        <!-- 投稿画像 -->
-        ${post.image ? `<img src="storage/${post.image}" alt="投稿画像" class="img-fluid mt-2">` : ''}
-
-        <!-- スケジュール情報 -->
-        ${post.schedule ? `
-            <div class="schedule-info mt-3 border rounded p-3">
-                <h5 class="mb-2">予定情報</h5>
-                <div class="d-flex align-items-center">
-                    ${post.schedule.favorite && post.schedule.favorite.icon_url ? `
-                        <img src="${post.schedule.favorite.icon_url}" alt="${post.schedule.favorite.name}" class="rounded-circle me-2" style="width: 30px;">
-                    ` : ''}
-                    <strong>${post.favorite ? post.favorite.name : '未設定'}</strong>
-                </div>
-                <div class="mt-2">
-                    <strong>タイトル:</strong> ${post.schedule.title || 'タイトルなし'}<br>
-                    <strong>内容:</strong> ${post.schedule.content || '内容なし'}<br>
-                    <strong>開始日時:</strong> ${post.schedule.start_date || '未設定'} ${post.schedule.start_time || ''}<br>
-                    <strong>終了日時:</strong> ${post.schedule.end_date || '未設定'} ${post.schedule.end_time || ''}<br>
-                    ${post.schedule.url ? `<a href="${post.schedule.url}" target="_blank">リンクはこちら</a>` : ''}
-                </div>
-                ${post.schedule.image ? `<img src="storage/${post.schedule.image}" alt="スケジュール画像" class="img-fluid mt-2">` : ''}
-            </div>
-        ` : ''}
-        
-        <!-- ボタン -->
-        <div class="mt-3">
-            <button type="button" class="btn btn-sm btn-outline-primary reply-toggle" data-post-id="${post.id}">返信する</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary reply-show" data-post-id="${post.id}">返信を見る</button>
-        </div>
-        
-        <!-- 返信フォーム -->
-        <form id="reply-form-${post.id}" class="d-none mt-3">
-            <textarea class="form-control reply-comment" rows="2" placeholder="返信を入力"></textarea>
-            <input type="file" class="form-control mt-2 reply-image" accept="image/*">
-            <button type="button" class="btn btn-secondary btn-sm mt-2 send-reply" data-post-id="${post.id}">返信する</button>
-            <div class="reply-error text-danger mt-2" style="display: none;"></div>
-        </form>
-        
-        <!-- 返信リスト -->
-        <div id="reply-list-${post.id}" class="reply-list mt-3 d-none"></div>
-    </div>
-`;
-
-        postList.prepend(postHtml);
-              // 10秒ごとに投稿を取得（ミリ秒単位で指定）
-      setInterval(addPostToList, 1000);
+    function extractUrls(text) {
+        const urlPattern = /(https?:\/\/[^\s]+)/g;
+        return text.match(urlPattern);
     }
-
+    
+    async function fetchOGP(url) {
+        try {
+            const response = await fetch(`/get-ogp?url=${encodeURIComponent(url)}`);
+            if (response.ok) {
+                return await response.json(); // OGPデータを返す
+            }
+        } catch (error) {
+            console.error('OGPデータの取得に失敗しました:', error);
+        }
+        return null;
+    }
+    
+    async function addPostToList(post) {
+        const postList = $('#timeline');
+        let postContent = post.post;
+        let linkPreviewHtml = '';
+    
+        // 投稿内容内のリンクを抽出
+        const urls = extractUrls(postContent);
+    
+        // リンクが見つかった場合、OGPデータを取得
+        if (urls && urls.length > 0) {
+            // 非同期処理内でOGPデータを取得
+            const ogpData = await fetchOGP(urls[0]); // 最初のURLだけ取得（複数URLにも対応可能）
+    
+            if (ogpData) {
+                linkPreviewHtml = `
+                    <div class="link-preview mt-3">
+                        <strong>リンクプレビュー</strong>
+                        <div class="border p-2">
+                            <a href="${ogpData.url}" target="_blank">
+                                <h5>${ogpData.title}</h5>
+                                <p>${ogpData.description}</p>
+                                <img src="${ogpData.image}" alt="Preview image" class="img-fluid">
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else {
+                console.log('OGPデータが取得できませんでした');
+            }
+    
+            // 投稿内容のURLをリンクに変換
+            postContent = postContent.replace(urls[0], `<a href="${urls[0]}" target="_blank">${urls[0]}</a>`);
+        }
+    
+        // 投稿HTMLを生成
+        const postHtml = `
+            <div class="post border rounded p-3 mb-4" id="post-${post.id}">
+                <!-- 投稿者情報 -->
+                <div class="d-flex align-items-center">
+                    <img src="${post.user.icon_url}" alt="${post.user.name}" class="rounded-circle me-2" style="width: 40px;">
+                    <strong>${post.user.name}</strong>
+                </div>
+    
+                <!-- 投稿内容 -->
+                <p>${postContent}</p>
+                ${linkPreviewHtml}  <!-- リンクプレビューを表示 -->
+    
+                <!-- 投稿画像 -->
+                ${post.image ? `<img src="storage/${post.image}" alt="投稿画像" class="img-fluid mt-2">` : ''}
+    
+                <!-- スケジュール情報 -->
+                ${post.schedule ? `
+                    <div class="schedule-info mt-3 border rounded p-3">
+                        <h5 class="mb-2">予定情報</h5>
+                        <div class="d-flex align-items-center">
+                            ${post.schedule.favorite && post.schedule.favorite.icon_url ? `
+                                <img src="${post.schedule.favorite.icon_url}" alt="${post.schedule.favorite.name}" class="rounded-circle me-2" style="width: 30px;">
+                            ` : ''}
+                            <strong>${post.favorite ? post.favorite.name : '未設定'}</strong>
+                        </div>
+                        <div class="mt-2">
+                            <strong>タイトル:</strong> ${post.schedule.title || 'タイトルなし'}<br>
+                            <strong>内容:</strong> ${post.schedule.content || '内容なし'}<br>
+                            <strong>開始日時:</strong> ${post.schedule.start_date || '未設定'} ${post.schedule.start_time || ''}<br>
+                            <strong>終了日時:</strong> ${post.schedule.end_date || '未設定'} ${post.schedule.end_time || ''}<br>
+                            ${post.schedule.url ? `<a href="${post.schedule.url}" target="_blank">リンクはこちら</a>` : ''}
+                        </div>
+                        ${post.schedule.image ? `<img src="storage/${post.schedule.image}" alt="スケジュール画像" class="img-fluid mt-2">` : ''}
+                    </div>
+                ` : ''}
+    
+                <!-- ボタン -->
+                <div class="mt-3">
+                    <button type="button" class="btn btn-sm btn-outline-primary reply-toggle" data-post-id="${post.id}">返信する</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary reply-show" data-post-id="${post.id}">返信を見る</button>
+                </div>
+    
+                <!-- 返信フォーム -->
+                <form id="reply-form-${post.id}" class="d-none mt-3">
+                    <textarea class="form-control reply-comment" rows="2" placeholder="返信を入力"></textarea>
+                    <input type="file" class="form-control mt-2 reply-image" accept="image/*">
+                    <button type="button" class="btn btn-secondary btn-sm mt-2 send-reply" data-post-id="${post.id}">返信する</button>
+                    <div class="reply-error text-danger mt-2" style="display: none;"></div>
+                </form>
+    
+                <!-- 返信リスト -->
+                <div id="reply-list-${post.id}" class="reply-list mt-3 d-none"></div>
+            </div>
+        `;
+    
+        postList.prepend(postHtml);  // 新しい投稿をリストに追加
+    }
+    
     /**
      * 返信フォームの表示・非表示
      */
@@ -388,7 +437,178 @@ $(document).ready(function() {
 
         });
     });
+    document.addEventListener('DOMContentLoaded', function () {
+        const postContents = document.querySelectorAll('.post-content');
+    
+        postContents.forEach(content => {
+            const originalText = content.textContent;
+            const linkifiedText = originalText.replace(
+                /(https?:\/\/[^\s]+)/g,
+                '<a href="$1" class="external-link" data-url="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+            );
+            content.innerHTML = linkifiedText;
+        });
+    
+        // 確認ページを挟む処理
+        const links = document.querySelectorAll('.external-link');
+        links.forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault(); // デフォルトのリンク遷移を無効化
+                const originalUrl = this.dataset.url; // 元のリンクURL
+                const confirmPageUrl = `/confirm?url=${encodeURIComponent(originalUrl)}`; // 確認ページのURLを生成
+                window.location.href = confirmPageUrl; // 確認ページにリダイレクト
+            });
+        });
+    });
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        // リンクプレビュー対象を取得
+        const linkPreviews = document.querySelectorAll('.link-preview');
+    
+        linkPreviews.forEach(link => {
+            const url = link.dataset.url;
+    
+            fetch(`/fetch-ogp?url=${encodeURIComponent(url)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('OGP取得エラー:', data.error);
+                        return;
+                    }
+    
+                    // プレビューHTMLを生成
+                    const previewHTML = `
+                        <div class="preview-box border rounded d-flex p-2 mt-2">
+                            <img src="${data.image || '/path/to/default-image.jpg'}" 
+                                 alt="${data.title}" 
+                                 class="preview-image me-3" 
+                                 style="width: 80px; height: 80px; object-fit: cover;">
+                            <div>
+                                <strong>${data.title}</strong>
+                                <p class="text-muted">${data.description}</p>
+                            </div>
+                        </div>
+                    `;
+    
+                    // プレビューを挿入
+                    const previewContainer = link.closest('.post').querySelector('.ogp-preview-container');
+                    previewContainer.insertAdjacentHTML('beforeend', previewHTML);
+                })
+                .catch(error => {
+                    console.error('OGP情報の取得に失敗しました:', error);
+                });
+        });
+    });
 
-      
+    function addPostToList(post) {
+        const postList = $('#timeline');
+        let postContent = post.post;
+        let linkPreviewHtml = '';
+    
+        // 投稿内容内のリンクを抽出
+        const urls = extractUrls(postContent);
+    
+        // リンクが見つかった場合、OGPデータを取得
+        if (urls && urls.length > 0) {
+            // 非同期処理内でOGPデータを取得
+            const ogpData = fetchOGP(urls[0]); // 最初のURLだけ取得（複数URLにも対応可能）
+    
+            if (ogpData) {
+                linkPreviewHtml = `
+                    <div class="link-preview mt-3">
+                        <strong>リンクプレビュー</strong>
+                        <div class="border p-2">
+                            <a href="${ogpData.url}" target="_blank">
+                                <h5>${ogpData.title}</h5>
+                                <p>${ogpData.description}</p>
+                                <img src="${ogpData.image}" alt="Preview image" class="img-fluid">
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else {
+                console.log('OGPデータが取得できませんでした');
+            }
+    
+            // 投稿内容のURLをリンクに変換
+            postContent = postContent.replace(urls[0], `<a href="${urls[0]}" target="_blank">${urls[0]}</a>`);
+        }
+    
+        // 投稿HTMLを生成
+        const postHtml = `
+            <div class="post border rounded p-3 mb-4" id="post-${post.id}">
+                <!-- 投稿者情報 -->
+                <div class="d-flex align-items-center">
+                    <img src="${post.user.icon_url}" alt="${post.user.name}" class="rounded-circle me-2" style="width: 40px;">
+                    <strong>${post.user.name}</strong>
+                </div>
+    
+                <!-- 投稿内容 -->
+                <p>${postContent}</p>
+                ${linkPreviewHtml}  <!-- リンクプレビューを表示 -->
+    
+                <!-- 投稿画像 -->
+                ${post.image ? `<img src="storage/${post.image}" alt="投稿画像" class="img-fluid mt-2">` : ''}
+    
+                <!-- スケジュール情報 -->
+                ${post.schedule ? `
+                    <div class="schedule-info mt-3 border rounded p-3">
+                        <h5 class="mb-2">予定情報</h5>
+                        <div class="d-flex align-items-center">
+                            ${post.schedule.favorite && post.schedule.favorite.icon_url ? `
+                                <img src="${post.schedule.favorite.icon_url}" alt="${post.schedule.favorite.name}" class="rounded-circle me-2" style="width: 30px;">
+                            ` : ''}
+                            <strong>${post.favorite ? post.favorite.name : '未設定'}</strong>
+                        </div>
+                        <div class="mt-2">
+                            <strong>タイトル:</strong> ${post.schedule.title || 'タイトルなし'}<br>
+                            <strong>内容:</strong> ${post.schedule.content || '内容なし'}<br>
+                            <strong>開始日時:</strong> ${post.schedule.start_date || '未設定'} ${post.schedule.start_time || ''}<br>
+                            <strong>終了日時:</strong> ${post.schedule.end_date || '未設定'} ${post.schedule.end_time || ''}<br>
+                            ${post.schedule.url ? `<a href="${post.schedule.url}" target="_blank">リンクはこちら</a>` : ''}
+                        </div>
+                        ${post.schedule.image ? `<img src="storage/${post.schedule.image}" alt="スケジュール画像" class="img-fluid mt-2">` : ''}
+                    </div>
+                ` : ''}
+    
+                <!-- ボタン -->
+                <div class="mt-3">
+                    <button type="button" class="btn btn-sm btn-outline-primary reply-toggle" data-post-id="${post.id}">返信する</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary reply-show" data-post-id="${post.id}">返信を見る</button>
+                </div>
+    
+                <!-- 返信フォーム -->
+                <form id="reply-form-${post.id}" class="d-none mt-3">
+                    <textarea class="form-control reply-comment" rows="2" placeholder="返信を入力"></textarea>
+                    <input type="file" class="form-control mt-2 reply-image" accept="image/*">
+                    <button type="button" class="btn btn-secondary btn-sm mt-2 send-reply" data-post-id="${post.id}">返信する</button>
+                    <div class="reply-error text-danger mt-2" style="display: none;"></div>
+                </form>
+    
+                <!-- 返信リスト -->
+                <div id="reply-list-${post.id}" class="reply-list mt-3 d-none"></div>
+            </div>
+        `;
+    
+        postList.prepend(postHtml);  // 新しい投稿をリストに追加
+    }
 
-      
+    $(document).ready(function () {
+        // 定期的に新しい投稿をチェック（例：5秒ごとに確認）
+        setInterval(async function () {
+            try {
+                const response = await fetch('/timeline/new-posts');  // 新規投稿を取得するAPIエンドポイント
+                if (response.ok) {
+                    const newPosts = await response.json();
+                    if (newPosts.length > 0) {
+                        newPosts.forEach(post => {
+                            addPostToList(post);  // 新規投稿をリストに追加
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('新規投稿の取得に失敗しました:', error);
+            }
+        }, 5000);  // 5秒ごとに新規投稿を確認
+    });
+    

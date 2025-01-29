@@ -168,4 +168,51 @@ class OshiController extends Controller
         }
     }
     
+    public function show($id)
+    {
+        // favoriteテーブルからデータを取得
+        $favorite = Favorite::findOrFail($id);
+
+        // 詳細ページにデータを渡す
+        return view('Oshi.detail', compact('favorite'));
+    }
+
+    // 編集ページを表示
+    public function edit($id)
+    {
+        $favorite = Favorite::findOrFail($id); // 指定されたIDのデータを取得
+        return view('Oshi.edit', compact('favorite'));
+    }
+
+    // 更新処理
+    public function update(Request $request, $id)
+    {
+        $favorite = Favorite::findOrFail($id);
+
+        // 入力データのバリデーション
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'introduction' => 'nullable|string',
+            'image_1' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image_2' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image_3' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image_4' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        // フィールドを更新
+        $favorite->name = $request->name;
+        $favorite->introduction = $request->introduction;
+
+        // 画像アップロード処理
+        foreach (['image_1', 'image_2', 'image_3', 'image_4'] as $imageField) {
+            if ($request->hasFile($imageField)) {
+                $path = $request->file($imageField)->store('public/favorites');
+                $favorite->$imageField = basename($path); // パスを保存
+            }
+        }
+
+        $favorite->save(); // 更新を保存
+
+        return redirect()->route('oshi.show', $favorite->id)->with('success', '推しの情報が更新されました。');
+    }
 }

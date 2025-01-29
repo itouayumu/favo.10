@@ -8,29 +8,35 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
-use App\Models\ToSchedule; 
+use App\Models\ToSchedule;
+use App\Models\ToFavorite;
 use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
 {
     // スケジュール表示
-    public function schedule(Request $request)
-    {
-        $currentDate = Carbon::now()->locale('ja');
-        if ($request->has('month')) {
-            $currentDate = Carbon::createFromFormat('Y-m', $request->input('month'))->locale('ja');
-        }
-
-        $currentMonth = $currentDate->format('Y年n月');
-        $schedules = Schedule::whereMonth('start_date', $currentDate->month)
-                             ->whereYear('start_date', $currentDate->year)
-                             ->get();
-
-        $previousMonth = $currentDate->copy()->subMonth()->format('Y-m');
-        $nextMonth = $currentDate->copy()->addMonth()->format('Y-m');
-
-        return view('schedules.schedule', compact('schedules', 'currentMonth', 'currentDate', 'previousMonth', 'nextMonth'));
+public function schedule(Request $request)
+{
+    $currentDate = Carbon::now()->locale('ja');
+    if ($request->has('month')) {
+        $currentDate = Carbon::createFromFormat('Y-m', $request->input('month'))->locale('ja');
     }
+
+    $currentMonth = $currentDate->format('Y年n月');
+    
+    // 中間テーブルを通じてスケジュールを取得
+    $schedules = ToSchedule::where('user_id', auth()->user()->id) // ログイン中のユーザーのIDに絞り込む
+
+        ->with('schedule') // スケジュールの詳細をロード
+        ->get()
+        ->pluck('schedule'); // 実際のスケジュールデータを抽出
+
+    $previousMonth = $currentDate->copy()->subMonth()->format('Y-m');
+    $nextMonth = $currentDate->copy()->addMonth()->format('Y-m');
+
+    return view('schedules.schedule', compact('schedules', 'currentMonth', 'currentDate', 'previousMonth', 'nextMonth'));
+}
+
 
     // スケジュール詳細表示
     public function show($id)
@@ -45,52 +51,70 @@ class ScheduleController extends Controller
         return view('schedules.create');
     }
 
-    // 推しの名前検索
-    public function searchFavorites(Request $request)
-    {
-        $query = $request->input('query');
-        $favorites = DB::table('favorite')
-            ->where('name', 'LIKE', "%{$query}%")
-            ->select('id', 'name')
-            ->get();
+// 推しの名前検索
+public function searchFavorites(Request $request)
+{
+    $query = $request->input('query');
 
-        return response()->json($favorites);
+    // ログインしているユーザーのIDを取得
+    $userId = auth()->id();
+
+    // ログインユーザーのToFavoriteから関連するFavoriteを検索
+    $favorites = ToFavorite::where('user_id', $userId) // ユーザーIDで絞り込み
+        ->whereHas('favorite', function ($q) use ($query) {
+            $q->where('name', 'LIKE', "%{$query}%"); // 名前で検索
+        })
+        ->with('favorite:id,name') // 必要なカラムのみ取得
+        ->get()
+        ->pluck('favorite'); // favoriteのみ抽出
+
+    return response()->json($favorites);
+}
+
+
+  // スケジュールの保存
+public function store(Request $request)
+{
+    // バリデーション
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'content' => 'nullable|string',
+        'oshiname' => 'required|integer|exists:favorite,id',
+        'start_date' => 'required|date',
+        'start_time' => 'required|date_format:H:i',
+        'end_date' => 'required|date',
+        'end_time' => 'required|date_format:H:i',
+    ]);
+
+    $imagePath = null;
+
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('images', 'public');
     }
 
-    // スケジュールの保存
-    public function store(Request $request)
-    {
-        // バリデーション
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'nullable|string',
-            'oshiname' => 'required|integer|exists:favorite,id',
-            'start_date' => 'required|date',
-            'start_time' => 'required|date_format:H:i',
-            'end_date' => 'required|date',
-            'end_time' => 'required|date_format:H:i',
-        ]);
+    // スケジュールを作成
+    $schedule = Schedule::create([
+        'user_id' => auth()->user()->id,
+        'title' => $request->input('title'),
+        'content' => $request->input('content', ''),
+        'start_date' => $request->input('start_date'),
+        'start_time' => $request->input('start_time'),
+        'end_date' => $request->input('end_date'),
+        'end_time' => $request->input('end_time'),
+        'favorite_id' => $request->input('oshiname'),
+        'image' => $imagePath,
+    ]);
 
-        $imagePath = null;
+    // ToScheduleテーブルに登録
+    ToSchedule::create([
+        'user_id' => auth()->user()->id,
+        'schedule_id' => $schedule->id, // 作成したスケジュールのIDを使用
+        'delete_flag' => false, // 必要に応じて適切な値を設定
+    ]);
 
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images', 'public');
-        }
+    return redirect('/schedules')->with('success', 'スケジュールが作成されました');
+}
 
-        Schedule::create([
-            'user_id' => auth()->user()->id,
-            'title' => $request->input('title'),
-            'content' => $request->input('content', ''),
-            'start_date' => $request->input('start_date'),
-            'start_time' => $request->input('start_time'),
-            'end_date' => $request->input('end_date'),
-            'end_time' => $request->input('end_time'),
-            'favorite_id' => $request->input('oshiname'),
-            'image' => $imagePath,
-        ]);
-
-        return redirect('/schedules')->with('success', 'スケジュールが作成されました');
-    }
 
     // スケジュール編集画面表示   
     
