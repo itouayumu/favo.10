@@ -113,6 +113,10 @@
     font-size: 20px;
 }
 
+.favorites{
+    display: flex;
+}
+
 .img-name{
     width: 100px;
     height: 100px;
@@ -130,8 +134,10 @@
     height: 70px;
 }
 
-.image-name .redimg{
+.img-name .redimg{
     position: absolute;
-    width: 10px;
-    height: 20px;
+    width: 30px;
+    height: 100px;
+    transform: rotate(20deg);
+    top: -40px;
 }
