@@ -122,13 +122,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
-.img-name img{
+.img-name .favorite-img{
     width: 70px;
     height: 70px;
 }
 
-.img-name h5{
-    margin: 0;
+.image-name .redimg{
+    position: absolute;
+    width: 10px;
+    height: 20px;
 }

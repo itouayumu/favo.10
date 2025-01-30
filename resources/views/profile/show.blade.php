@@ -55,8 +55,8 @@
                                         : asset('img/default.png') }}" 
                                         alt="{{ $favorite->name }}" class="favorite-img">
                                 </a>
+                                <!-- <img src="{{ asset('img/red.png') }}" alt="赤いテープ" class="redimg"> -->
                             </div>
-                            <h5>{{ $favorite->name }}</h5>
 
                             <!-- Visibility toggle button -->
                             @if ($favorite->pivot->hidden_flag == 1)
