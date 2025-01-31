@@ -108,7 +108,7 @@ function displaySchedules(date) {
             foundSchedule = true;
             const item = document.createElement('button'); // ボタンとして作成
             item.classList.add('schedule-item');
-            item.innerHTML = `<strong>${schedule.oshiname}: ${schedule.title}</strong>`;
+            item.innerHTML = `<strong>配信タイトル：${schedule.title}</strong>`;
             item.onclick = () => showEditPage(schedule); // 編集ページへの移動
             scheduleItems.appendChild(item);
         }
