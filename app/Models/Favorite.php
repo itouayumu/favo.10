@@ -48,4 +48,9 @@ class Favorite extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function genre()
+    {
+        return $this->belongsTo(Genre::class, 'genre_id');
+    }
 }
