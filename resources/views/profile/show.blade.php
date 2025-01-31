@@ -5,7 +5,10 @@
 @endsection
 
 @section('content')
-    <div class="card">
+<div class="card">
+    <div class="btn">
+        <button class="e_btn" onclick="location.href='{{ route('profile.edit') }}'">編集</button>
+    </div>
         <!-- Profile Header -->
         <div class="card-header">
             <img src="{{ $user->image ? asset('storage/' . $user->image) : 'https://via.placeholder.com/150' }}"
@@ -76,10 +79,9 @@
 
             <!-- Edit and Logout Buttons -->
             <div class="d-flex justify-content-between mt-3">
-                <button class="btn btn-primary" onclick="location.href='{{ route('profile.edit') }}'">編集</button>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit">ログアウト</button>
+                    <button type="submit" class="logout-btn">ログアウト</button>
                 </form>
             </div>
         </div>
