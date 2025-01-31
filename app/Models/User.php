@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable
 {
@@ -54,5 +55,11 @@ public function getImageUrlAttribute()
     public function toFavorites()
     {
         return $this->hasMany(ToFavorite::class, 'user_id'); // `to_favorite` テーブルとのリレーション
+    }
+    protected function iconUrl(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->image ? asset('storage/' . $this->image) : null;
+        });
     }
 }

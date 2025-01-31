@@ -41,6 +41,7 @@ class Post extends Model
     public function schedule()
     {
         return $this->belongsTo(Schedule::class, 'schedule_id', 'id'); // 'schedule_id' が正しい外部キーであることを指定
+        return $this->hasOne(Schedule::class, 'post_id');
     }
     
 

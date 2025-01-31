@@ -13,6 +13,8 @@
 <body>
     <header>
         <img src="{{ asset('img/rogo.png') }}" alt="ロゴ" class="rogo">
+        <a href="profile"><img src="{{ auth()->user()->icon_url }}" alt="ユーザーアイコン" class="usericon1"></a>
+
     </header>
 
 

@@ -19,6 +19,15 @@ header .rogo{
     width: 170px;
     object-fit: cover;
 }
+.usericon1{
+    height: 65px;
+    width: 65px;
+    object-fit:cover;
+    position: relative;
+    left: 110px;
+    bottom: 5px;
+    border-radius: 50%;
+}
 
 .container{
     background-image: url('../img/frame.png'), url('../img/CorkBoard.jpg'), url('../img/frame.png');

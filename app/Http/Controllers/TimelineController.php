@@ -245,27 +245,86 @@ private function getMetaTag($html, $property)
     // 特定投稿の返信取得
     public function fetchReplies($postId)
     {
-        $replies = Reply::with('user')
-                        ->where('post_id', $postId)
-                        ->where('delete_flag', false)
-                        ->orderBy('created_at', 'asc')
-                        ->get();
+        $replies = Reply::with([
+            'user:id,name,image',
+            'replies.user:id,name,image',
+            'schedule:id,title,image,favorite_id,start_date,start_time,end_date,end_time,content,url', // 🔍 ここを修正
+            'schedule.favorite:id,name,image_1'
+        ])
+        ->where('post_id', $postId)
+        ->where('delete_flag', false)
+        ->orderBy('created_at', 'asc')
+        ->get();
 
-        return response()->json($replies);
+            // データ整形
+    $newPostsTransformed = $replies->map(function ($post) {
+        return [
+            'id' => $post->id,
+            'post' => $post->post,
+            'created_at' => $post->created_at,
+            'user' => [
+                'id' => $post->user->id,
+                'name' => $post->user->name,
+                'icon_url' => $post->user->icon_url, // ✅ アクセサ経由で取得
+            ],
+            'schedule' => $post->schedule ? [
+                'favorite_icon' => $post->schedule->favorite->image_1 ?? null,
+                'favorite_name' => $post->schedule->favorite->name ?? null,
+                'title' => $post->schedule->title ?? 'タイトルなし',
+                'start_date'=>$post->schedule->start_date,
+                'start_time'=>$post->schedule->start_time,
+                'end_date'=>$post->schedule->end_date,
+                'end_time'=>$post->schedule->end_time,
+                'image' => $post->schedule->image ? asset('storage/' . $post->schedule->image) : null,
+            ] : null,
+        ];
+    });
+
+
+        return response()->json($newPostsTransformed);
     }
     public function getNewPosts(Request $request)
 {
-    // 最後に確認した時刻を取得（セッションやクッキーから）
     $lastChecked = $request->session()->get('last_checked', now()->subMinutes(5));
 
-    // 新規投稿を取得
-    $newPosts = Post::where('created_at', '>', $lastChecked)
-                    ->with('user') // 投稿者情報を含める
-                    ->get();
+    $newPosts = Post::with([
+        'user:id,name,image',
+        'replies.user:id,name,image',
+        'schedule:id,title,image,favorite_id,start_date,start_time,end_date,end_time,content,url', // 🔍 ここを修正
+        'schedule.favorite:id,name,image_1'
+    ])
+    ->where('created_at', '>', $lastChecked)
+    ->where('delete_flag', false)
+    ->orderBy('created_at', 'desc')
+    ->get();
 
-    // 現在時刻をセッションに保存
+    // データ整形
+    $newPostsTransformed = $newPosts->map(function ($post) {
+        return [
+            'id' => $post->id,
+            'post' => $post->post,
+            'created_at' => $post->created_at,
+            'user' => [
+                'id' => $post->user->id,
+                'name' => $post->user->name,
+                'icon_url' => $post->user->icon_url, // ✅ アクセサ経由で取得
+            ],
+            'schedule' => $post->schedule ? [
+                'favorite_icon' => $post->schedule->favorite->image_1 ?? null,
+                'favorite_name' => $post->schedule->favorite->name ?? null,
+                'title' => $post->schedule->title ?? 'タイトルなし',
+                'start_date'=>$post->schedule->start_date,
+                'start_time'=>$post->schedule->start_time,
+                'end_date'=>$post->schedule->end_date,
+                'end_time'=>$post->schedule->end_time,
+                'image' => $post->schedule->image ? asset('storage/' . $post->schedule->image) : null,
+            ] : null,
+        ];
+    });
+
+    // 最終チェック時間を更新
     $request->session()->put('last_checked', now());
 
-    return response()->json($newPosts);
+    return response()->json($newPostsTransformed);
 }
 }

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReplyController;
+use App\Http\Controllers\TimelineController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,11 +16,14 @@ use App\Http\Controllers\ReplyController;
 |
 */
 
+// ユーザー情報の取得（認証が必要）
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
-    // 返信の保存
+});
+
+// 返信の保存
 Route::post('/replies/store', [ReplyController::class, 'store'])->name('replies.store');
 
 // 返信の取得
 Route::get('/replies/fetch/{postId}', [ReplyController::class, 'fetch'])->name('replies.fetch');
-});
+

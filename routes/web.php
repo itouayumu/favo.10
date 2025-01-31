@@ -188,4 +188,10 @@ Route::get('/fetch-ogp', function (Illuminate\Http\Request $request) {
 
 
 Route::get('/fetch-ogp', [OGPController::class, 'fetchOGP']);
-Route::get('/timeline/new-posts', [TimelineController::class, 'getNewPosts']);
+Route::get('/timeline/new-posts', [TimelineController::class, 'fetchTimeline']);
+
+Route::get('/search', [TimelineController::class, 'search']);
+
+Route::middleware(['web'])->group(function () {
+    Route::get('/timeline/new-posts', [TimelineController::class, 'getNewPosts']);
+});

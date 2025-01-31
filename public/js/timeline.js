@@ -564,25 +564,23 @@ $(document).ready(function() {
                 ${post.image ? `<img src="storage/${post.image}" alt="投稿画像" class="img-fluid mt-2">` : ''}
     
                 <!-- スケジュール情報 -->
-                ${post.schedule ? `
-                    <div class="schedule-info mt-3 border rounded p-3">
-                        <h5 class="mb-2">予定情報</h5>
-                        <div class="d-flex align-items-center">
-                            ${post.schedule.favorite && post.schedule.favorite.icon_url ? `
-                                <img src="${post.schedule.favorite.icon_url}" alt="${post.schedule.favorite.name}" class="rounded-circle me-2" style="width: 30px;">
-                            ` : ''}
-                            <strong>${post.favorite ? post.favorite.name : '未設定'}</strong>
-                        </div>
-                        <div class="mt-2">
-                            <strong>タイトル:</strong> ${post.schedule.title || 'タイトルなし'}<br>
-                            <strong>内容:</strong> ${post.schedule.content || '内容なし'}<br>
-                            <strong>開始日時:</strong> ${post.schedule.start_date || '未設定'} ${post.schedule.start_time || ''}<br>
-                            <strong>終了日時:</strong> ${post.schedule.end_date || '未設定'} ${post.schedule.end_time || ''}<br>
-                            ${post.schedule.url ? `<a href="${post.schedule.url}" target="_blank">リンクはこちら</a>` : ''}
-                        </div>
-                        ${post.schedule.image ? `<img src="storage/${post.schedule.image}" alt="スケジュール画像" class="img-fluid mt-2">` : ''}
-                    </div>
-                ` : ''}
+${post.schedule ? `
+    <div class="schedule-info mt-3 border rounded p-3">
+        <h5 class="mb-2">予定情報</h5>
+        <div class="d-flex align-items-center">
+
+            <strong>${post.schedule.favorite_name || '未設定'}</strong>
+        </div>
+        <div class="mt-2">
+            <strong>タイトル:</strong> ${post.schedule.title || 'タイトルなし'}<br>
+            <strong>内容:</strong> ${post.schedule.content || '内容なし'}<br>
+            <strong>開始日時:</strong> ${post.schedule.start_date || '未設定'} ${post.schedule.start_time || ''}<br>
+            ${post.schedule.url ? `<a href="${post.schedule.url}" target="_blank">リンクはこちら</a>` : ''}
+        </div>
+        ${post.schedule.image ? `<img src="${post.schedule.image}" alt="スケジュール画像" class="img-fluid mt-2">` : ''}
+    </div>
+` : ''}
+
     
                 <!-- ボタン -->
                 <div class="mt-3">
@@ -624,4 +622,91 @@ $(document).ready(function() {
             }
         }, 5000);  // 5秒ごとに新規投稿を確認
     });
-    postForm
+document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById("searchInput");
+    const searchResults = document.getElementById("searchResults");
+
+    searchInput.addEventListener("input", function() {
+        let query = searchInput.value.trim();
+
+        if (query.length === 0) {
+            searchResults.innerHTML = ""; // 空ならリセット
+            return;
+        }
+
+        fetch(`/search?query=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(posts => {
+                searchResults.innerHTML = ""; // 結果をクリア
+                
+                if (posts.length === 0) {
+                    searchResults.innerHTML = "<p>該当する投稿がありません。</p>";
+                    return;
+                }
+
+                posts.forEach(post => {
+                    let postContent = post.post ? post.post : '内容なし';
+                    let linkPreviewHtml = post.link_preview ? `<div class="link-preview">${post.link_preview}</div>` : '';
+
+                    let postElement = document.createElement("div");
+                    postElement.innerHTML = `
+                        <div class="post border rounded p-3 mb-4" id="post-${post.id}">
+                            <!-- 投稿者情報 -->
+                            <div class="d-flex align-items-center">
+                                <img src="${post.user.icon_url}" alt="${post.user.name}" class="rounded-circle me-2" style="width: 40px;">
+                                <strong>${post.user.name}</strong>
+                            </div>
+
+                            <!-- 投稿内容 -->
+                            <p>${postContent}</p>
+                            ${linkPreviewHtml}
+
+                            <!-- 投稿画像 -->
+                            ${post.image ? `<img src="storage/${post.image}" alt="投稿画像" class="img-fluid mt-2">` : ''}
+
+                            <!-- スケジュール情報 -->
+                            ${post.schedule ? `
+                                <div class="schedule-info mt-3 border rounded p-3">
+                                    <h5 class="mb-2">予定情報</h5>
+                                    <div class="d-flex align-items-center">
+                                        ${post.schedule.favorite && post.schedule.favorite.icon_url ? `
+                                            <img src="${post.schedule.favorite.icon_url}" alt="${post.schedule.favorite.name}" class="rounded-circle me-2" style="width: 30px;">
+                                        ` : ''}
+                                        <strong>${post.favorite ? post.favorite.name : '未設定'}</strong>
+                                    </div>
+                                    <div class="mt-2">
+                                        <strong>タイトル:</strong> ${post.schedule.title || 'タイトルなし'}<br>
+                                        <strong>内容:</strong> ${post.schedule.content || '内容なし'}<br>
+                                        <strong>開始日時:</strong> ${post.schedule.start_date || '未設定'} ${post.schedule.start_time || ''}<br>
+                                        <strong>終了日時:</strong> ${post.schedule.end_date || '未設定'} ${post.schedule.end_time || ''}<br>
+                                        ${post.schedule.url ? `<a href="${post.schedule.url}" target="_blank">リンクはこちら</a>` : ''}
+                                    </div>
+                                    ${post.schedule.image ? `<img src="storage/${post.schedule.image}" alt="スケジュール画像" class="img-fluid mt-2">` : ''}
+                                </div>
+                            ` : ''}
+
+                            <!-- ボタン -->
+                            <div class="mt-3">
+                                <button type="button" class="btn btn-sm btn-outline-primary reply-toggle" data-post-id="${post.id}">返信する</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary reply-show" data-post-id="${post.id}">返信を見る</button>
+                            </div>
+
+                            <!-- 返信フォーム -->
+                            <form id="reply-form-${post.id}" class="d-none mt-3">
+                                <textarea class="form-control reply-comment" rows="2" placeholder="返信を入力"></textarea>
+                                <input type="file" class="form-control mt-2 reply-image" accept="image/*">
+                                <button type="button" class="btn btn-secondary btn-sm mt-2 send-reply" data-post-id="${post.id}">返信する</button>
+                                <div class="reply-error text-danger mt-2" style="display: none;"></div>
+                            </form>
+
+                            <!-- 返信リスト -->
+                            <div id="reply-list-${post.id}" class="reply-list mt-3 d-none"></div>
+                        </div>
+                    `;
+
+                    searchResults.appendChild(postElement);
+                });
+            })
+            .catch(error => console.error("検索エラー:", error));
+    });
+});
