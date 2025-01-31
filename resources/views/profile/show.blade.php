@@ -5,7 +5,10 @@
 @endsection
 
 @section('content')
-    <div class="card">
+<div class="card">
+    <div class="btn">
+        <button class="e_btn" onclick="location.href='{{ route('profile.edit') }}'">編集</button>
+    </div>
         <!-- Profile Header -->
         <div class="card-header">
             <img src="{{ $user->image ? asset('storage/' . $user->image) : 'https://via.placeholder.com/150' }}"
@@ -55,8 +58,8 @@
                                         : asset('img/default.png') }}" 
                                         alt="{{ $favorite->name }}" class="favorite-img">
                                 </a>
+                                <img src="{{ asset('img/red.png') }}" alt="赤いテープ" class="redimg">
                             </div>
-                            <h5>{{ $favorite->name }}</h5>
 
                             <!-- Visibility toggle button -->
                             @if ($favorite->pivot->hidden_flag == 1)
@@ -76,10 +79,9 @@
 
             <!-- Edit and Logout Buttons -->
             <div class="d-flex justify-content-between mt-3">
-                <button class="btn btn-primary" onclick="location.href='{{ route('profile.edit') }}'">編集</button>
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit">ログアウト</button>
+                    <button type="submit" class="logout-btn">ログアウト</button>
                 </form>
             </div>
         </div>
