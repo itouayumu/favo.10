@@ -29,7 +29,7 @@
                 @endforeach
             </div>
             <h2 class="f_name">{{ $recommended->name }}</h2>
-            <p class="f_intro">{{ $recommended->introduction }}</p>
+            <p class="f_intro">{{ $recommended->genre->genre_name ?? '未分類' }}</p>
             <p class="f_count">お気に入り数: {{ $recommended->favorite_count }}</p>
         </div>
             <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
