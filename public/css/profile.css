@@ -1,6 +1,6 @@
 .card{
     overflow-y: auto;
-    height: 370px;
+    height: 60%;
     margin-bottom: 50px;
     /*IE(Internet Explorer)・Microsoft Edgeへの対応*/
     -ms-overflow-style: none;

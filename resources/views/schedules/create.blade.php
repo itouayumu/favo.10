@@ -8,8 +8,8 @@
 <h1 class="heading">予定を作成</h1>
 
 <div class="form-container">
-<img src="{{ asset('img/osipin.png') }}" alt="押しピン" class="osipin">
-<form action="/schedules" method="POST" enctype="multipart/form-data">
+    <form action="/schedules" method="POST" enctype="multipart/form-data">
+    <img src="{{ asset('img/osipin.png') }}" alt="押しピン" class="osipin">
     @csrf
 
     <!-- 推しの名前検索 -->

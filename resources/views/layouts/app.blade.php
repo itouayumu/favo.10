@@ -23,6 +23,7 @@
         @yield('content')
     </div>
 
+<div class="footer">
     <footer>
         <ul>
             <li class="profile"><p>プロフィール</p><a href="/profile"><img src="{{asset('img/profile.png')}}" alt="プロフィール"></a></li>
@@ -32,6 +33,7 @@
             <li class="shop"><p>ショップ</p><a href=""><img src="{{asset('img/shop.png')}}" alt="ショップ"></a></li>
         </ul>
     </footer>
+</div>
 
     <!-- JavaScriptのリンクなど -->
     <script src="{{ asset('js/app.js') }}"></script>
