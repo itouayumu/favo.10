@@ -1,13 +1,11 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>推しの新規登録</title>
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}"> <!-- スタイルを適用する場合 -->
-</head>
-<body>
-    <div class="container">
+@extends('layouts.app')
+
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/r_create.css') }}">
+@endsection
+
+@section('content')
+    <div class="c_form">
         <h1>推しの新規登録</h1>
 
         <!-- エラーメッセージの表示 -->
@@ -73,7 +71,5 @@
             </div>
 
             <button type="submit" class="btn btn-primary">登録</button>
-        </form>
     </div>
-</body>
-</html>
+@endsection

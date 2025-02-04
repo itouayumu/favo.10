@@ -16,7 +16,7 @@
     background-image: url('../img/me09.png');
     background-size: cover;
     background-repeat: no-repeat;
-    height: 300px;
+    height: 55%;
     margin-bottom: 30px;
     padding: 1px;
     overflow-y: auto;
@@ -31,18 +31,19 @@
     display: none;
   }
 
-.form-container .osipin{
-    width: 50px;
-    height: 30px;
-    position: absolute;
-    top: 140px;
-    right: 620px;
-}
-
 .form-container form {
     display: flex;
     flex-direction: column;
     padding: 10px;
+    position: relative;
+}
+
+.form-container form .osipin{
+    width: 50px;
+    height: 30px;
+    position: absolute;
+    top: -5px;
+    right: 45%;
 }
 
 .form-container label {
