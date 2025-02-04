@@ -75,7 +75,8 @@ class TagController extends Controller
             'delete_flag' => 0,
         ]);
 
-        return redirect()->route('tags.publicTags')->with('success', 'タグが作成されました');
+        return redirect()->back()->with('success', 'タグが作成されました');
+
     }
 
     // 公開/非公開の切り替え
