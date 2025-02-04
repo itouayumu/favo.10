@@ -1,371 +1,358 @@
-        .container{
-            text-align: center;
-            position: relative;
-        }
+.container {
+    text-align: center;
+    position: relative;
+}
 
-        .container h1{
-            margin: 0;
-            width: 100%;
-            font-size: 20px;
-            background-color: #ffffff;
-        }
+.container h1 {
+    margin: 0;
+    width: 100%;
+    font-size: 20px;
+    background-color: #ffffff;
+}
 
-        .calendar{
-            position: relative;
-            background-color: #ffffff;
-            margin-top: 10px;
-            margin-bottom: 20px;
-            padding: 10px;
-        }
+.calendar {
+    position: relative;
+    background-color: #ffffff;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+}
 
-        .calendar .osipin1{
-            width: 50px;
-            height: 30px;
-            position: absolute;
-            top: -8px;
-            left: -8px;
-        }
+.calendar .osipin1 {
+    width: 50px;
+    height: 30px;
+    position: absolute;
+    top: -8px;
+    left: -8px;
+}
 
-        .calendar .osipin2{
-            width: 50px;
-            height: 30px;
-            position: absolute;
-            top: -8px;
-            right: -8px;
-        }
+.calendar .osipin2 {
+    width: 50px;
+    height: 30px;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+}
 
-        .month{
-            display: flex;
-            justify-content: space-between;
-        }
+.month {
+    display: flex;
+    justify-content: space-between;
+}
 
-        .month .current-month{
-            margin-left: 15px;
-            font-size: 30px;
-        }
+.month .current-month {
+    margin-left: 15px;
+    font-size: 30px;
+}
 
-        .month .current-year{
-            margin-right: 15px;
-            margin-bottom: 5px;
-            align-self: flex-end;
-        }
+.month .current-year {
+    margin-right: 15px;
+    margin-bottom: 5px;
+    align-self: flex-end;
+}
 
-        .scroll{
-            overflow-y: auto;
-            height: 60%;
-            margin-bottom: 30px;
-            /*IE(Internet Explorer)・Microsoft Edgeへの対応*/
-            -ms-overflow-style: none;
-            /*Firefoxへの対応*/
-            scrollbar-width: none;
-        }
+.scroll {
+    overflow-y: auto;
+    height: 60%;
+    margin-bottom: 30px;
+    /*IE(Internet Explorer)・Microsoft Edgeへの対応*/
+    -ms-overflow-style: none;
+    /*Firefoxへの対応*/
+    scrollbar-width: none;
+}
 
-        .scroll::-webkit-scrollbar{
-            display: none;
-        }
+.scroll::-webkit-scrollbar {
+    display: none;
+}
 
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 20px;
-        }
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
 
-        table {
-            width: 90%;
-            max-width: 600px;
-            margin: 0 auto;
-            border-collapse: collapse;
-        }
+table {
+    width: 90%;
+    max-width: 600px;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
 
-        th {
-            font-size: 10px;
-            text-align: center;
-            width: 30px;
-            box-sizing: border-box;
-            cursor: pointer;
-            position: relative;
-        }
+th {
+    font-size: 10px;
+    text-align: center;
+    width: 30px;
+    box-sizing: border-box;
+    cursor: pointer;
+    position: relative;
+}
 
-        td {
-            vertical-align: top;
-            background-color: #ffffff;
-            text-align: center;
-            border: 1px solid #000000;
-            padding: 10px;
-            height: 35px;
-            width: 30px;
-            box-sizing: border-box;
-            cursor: pointer;
-            position: relative;
-        }
+td {
+    vertical-align: top;
+    background-color: #ffffff;
+    text-align: center;
+    border: 1px solid #000000;
+    padding: 10px;
+    height: 35px;
+    width: 30px;
+    box-sizing: border-box;
+    cursor: pointer;
+    position: relative;
+}
 
-        td strong{
-            font-size: 10px;
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
+td strong {
+    font-size: 10px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
 
-        .selected-date {
-            background-color: #ffeb3b; /* 黄色で選択を強調 */
-            color: #333;
-        }
+.selected-date {
+    background-color: #ffeb3b; /* 黄色で選択を強調 */
+    color: #333;
+}
 
-        .has-schedule {
-            position: relative;
-        }
+.has-schedule {
+    position: relative;
+}
 
-        .has-schedule::after {
-            content: '';
-            display: block;
-            width: 10px;
-            height: 10px;
-            background-color: #4caf50; /* 緑色の丸 */
-            border-radius: 50%;
-            position: absolute;
-            right: 5px;
-        }
+.has-schedule::after {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    background-color: #4caf50; /* 緑色の丸 */
+    border-radius: 50%;
+    position: absolute;
+    right: 5px;
+}
 
-        .arrow-buttons {
-            display: flex;
-            justify-content: space-between;
-            width: 90%;
-            max-width: 600px;
-            margin-top: 10px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+.arrow-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    max-width: 600px;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
-        .arrow-buttons button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 5px;
-            font-size: 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+.arrow-buttons button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px;
+    font-size: 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
-        .arrow-buttons button:hover {
-            background-color: #45a049;
-        }
+.arrow-buttons button:hover {
+    background-color: #45a049;
+}
 
-        .schedule-list {
-            position: relative;
-            margin-top: 20px;
-            margin-bottom: 30px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 10px;
-            background-image: url("../img/me06g.png");
-            background-size: cover;
-            width: 90%;
-        }
+.schedule-list {
+    display: flex;
+    flex-direction: column; /* Align items vertically */
+    justify-content: center; /* Center items vertically */
+    align-items: center; /* Center items horizontally */
+    position: relative;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    background-image: url("../img/me06g.png");
+    background-size: cover;
+    width: 90%;
+}
 
-        .schedule-list .osipin3{
-            width: 50px;
-            height: 30px;
-            position: absolute;
-            top: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
+.schedule-list .osipin3 {
+    width: 50px;
+    height: 30px;
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+}
 
-        .schedule-item {
-            padding: 15px;
-            background-color: #fefefe;
-            margin: 10px 0;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
+.schedule-item {
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    padding: 10px;
+    margin: 5px;
+    background-color: #f0f0f0;
+    border: none;
+    cursor: pointer;
+    width: 100%; /* Optional: set a fixed width if needed */
+    box-sizing: border-box;
+}
 
-        .schedule-item:hover {
-            background-color: #f1f1f1;
-        }
+.schedule-item:hover {
+    background-color: #f1f1f1;
+}
 
-        .add-schedule-btn {
-            position: absolute;
-            bottom: 180px;
-            right: 20px;
-            background-color: #ffcc00;
-            color: black;
-            padding: 15px;
-            font-size: 18px;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            width: 60px;
-            height: 60px;
-        }
+.add-schedule-btn {
+    position: absolute;
+    bottom: 180px;
+    right: 20px;
+    background-color: #ffcc00;
+    color: black;
+    padding: 15px;
+    font-size: 18px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    width: 60px;
+    height: 60px;
+}
 
-        .add-schedule-btn:hover {
-            background-color: #ffa500;
-        }
+.add-schedule-btn:hover {
+    background-color: #ffa500;
+}
 
-        #schedule-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
-            border-radius: 10px;
-            z-index: 1000;
-        }
+#schedule-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    z-index: 1000;
+}
 
-        #modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
+#modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
 
-        .schedule-live::after {
-            background-color: red; /* リアルライブ → 赤 */
-        }
-        
-        .schedule-event::after {
-            background-color: blue; /* リアルイベント → 青 */
-        }
-        
-        .schedule-stream::after {
-            background-color: orange; /* 配信予定 → オレンジ */
-        }
-        
-        .schedule-onlive::after {
-            background-color: purple; /* ライブ配信 → 紫 */
-        }
-        
-        .schedule-goods::after {
-            background-color: yellow; /* グッズ発売日 → 黄色 */
-        }
-        
-        .schedule-default::after {
-            background-color: #4caf50; /* デフォルトは緑 */
-        }
-        #schedule-modal {
-            display: none; /* 初期状態では非表示 */
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            padding: 5px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 1001;
-        }
-        
-        #modal-overlay {
-            display: none; /* 初期状態では非表示 */
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-        }
-        .schedule-legend {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 15px;
-            gap: 10px;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-        }
-        
-        .legend-color {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
-        
-        /* 色ごとのクラス */
-        .legend-color.schedule-live {
-            background-color: red; /* リアルライブ */
-        }
-        
-        .legend-color.schedule-event {
-            background-color: blue; /* リアルイベント */
-        }
-        
-        .legend-color.schedule-stream {
-            background-color: orange; /* 配信予定 */
-        }
-        
-        .legend-color.schedule-onlive {
-            background-color: purple; /* ライブ配信 */
-        }
-        
-        .legend-color.schedule-goods {
-            background-color: yellow; /* グッズ発売日 */
-        }
-        .modal, .modal-overlay {
-            display: none; /* 初期状態では非表示 */
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 9999; /* モーダルの重なり順 */
-        }
-        
-        .modal-overlay {
-            background: rgba(0, 0, 0, 0.5); /* 半透明の背景 */
-        }
-        
-        .modal {
-            background-color: white;
-            padding: 20px;
-            margin: auto;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            max-width: 600px;
-            border-radius: 8px;
-        }
-/* 必要に応じて追加するスタイル */
+.schedule-live::after {
+    background-color: red; /* リアルライブ → 赤 */
+}
 
+.schedule-event::after {
+    background-color: blue; /* リアルイベント → 青 */
+}
 
-.modal-overlay {
+.schedule-stream::after {
+    background-color: orange; /* 配信予定 → オレンジ */
+}
+
+.schedule-onlive::after {
+    background-color: purple; /* ライブ配信 → 紫 */
+}
+
+.schedule-goods::after {
+    background-color: yellow; /* グッズ発売日 → 黄色 */
+}
+
+.schedule-default::after {
+    background-color: #4caf50; /* デフォルトは緑 */
+}
+
+#schedule-modal {
+    display: none; /* 初期状態では非表示 */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 5px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+}
+
+#modal-overlay {
+    display: none; /* 初期状態では非表示 */
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    display: none;
+    z-index: 1000;
+}
+
+.schedule-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 15px;
+    gap: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.legend-color {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+/* 色ごとのクラス */
+.legend-color.schedule-live {
+    background-color: red; /* リアルライブ */
+}
+
+.legend-color.schedule-event {
+    background-color: blue; /* リアルイベント */
+}
+
+.legend-color.schedule-stream {
+    background-color: orange; /* 配信予定 */
+}
+
+.legend-color.schedule-onlive {
+    background-color: purple; /* ライブ配信 */
+}
+
+.legend-color.schedule-goods {
+    background-color: yellow; /* グッズ発売日 */
+}
+
+.modal,
+.modal-overlay {
+    display: none; /* 初期状態では非表示 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999; /* モーダルの重なり順 */
+}
+
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.5); /* 半透明の背景 */
 }
 
 .modal {
-    position: fixed;
+    background-color: white;
+    padding: 20px;
+    margin: auto;
     top: 20%;
     left: 50%;
     transform: translateX(-50%);
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    display: none;
-    max-width: 80%;
-    overflow: hidden;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 8px;
 }
 
 .modal-content {
@@ -431,6 +418,7 @@
     background-color: #00796b;
     color: white;
 }
+
 .schedule-legend {
     display: flex;
     justify-content: center;
@@ -473,4 +461,8 @@
 .legend-color.schedule-goods {
     background-color: yellow; /* グッズ発売日 */
 }
-   
+
+.modal {
+    width: 55vw;
+    padding: 10px;
+}
