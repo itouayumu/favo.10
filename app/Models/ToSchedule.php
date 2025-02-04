@@ -13,6 +13,7 @@ class ToSchedule extends Model
 
     protected $fillable = [
         'user_id',
+        'favorite_id',
         'schedule_id',
         'delete_flag',
     ];
@@ -21,7 +22,10 @@ class ToSchedule extends Model
    {
        return $this->belongsTo(User::class, 'user_id');
    }
-
+   public function Favorite()
+   {
+       return $this->belongsTo(Favorite::class, 'favorite_id');
+   }
    /**
     * スケジュールリレーション
     */
@@ -29,6 +33,8 @@ class ToSchedule extends Model
    {
        return $this->belongsTo(Schedule::class, 'schedule_id');
    }
+
+   
 }
 
 

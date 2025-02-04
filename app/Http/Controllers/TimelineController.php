@@ -327,4 +327,28 @@ private function getMetaTag($html, $property)
 
     return response()->json($newPostsTransformed);
 }
+public function ogp($url,Request $request){
+    $url = $request->query('url');
+    if (!$url) {
+        return response()->json(['error' => 'URLが指定されていません。'], 400);
+    }
+
+    try {
+        $response = Http::get($url);
+        $html = $response->body();
+
+        // メタ情報を取得する
+        preg_match('/<meta property="og:title" content="([^"]+)"/', $html, $titleMatch);
+        preg_match('/<meta property="og:description" content="([^"]+)"/', $html, $descriptionMatch);
+        preg_match('/<meta property="og:image" content="([^"]+)"/', $html, $imageMatch);
+
+        return response()->json([
+            'title' => $titleMatch[1] ?? 'タイトルなし',
+            'description' => $descriptionMatch[1] ?? '説明なし',
+            'image' => $imageMatch[1] ?? null,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'OGP情報の取得に失敗しました。'], 500);
+    }
+}
 }

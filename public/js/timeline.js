@@ -88,6 +88,31 @@ $(document).ready(function () {
         }
         return null;
     }
+    // OGPデータを取得する非同期関数
+async function fetchOGP(url) {
+    try {
+        const response = await fetch(`/get-ogp?url=${encodeURIComponent(url)}`);
+        if (response.ok) {
+            return await response.json(); // OGPデータを返す
+        } else {
+            console.error('OGPデータの取得に失敗しました:', response.status);
+        }
+    } catch (error) {
+        console.error('OGPデータの取得に失敗しました:', error);
+    }
+    return null;
+}
+
+// 投稿をリストに追加する非同期関数
+async function addPostToList(post) {
+    const ogpData = await fetchOGP(post.url);  // 非同期でOGPデータを取得
+    if (ogpData) {
+        // OGPデータを使って投稿をリストに追加する処理
+        console.log('OGPデータ:', ogpData);
+    } else {
+        console.error('OGPデータが取得できませんでした');
+    }
+}
     
     async function addPostToList(post) {
         const postList = $('#timeline');
@@ -512,8 +537,24 @@ $(document).ready(function() {
         const urlRegex = /(https?:\/\/[^\s]+)/g;
         return text.match(urlRegex) || [];
     }
-
-    function addPostToList(post) {
+    
+    // OGPデータを取得する非同期関数
+    async function fetchOGP(url) {
+        try {
+            const response = await fetch(`/get-ogp?url=${encodeURIComponent(url)}`);
+            if (response.ok) {
+                return await response.json(); // OGPデータを返す
+            } else {
+                console.error('OGPデータの取得に失敗しました:', response.status);
+            }
+        } catch (error) {
+            console.error('OGPデータの取得に失敗しました:', error);
+        }
+        return null;
+    }
+    
+    // 投稿をリストに追加する非同期関数
+    async function addPostToList(post) {
         const postList = $('#timeline');
         let postContent = post.post;
         let linkPreviewHtml = '';
@@ -524,7 +565,7 @@ $(document).ready(function() {
         // リンクが見つかった場合、OGPデータを取得
         if (urls && urls.length > 0) {
             // 非同期処理内でOGPデータを取得
-            const ogpData = fetchOGP(urls[0]); // 最初のURLだけ取得（複数URLにも対応可能）
+            const ogpData = await fetchOGP(urls[0]); // 最初のURLだけ取得（複数URLにも対応可能）
     
             if (ogpData) {
                 linkPreviewHtml = `
@@ -564,23 +605,22 @@ $(document).ready(function() {
                 ${post.image ? `<img src="storage/${post.image}" alt="投稿画像" class="img-fluid mt-2">` : ''}
     
                 <!-- スケジュール情報 -->
-${post.schedule ? `
-    <div class="schedule-info mt-3 border rounded p-3">
-        <h5 class="mb-2">予定情報</h5>
-        <div class="d-flex align-items-center">
-
-            <strong>${post.schedule.favorite_name || '未設定'}</strong>
-        </div>
-        <div class="mt-2">
-            <strong>タイトル:</strong> ${post.schedule.title || 'タイトルなし'}<br>
-            <strong>内容:</strong> ${post.schedule.content || '内容なし'}<br>
-            <strong>開始日時:</strong> ${post.schedule.start_date || '未設定'} ${post.schedule.start_time || ''}<br>
-            ${post.schedule.url ? `<a href="${post.schedule.url}" target="_blank">リンクはこちら</a>` : ''}
-        </div>
-        ${post.schedule.image ? `<img src="${post.schedule.image}" alt="スケジュール画像" class="img-fluid mt-2">` : ''}
-    </div>
-` : ''}
-
+                ${post.schedule ? `
+                    <div class="schedule-info mt-3 border rounded p-3">
+                        <h5 class="mb-2">予定情報</h5>
+                        <div class="d-flex align-items-center">
+                            <strong>${post.schedule.favorite_name || '未設定'}</strong>
+                        </div>
+                        <div class="mt-2">
+                            <strong>タイトル:</strong> ${post.schedule.title || 'タイトルなし'}<br>
+                            <strong>内容:</strong> ${post.schedule.content || '内容なし'}<br>
+                            <strong>開始日時:</strong> ${post.schedule.start_date || '未設定'} ${post.schedule.start_time || ''}<br>
+                            ${post.schedule.url ? `<a href="${post.schedule.url}" target="_blank">リンクはこちら</a>` : ''}
+                        </div>
+                        ${post.schedule.image ? `<img src="${post.schedule.image}" alt="スケジュール画像" class="img-fluid mt-2">` : ''}
+                    </div>
+                    
+                ` : ''}
     
                 <!-- ボタン -->
                 <div class="mt-3">
@@ -603,7 +643,7 @@ ${post.schedule ? `
     
         postList.prepend(postHtml);  // 新しい投稿をリストに追加
     }
-
+    
     $(document).ready(function () {
         // 定期的に新しい投稿をチェック（例：5秒ごとに確認）
         setInterval(async function () {
@@ -622,6 +662,7 @@ ${post.schedule ? `
             }
         }, 5000);  // 5秒ごとに新規投稿を確認
     });
+    
 document.addEventListener("DOMContentLoaded", function() {
     const searchInput = document.getElementById("searchInput");
     const searchResults = document.getElementById("searchResults");

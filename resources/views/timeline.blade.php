@@ -14,7 +14,7 @@
 <body>
     <header>
         <img src="{{ asset('img/rogo.png') }}" alt="ロゴ" class="rogo">
-        <a href="profile"><img src="{{ auth()->user()->icon_url }}" alt="ユーザーアイコン" class="usericon1"></a>
+        <a href="/profile"><img src="{{ auth()->user()->icon_url }}" alt="ユーザーアイコン" class="usericon1"></a>
     </header>
 
     <div class="container">
@@ -250,5 +250,6 @@
     <script src="{{ asset('js/serch_favorite.js') }}"></script>
     <!-- 右下ボタン用のアイコン（Bootstrap Icons） -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    
 </body>
 </html>

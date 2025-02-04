@@ -16,6 +16,7 @@ return new class extends Migration
 
             // ユーザーID（外部キー）
             $table->unsignedBigInteger('user_id'); // ユーザーID
+            $table->unsignedBigInteger('favorite_id');  // 推しID (外部キー)
 
             // スケジュールID（外部キー）
             $table->unsignedBigInteger('schedule_id'); // スケジュールID
@@ -25,6 +26,7 @@ return new class extends Migration
 
             // 外部キー制約
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade'); // ユーザーIDに関連する外部キー
+            $table->foreign('favorite_id')->references('id')->on('favorite')->onDelete('cascade');
             $table->foreign('schedule_id')->references('id')->on('schedules')->onDelete('cascade'); // スケジュールIDに関連する外部キー
 
             $table->timestamps(); // created_at, updated_at

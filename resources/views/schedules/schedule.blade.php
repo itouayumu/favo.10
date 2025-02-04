@@ -5,7 +5,8 @@
 @endsection
 
 @section('content')
-    <h1>予定表</h1>
+
+<h1>予定表</h1>
 
 <div class="scroll">
 
@@ -20,6 +21,13 @@
             <span id="current-month" class="current-month"></span>
             <span id="current-year" class="current-year"></span>
         </div>
+        <div class="schedule-legend">
+    <div class="legend-item"><span class="legend-color schedule-live"></span> リアルライブ</div>
+    <div class="legend-item"><span class="legend-color schedule-event"></span> リアルイベント</div>
+    <div class="legend-item"><span class="legend-color schedule-stream"></span> 配信予定</div>
+    <div class="legend-item"><span class="legend-color schedule-onlive"></span> ライブ配信</div>
+    <div class="legend-item"><span class="legend-color schedule-goods"></span> グッズ発売日</div>
+</div>
 
         <img src="{{ asset('img/osipin.png') }}" alt="押しピン" class="osipin1">
         <img src="{{ asset('img/osipin.png') }}" alt="押しピン" class="osipin2">
@@ -50,22 +58,38 @@
 
     <button class="add-schedule-btn" onclick="window.location.href='/schedules/create'">+</button>
 
-    <!-- モーダル -->
-    <div id="schedule-modal">
-        <h2 id="modal-title"></h2>
-        <p id="modal-content"></p>
-        <div class="modal-actions">
+    <!-- モーダルオーバーレイ -->
+    <div id="modal-overlay" class="modal-overlay"></div>
 
-            <button onclick="closeModal()">閉じる</button>
+    <!-- モーダル -->
+    <div id="schedule-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-image">
+                <img id="modal-image" src="" alt="Schedule Image" style=" display: none;" />
+            </div>
+            <div class="modal-info">
+                <h2 id="modal-title"></h2>
+                <p id="modal-oshiname"></p> <!-- 推しの名前 -->
+                <p id="modal-start-time"></p> <!-- 開始日時 -->
+                <p id="modal-end-time"></p> <!-- 終了日時 -->
+                <p id="modal-content"></p> <!-- 内容 -->
+                <div class="modal-actions">
+                    <button onclick="closeModal()">閉じる</button>
+
+    <button id="edit-schedule-btn">編集</button> <!-- 追加 -->
+
+                </div>
+            </div>
         </div>
     </div>
-    <div id="modal-overlay" onclick="closeModal()"></div>
+
 </div>
+
 @endsection
 
 @section('scripts')
 <script>
-    let schedules = JSON.parse('@json($schedules)');
+    let schedules = JSON.parse('@json($schedules)'); 
 </script>
 <script src="{{ asset('js/callender.js') }}"></script>
 @endsection

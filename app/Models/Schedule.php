@@ -21,17 +21,23 @@ class Schedule extends Model
         'end_time',
         'url',
     ];
-    // Scheduleモデルに推し情報へのリレーション
 
+    /**
+     * 推し情報（Favorite）とのリレーション
+     */
+// Schedule.php モデル
 public function favorite()
 {
-    return $this->belongsTo(Favorite::class, 'favorite_id');  // favorite_idをキーにFavoriteモデルと関連付け
-}
-public function posts()
-{
-    return $this->hasMany(Post::class, 'schedule_id', 'id'); // 'schedule_id' がリレーションキーであることを指定
+    return $this->belongsTo(Favorite::class, 'favorite_id'); // 'favorite_id' は外部キー
 }
 
 
+    /**
+     * 関連する投稿（Post）とのリレーション
+     */
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'schedule_id');
+    }
+    
 }
-
