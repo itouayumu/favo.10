@@ -1,0 +1,131 @@
+.card{
+    overflow-y: auto;
+    height: 60%;
+    margin-bottom: 50px;
+    /*IE(Internet Explorer)・Microsoft Edgeへの対応*/
+    -ms-overflow-style: none;
+    /*Firefoxへの対応*/
+    scrollbar-width: none;
+}
+
+.card::-webkit-scrollbar{
+    display: none;
+}
+
+.card .btn{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.card .e_btn{
+    width: 80px;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 13px;
+    background-color: #ffffff;
+}
+
+.card-header{
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    position: relative;
+}
+
+.card-header .icon{
+    height: 80px;
+    width: 80px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.username{
+    margin: 0;
+    height: 50px;
+    width: 150px;
+    background-image: url('../img/nametag.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center; /* 水平方向に中央揃え */
+    align-items: center; /* 垂直方向に中央揃え */
+    color: #ffffff;
+}
+
+.introduction{
+    height: 300px;
+    margin-top: 20px;
+}
+
+.introduction .description{
+    padding: 10px;
+    height: 100%;
+    background-image: url('../img/me09.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    overflow-wrap: break-word;
+}
+
+.tag{
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.tag p{
+    width: 100%;
+    background-color: #ffffffb4;
+}
+
+.tag li{
+    height: 50px;
+    width: 110px;
+    list-style: none;
+    background-image: url("../img/tag.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center; /* 水平方向に中央揃え */
+    align-items: center; /* 垂直方向に中央揃え */
+    position: relative;
+}
+
+.tag a{
+    font-size: 12px;
+    color: black;
+    text-decoration: none;
+}
+
+.tag span{
+    position: absolute;
+    bottom: 0;
+    right: 3px;
+}
+
+form{
+    background-color: #ffffffb4;
+    padding: 10px;
+}
+
+form input[type="text"]{
+    width: 98%;
+}
+
+.create{
+    text-align: center;
+}
+
+.create button{
+    width: 90%;
+    padding: 10px;
+    margin: 8px;
+    border: none;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    font-size: 16px;
+    border: solid 1px #000000;;
+    border-radius: 4px;
+    cursor: pointer;
+}
