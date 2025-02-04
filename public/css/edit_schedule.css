@@ -9,7 +9,7 @@
     margin-bottom: 3px;
     height: 50px;
     width: 180px;
-    font-size: 22px;
+    font-size: 25px;
 }
 
 .c_form {
@@ -28,7 +28,7 @@
     scrollbar-width: none;
 }
 
-input[type="text"]{
+input[type="text"], input[type="date"], input[type="time"]{
     margin-top: 10px;
     width: 100%;
     background-color: #F2F2F2;
@@ -53,21 +53,7 @@ textarea{
     resize: none;
 }
 
-.custom-select {
-    background-color: #F2F2F2;
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    border: none;
-    border-bottom: solid 1px #000000;
-    margin-bottom: 12px;
-    color: #333;
-    appearance: none;
-    cursor: pointer;
-    transition: border-color 0.2s ease-in-out;
-}
-
-.custom-select:focus, input[type="text"]:focus, textarea:focus{
+input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus, textarea:focus{
     border-bottom: 2px solid #da3c41;
     outline: none;
 }
@@ -99,11 +85,11 @@ textarea{
     display: none;
 }
 
-.submit-btn{
+.update, .delete{
     text-align: center;
 }
 
-.btn{
+button{
     width: 90%;
     padding: 10px;
     margin: 8px;
