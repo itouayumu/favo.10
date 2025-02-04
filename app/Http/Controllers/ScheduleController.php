@@ -196,12 +196,26 @@ public function registerSchedule(Request $request)
         'schedule_id' => 'required|exists:schedules,id',
     ]);
 
+    // 現在のユーザーIDを取得
     $userId = auth()->id();
 
-    // データの保存
+    // スケジュール情報を取得
+    $schedule = Schedule::find($validated['schedule_id']);
+
+    if (!$schedule) {
+        return response()->json([
+            'message' => '指定されたスケジュールが存在しません。',
+        ], 404);
+    }
+
+    // スケジュールからfavorite_idを取得
+    $favoriteId = $schedule->favorite_id;
+
+    // データの保存（favorite_idも一緒に保存）
     $toSchedule = ToSchedule::create([
         'user_id' => $userId,
         'schedule_id' => $validated['schedule_id'],
+        'favorite_id' => $favoriteId, // favorite_idを保存
         'delete_flag' => false,
     ]);
 
@@ -211,5 +225,4 @@ public function registerSchedule(Request $request)
         'data' => $toSchedule,
     ]);
 }
-
 }
