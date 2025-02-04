@@ -228,3 +228,249 @@
             background: rgba(0, 0, 0, 0.5);
             z-index: 999;
         }
+
+        .schedule-live::after {
+            background-color: red; /* リアルライブ → 赤 */
+        }
+        
+        .schedule-event::after {
+            background-color: blue; /* リアルイベント → 青 */
+        }
+        
+        .schedule-stream::after {
+            background-color: orange; /* 配信予定 → オレンジ */
+        }
+        
+        .schedule-onlive::after {
+            background-color: purple; /* ライブ配信 → 紫 */
+        }
+        
+        .schedule-goods::after {
+            background-color: yellow; /* グッズ発売日 → 黄色 */
+        }
+        
+        .schedule-default::after {
+            background-color: #4caf50; /* デフォルトは緑 */
+        }
+        #schedule-modal {
+            display: none; /* 初期状態では非表示 */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 5px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+        }
+        
+        #modal-overlay {
+            display: none; /* 初期状態では非表示 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .schedule-legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .legend-color {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        /* 色ごとのクラス */
+        .legend-color.schedule-live {
+            background-color: red; /* リアルライブ */
+        }
+        
+        .legend-color.schedule-event {
+            background-color: blue; /* リアルイベント */
+        }
+        
+        .legend-color.schedule-stream {
+            background-color: orange; /* 配信予定 */
+        }
+        
+        .legend-color.schedule-onlive {
+            background-color: purple; /* ライブ配信 */
+        }
+        
+        .legend-color.schedule-goods {
+            background-color: yellow; /* グッズ発売日 */
+        }
+        .modal, .modal-overlay {
+            display: none; /* 初期状態では非表示 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999; /* モーダルの重なり順 */
+        }
+        
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.5); /* 半透明の背景 */
+        }
+        
+        .modal {
+            background-color: white;
+            padding: 20px;
+            margin: auto;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 600px;
+            border-radius: 8px;
+        }
+/* 必要に応じて追加するスタイル */
+
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+}
+
+.modal {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    display: none;
+    max-width: 80%;
+    overflow: hidden;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.modal-image {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.modal-info {
+    flex: 2;
+    padding-left: 20px;
+}
+
+.schedule-item {
+    display: block;
+    padding: 10px;
+    margin: 5px;
+    background-color: #f0f0f0;
+    border: none;
+    cursor: pointer;
+}
+
+.today {
+    background-color: #ffe0b2;
+}
+
+.selected-date {
+    background-color: #8bc34a;
+}
+
+.modal-actions {
+    margin-top: 20px;
+}
+
+.modal-actions button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.modal-actions button:hover {
+    background-color: #45a049;
+}
+
+#schedule-items button {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #e0f7fa;
+    border: 1px solid #00796b;
+    cursor: pointer;
+}
+
+#schedule-items button:hover {
+    background-color: #00796b;
+    color: white;
+}
+.schedule-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 15px;
+    gap: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.legend-color {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+/* 色ごとのクラス */
+.legend-color.schedule-live {
+    background-color: red; /* リアルライブ */
+}
+
+.legend-color.schedule-event {
+    background-color: blue; /* リアルイベント */
+}
+
+.legend-color.schedule-stream {
+    background-color: orange; /* 配信予定 */
+}
+
+.legend-color.schedule-onlive {
+    background-color: purple; /* ライブ配信 */
+}
+
+.legend-color.schedule-goods {
+    background-color: yellow; /* グッズ発売日 */
+}
+   

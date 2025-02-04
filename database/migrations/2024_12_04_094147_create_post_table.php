@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();  // 投稿ID (主キー、自動インクリメント)
             $table->unsignedBigInteger('user_id');  // ユーザーID (外部キー)
             $table->unsignedBigInteger('favorite_id');  // 推しID (外部キー)
-            $table->unsignedBigInteger('schedule_id');  // スケジュールID (外部キー)
+            $table->unsignedBigInteger('schedule_id')->nullable();  // スケジュールID (外部キー)
             $table->text('post');  // 投稿内容
             $table->text('image')->nullable();  // 画像 (バイナリ)
             $table->timestamps();  // 作成日と更新日

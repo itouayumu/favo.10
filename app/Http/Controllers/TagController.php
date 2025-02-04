@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Tag;
+use Illuminate\Support\Facades\DB;
 
 class TagController extends Controller
 {
@@ -22,28 +23,31 @@ class TagController extends Controller
     }
 
     // クリック数を増加
-    public function incrementClickCount($tagId)
-{
-    $userId = auth()->id();
-    $user = User::findOrFail($userId);
-
-    // タグが存在するか確認
-    $tag = $user->tags()->where('tags.id', $tagId)->first();
-    if (!$tag) {
-        return response()->json(['success' => false, 'message' => 'タグが見つかりません。']);
+    public function incrementClickCount($tagId, $userId)
+    {
+        // ユーザーが存在するか確認
+        $user = User::find($userId);
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'ユーザーが見つかりません。']);
+        }
+    
+        // タグがそのユーザーに関連しているか確認
+        $tag = $user->tags()->where('tags.id', $tagId)->first();
+        if (!$tag) {
+            return response()->json(['success' => false, 'message' => 'タグが見つかりません。']);
+        }
+    
+        // クリック数をインクリメント
+        $user->tags()->updateExistingPivot($tagId, [
+            'count' => DB::raw('count + 1'),
+        ]);
+    
+        // 最新のクリック数を取得
+        $clickCount = $user->tags()->where('tags.id', $tagId)->first()->pivot->count;
+    
+        return response()->json(['success' => true, 'click_count' => $clickCount]);
     }
-
-    // クリック数をインクリメント
-    $user->tags()->updateExistingPivot($tagId, [
-        'count' => \DB::raw('count + 1'),
-    ]);
-
-    // 最新のクリック数を取得
-    $clickCount = $user->tags()->where('tags.id', $tagId)->first()->pivot->count;
-
-    return response()->json(['success' => true, 'click_count' => $clickCount]);
-}
-
+    
     // タグの作成
     public function create(Request $request)
     {

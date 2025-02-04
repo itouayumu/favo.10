@@ -15,28 +15,31 @@ use Illuminate\Support\Facades\Auth;
 class ScheduleController extends Controller
 {
     // スケジュール表示
-public function schedule(Request $request)
-{
-    $currentDate = Carbon::now()->locale('ja');
-    if ($request->has('month')) {
-        $currentDate = Carbon::createFromFormat('Y-m', $request->input('month'))->locale('ja');
-    }
-
-    $currentMonth = $currentDate->format('Y年n月');
+    public function schedule(Request $request)
+    {
+        $currentDate = Carbon::now()->locale('ja');
+        if ($request->has('month')) {
+            $currentDate = Carbon::createFromFormat('Y-m', $request->input('month'))->locale('ja');
+        }
     
-    // 中間テーブルを通じてスケジュールを取得
-    $schedules = ToSchedule::where('user_id', auth()->user()->id) // ログイン中のユーザーのIDに絞り込む
+        $currentMonth = $currentDate->format('Y年n月');
+        
+        // 中間テーブルを通じてスケジュールと推し情報を取得
+// ScheduleController.php
 
-        ->with('schedule') // スケジュールの詳細をロード
-        ->get()
-        ->pluck('schedule'); // 実際のスケジュールデータを抽出
+// 中間テーブルを通じてスケジュールと推し情報を取得
+$schedules = ToSchedule::where('user_id', auth()->user()->id) // ログイン中のユーザーのIDに絞り込む
+    ->with(['schedule.favorite']) // スケジュールと推しの詳細をロード
+    ->get()
+    ->pluck('schedule'); 
+// 実際のスケジュールデータを抽出
 
-    $previousMonth = $currentDate->copy()->subMonth()->format('Y-m');
-    $nextMonth = $currentDate->copy()->addMonth()->format('Y-m');
-
-    return view('schedules.schedule', compact('schedules', 'currentMonth', 'currentDate', 'previousMonth', 'nextMonth'));
-}
-
+        $previousMonth = $currentDate->copy()->subMonth()->format('Y-m');
+        $nextMonth = $currentDate->copy()->addMonth()->format('Y-m');
+    
+        return view('schedules.schedule', compact('schedules', 'currentMonth', 'currentDate', 'previousMonth', 'nextMonth'));
+    }
+    
 
     // スケジュール詳細表示
     public function show($id)
@@ -109,6 +112,7 @@ public function store(Request $request)
     ToSchedule::create([
         'user_id' => auth()->user()->id,
         'schedule_id' => $schedule->id, // 作成したスケジュールのIDを使用
+        'favorite_id' => $schedule->favorite_id, // 作成したスケジュールの推しIDを使用
         'delete_flag' => false, // 必要に応じて適切な値を設定
     ]);
 

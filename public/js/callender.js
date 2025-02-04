@@ -1,5 +1,4 @@
 let currentDate = new Date();
- // サーバーから受け取ったスケジュールデータ
 let selectedDateElement = null;
 
 function formatDate(date) {
@@ -10,27 +9,28 @@ function formatDate(date) {
 }
 
 function updateMonthDisplay() {
-    const yearDisplay = document.getElementById('current-year')
+    const yearDisplay = document.getElementById('current-year');
     const monthDisplay = document.getElementById('current-month');
     const monthName = currentDate.toLocaleString('default', { month: 'long' });
-    const firstDay = formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
-    const lastDay = formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0));
-
     yearDisplay.textContent = `${currentDate.getFullYear()}`;
     monthDisplay.textContent = `${monthName}`;
 }
 
 function displaySchedulesForDate(date) {
     let hasSchedule = false;
+    let scheduleType = '';
 
     schedules.forEach(schedule => {
         if (schedule.start_date === date) {
             hasSchedule = true;
+            scheduleType = schedule.title; // タイトルを取得
         }
     });
 
-    // 予定がある場合、緑の丸を表示
-    return hasSchedule ? '<div class="has-schedule"></div>' : ''; // 予定なしの場合は空
+    if (hasSchedule) {
+        return `<div class="has-schedule ${getScheduleClass(scheduleType)}"></div>`;
+    }
+    return ''; // 予定なしの場合は空
 }
 
 function updateCalendar() {
@@ -90,12 +90,6 @@ function selectDate(day) {
     displaySchedules(selectedDate);
 }
 
-// スケジュール編集ページにリダイレクトする関数
-function showEditPage(schedule) {
-    window.location.href = `/schedules/${schedule.id}/edit`; // 編集ページに遷移
-}
-
-// スケジュールを表示する関数
 function displaySchedules(date) {
     const formattedDate = formatDate(date);
     document.getElementById('current-date').textContent = `日付: ${formattedDate}`;
@@ -107,9 +101,10 @@ function displaySchedules(date) {
         if (schedule.start_date === formattedDate) {
             foundSchedule = true;
             const item = document.createElement('button'); // ボタンとして作成
+            const oshiname = schedule.favorite ? schedule.favorite.name : '推し不明';
             item.classList.add('schedule-item');
-            item.innerHTML = `<strong>${schedule.oshiname}: ${schedule.title}</strong>`;
-            item.onclick = () => showEditPage(schedule); // 編集ページへの移動
+            item.innerHTML = `<strong>${oshiname}: ${schedule.title}</strong>`;
+            item.onclick = () => openModal(schedule); // モーダルを開く
             scheduleItems.appendChild(item);
         }
     });
@@ -118,15 +113,56 @@ function displaySchedules(date) {
     }
 }
 
+function getScheduleClass(title) {
+    switch (title) {
+        case 'リアルライブ':
+            return 'schedule-live';
+        case 'リアルイベント':
+            return 'schedule-event';
+        case '配信予定':
+            return 'schedule-stream';
+        case 'ライブ配信':
+            return 'schedule-onlive';
+        case 'グッズ発売日':
+            return 'schedule-goods';
+        default:
+            return 'schedule-default';
+    }
+}
 
+// モーダル詳細を表示する関数
+function openModal(schedule) {
+    document.getElementById('modal-title').textContent = schedule.title;
+    const oshiname = schedule.favorite ? schedule.favorite.name : '推し不明';
+    document.getElementById('modal-oshiname').textContent = `推し: ${oshiname}`;
+    const startDateTime = `${schedule.start_date} ${schedule.start_time}`;
+    const endDateTime = `${schedule.end_date} ${schedule.end_time}`;
+    document.getElementById('modal-start-time').textContent = `開始日時: ${startDateTime}`;
+    document.getElementById('modal-end-time').textContent = `終了日時: ${endDateTime}`;
+    document.getElementById('modal-content').textContent = schedule.content;
+
+    const modalImage = document.getElementById('modal-image');
+    if (schedule.image) {
+        modalImage.src = `/storage/${schedule.image}`;
+        modalImage.style.display = 'block';
+    } else {
+        modalImage.style.display = 'none';
+    }
+
+    document.getElementById('schedule-modal').style.display = 'block';
+    document.getElementById('modal-overlay').style.display = 'block';
+}
+
+// モーダルを閉じる関数
+function closeModal() {
+    document.getElementById('schedule-modal').style.display = 'none';
+    document.getElementById('modal-overlay').style.display = 'none';
+}
+
+document.getElementById('modal-overlay').addEventListener('click', closeModal);
 
 document.addEventListener('DOMContentLoaded', () => {
     updateMonthDisplay();
     updateCalendar();
     displaySchedules(currentDate); // 初期表示で今日の日付の予定を表示
 });
-
-
-
-
-showModal

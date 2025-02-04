@@ -48,7 +48,7 @@ Route::get('/tags', [TagController::class, 'publicTags'])->name('users.tags.publ
 
 // タグクリックカウント
 Route::post('/tags/{tagId}/count', [TagController::class, 'incrementClickCount']);
-Route::get('/tags/increment/{tagId}', [TagController::class, 'incrementClickCount'])->name('tags.incrementClickCount');
+Route::get('/tags/increment/{tagId}/{userId}', [TagController::class, 'incrementClickCount'])->name('tags.incrementClickCount');
 
 //タグ作成
 Route::post('/tags/create', [TagController::class, 'create'])->name('tags.create');
@@ -159,34 +159,6 @@ Route::get('/confirm', function (Illuminate\Http\Request $request) {
     return view('confirm', ['url' => $url]);
 })->name('confirm');
 
-
-Route::get('/fetch-ogp', function (Illuminate\Http\Request $request) {
-    $url = $request->query('url');
-    if (!$url) {
-        return response()->json(['error' => 'URLが指定されていません。'], 400);
-    }
-
-    try {
-        $response = Http::get($url);
-        $html = $response->body();
-
-        // メタ情報を取得する
-        preg_match('/<meta property="og:title" content="([^"]+)"/', $html, $titleMatch);
-        preg_match('/<meta property="og:description" content="([^"]+)"/', $html, $descriptionMatch);
-        preg_match('/<meta property="og:image" content="([^"]+)"/', $html, $imageMatch);
-
-        return response()->json([
-            'title' => $titleMatch[1] ?? 'タイトルなし',
-            'description' => $descriptionMatch[1] ?? '説明なし',
-            'image' => $imageMatch[1] ?? null,
-        ]);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'OGP情報の取得に失敗しました。'], 500);
-    }
-})->name('fetch-ogp');
-
-
-
 Route::get('/fetch-ogp', [OGPController::class, 'fetchOGP']);
 Route::get('/timeline/new-posts', [TimelineController::class, 'fetchTimeline']);
 
@@ -195,3 +167,4 @@ Route::get('/search', [TimelineController::class, 'search']);
 Route::middleware(['web'])->group(function () {
     Route::get('/timeline/new-posts', [TimelineController::class, 'getNewPosts']);
 });
+Route::get('/api/schedules', [ScheduleController::class, 'getSchedules']);

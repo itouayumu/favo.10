@@ -22,8 +22,15 @@
 
     <br><br>
 
-    <label for="title">タイトル</label><br>
-    <input type="text" id="title" name="title" required value="{{ old('title') }}"><br><br>
+    <label for="title">タイトル</label><br> 
+    <select name="title" id="title"required value="{{ old('title') }}">
+  <option value="">選択してください</option>
+  <option value="リアルライブ">リアルライブ</option>
+  <option value="リアルイベント">リアルイベント</option>
+  <option value="配信予定">配信予定</option>
+  <option value="ライブ配信">ライブ配信</option>
+  <option value="グッズ発売日">グッズ発売日</option>
+</select>
 
     <label for="start_date">開始日</label><br>
     <input type="date" id="start_date" name="start_date" required value="{{ old('start_date') }}"><br><br>
