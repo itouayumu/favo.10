@@ -4,7 +4,7 @@
     <a href="#" class="tag-click" 
        data-tag-id="{{ $tagId }}" 
        data-favorite-id="{{ $favoriteId }}">
-        #{{ $tagName }}</span>
+        {{ $tagName }}{{ $tagCount }}
     </a>
     <span id="click-count-{{ $tagId }}">{{ $tagCount }}</span>
 </div>
