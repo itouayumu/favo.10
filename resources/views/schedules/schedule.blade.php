@@ -75,6 +75,9 @@
                 <p id="modal-content"></p> <!-- 内容 -->
                 <div class="modal-actions">
                     <button onclick="closeModal()">閉じる</button>
+
+    <button id="edit-schedule-btn">編集</button> <!-- 追加 -->
+
                 </div>
             </div>
         </div>

@@ -148,6 +148,10 @@ function openModal(schedule) {
     } else {
         modalImage.style.display = 'none';
     }
+    const editButton = document.getElementById('edit-schedule-btn');
+    editButton.onclick = function () {
+        window.location.href = `/schedules/${schedule.id}/edit`;
+    };
 
     document.getElementById('schedule-modal').style.display = 'block';
     document.getElementById('modal-overlay').style.display = 'block';
