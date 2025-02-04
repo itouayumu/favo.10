@@ -78,8 +78,9 @@
                 @error('image')<p>{{ $message }}</p>@enderror
             </div>
 
-            <!-- 更新ボタン -->
-            <button type="submit" class="btn">更新する</button>
+            <div class="submit-btn">
+                <button type="submit" class="btn">更新する</button>
+            </div>
         </form>
     </div>
 @endsection
