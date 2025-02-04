@@ -380,9 +380,7 @@ td strong {
     cursor: pointer;
 }
 
-.today {
-    background-color: #ffe0b2;
-}
+
 
 .selected-date {
     background-color: #8bc34a;
