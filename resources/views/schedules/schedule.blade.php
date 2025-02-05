@@ -89,7 +89,10 @@
 
 @section('scripts')
 <script>
-    let schedules = JSON.parse('@json($schedules)'); 
+    console.log('@json.parse($schedules)');
 </script>
+
+</script>
+
 <script src="{{ asset('js/callender.js') }}"></script>
 @endsection
