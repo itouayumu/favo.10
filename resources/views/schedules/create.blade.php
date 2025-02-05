@@ -23,7 +23,7 @@
     <br><br>
 
     <label for="title">タイトル</label><br> 
-    <select name="title" id="title"required value="{{ old('title') }}">
+    <select name="title" id="title"required value="{{ old('title') }}" class="custom-select">
   <option value="">選択してください</option>
   <option value="リアルライブ">リアルライブ</option>
   <option value="リアルイベント">リアルイベント</option>
