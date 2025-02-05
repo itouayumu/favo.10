@@ -13,13 +13,14 @@ header{
     width: 100%;
     height: 12%;
     background-image: url('../img/frame.png');
+    position: relative;
 }
 
 header .rogo{
     height: 80px;
     width: 170px;
     object-fit: cover;
-    position: relative;
+
 }
 .usericon1{
     height: 65px;
@@ -27,6 +28,8 @@ header .rogo{
     object-fit:cover;
     position: absolute;
     right: 0;
+    top: 0;
+
     border-radius: 50%;
     display: block; /* インライン要素の隙間を防ぐ */
     overflow: hidden; /* 丸くトリミングされた画像のはみ出し防止 */
