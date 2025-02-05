@@ -65,7 +65,7 @@
     <div id="schedule-modal" class="modal">
         <div class="modal-content">
             <div class="modal-image">
-                <img id="modal-image"  class="m_image" alt="Schedule Image" style=" display: none;" />
+                <img id="modal-image"  class="m_image" alt="Schedule Image" style=" display: none; height:150px; width:auto;" />
             </div>
             <div class="modal-info">
                 <h2 id="modal-title"></h2>
