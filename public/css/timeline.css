@@ -8,7 +8,7 @@ body{
 
 .container{
     overflow-y: hidden;
-    height: 465px;
+    max-height: 100%;
     overflow-y: auto;
     scrollbar-width: none;
 }
