@@ -17,3 +17,8 @@ function showSlides(n) {
     }
     slides[slideIndex - 1].style.display = "block";
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    showSlides(); // ページが読み込まれてからshowSlidesを実行
+});
+

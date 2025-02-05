@@ -75,7 +75,21 @@
     resize: none;
 }
 
-.form-container input[type="text"]:focus, .form-container input[type="date"]:focus, .form-container input[type="time"]:focus, .form-container textarea:focus{
+.custom-select {
+    background-color: #F2F2F2;
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-bottom: solid 1px #000000;
+    margin-bottom: 12px;
+    color: #333;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.form-container input[type="text"]:focus, .form-container input[type="date"]:focus, .form-container input[type="time"]:focus, .form-container textarea:focus, .custom-select:focus{
     border-bottom: 2px solid #da3c41;
     outline: none;
 }
