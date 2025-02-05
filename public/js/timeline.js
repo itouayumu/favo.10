@@ -234,7 +234,7 @@ async function addPostToList(post) {
                 }
             } catch (error) {
                 console.error('通信エラー:', error);
-                alert('通信エラーが発生しました。');
+                alert('返信がありません');
             }
         } else {
             replyList.addClass('d-none');
