@@ -42,17 +42,22 @@ class FavoriteController extends Controller
 
         // 画像の保存
         if ($request->hasFile('image_1')) {
-            $favorite->image_1 = $request->file('image_1')->store('profile_images', 'public');
+            $path = $request->file('image_1')->store('images', 'public');
+            $favorite->image_1 = asset('storage/' . $path);
         }
         if ($request->hasFile('image_2')) {
-            $favorite->image_2 = $request->file('image_2')->store('profile_images', 'public');
+            $path = $request->file('image_2')->store('images', 'public');
+            $favorite->image_2 = asset('storage/' . $path);
         }
         if ($request->hasFile('image_3')) {
-            $favorite->image_3 = $request->file('image_3')->store('profile_images', 'public');
+            $path = $request->file('image_3')->store('images', 'public');
+            $favorite->image_3 = asset('storage/' . $path);
         }
         if ($request->hasFile('image_4')) {
-            $favorite->image_4 = $request->file('image_4')->store('profile_images', 'public');
+            $path = $request->file('image_4')->store('images', 'public');
+            $favorite->image_4 = asset('storage/' . $path);
         }
+        
 
         $favorite->save();
 
