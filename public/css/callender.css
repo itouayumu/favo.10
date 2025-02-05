@@ -464,3 +464,7 @@ td strong {
     width: 55vw;
     padding: 10px;
 }
+.m_image{
+    height: 200px;
+    width: auto;
+}
