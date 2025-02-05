@@ -19,14 +19,14 @@ header .rogo{
     height: 80px;
     width: 170px;
     object-fit: cover;
+    position: relative;
 }
 .usericon1{
     height: 65px;
     width: 65px;
     object-fit:cover;
-    position: relative;
-    left: 23vw;
-    bottom: 6vw;
+    position: absolute;
+    right: 0;
     border-radius: 50%;
     display: block; /* インライン要素の隙間を防ぐ */
     overflow: hidden; /* 丸くトリミングされた画像のはみ出し防止 */
