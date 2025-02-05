@@ -236,8 +236,8 @@ footer .schedule{
 }
 
 footer .profile img , footer .timeline img , footer .search img, footer .shop img{
-    height: 40px;
-    width: 40px;
+    height: 42px;
+    width: 42px;
 }
 
 footer .schedule img{
@@ -246,7 +246,7 @@ footer .schedule img{
 }
 
 footer .profile p, footer .timeline p, footer .search p, footer .shop p{
-    font-size: 7px;
+    font-size: 6.5px;
     text-align: center;
     margin: 3px 0px 0px 0px;
 }
