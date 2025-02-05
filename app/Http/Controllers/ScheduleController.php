@@ -215,6 +215,7 @@ public function getSchedules()
     ->pluck('schedule'); 
 
 
+    
     return response()->json($schedules);
 }
 
