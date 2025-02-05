@@ -181,48 +181,41 @@ public function store(Request $request)
 {
     $userId = Auth::id(); // ログインユーザーのIDを取得
 
-    // ログインユーザーの予定を取得
-    $schedules = Schedule::where('user_id', $userId)
-                         ->orderBy('start_date', 'asc')
-                         ->get();
+    // ログインユーザーの予定を取得（推し情報も含める）
+    $schedules = ToSchedule::where('user_id', $userId)
+        ->with(['schedule.favorite']) // スケジュールと推しの情報を取得
+        ->get()
+        ->map(function ($toSchedule) {
+            return [
+                'id' => $toSchedule->schedule->id,
+                'title' => $toSchedule->schedule->title,
+                'content' => $toSchedule->schedule->content,
+                'start_date' => $toSchedule->schedule->start_date,
+                'start_time' => $toSchedule->schedule->start_time,
+                'end_date' => $toSchedule->schedule->end_date,
+                'end_time' => $toSchedule->schedule->end_time,
+                'image' => $toSchedule->schedule->image,
+                'favorite' => $toSchedule->schedule->favorite ? [
+                    'id' => $toSchedule->schedule->favorite->id,
+                    'name' => $toSchedule->schedule->favorite->name,
+                ] : null,
+            ];
+        });
+
+    return response()->json($schedules);
+}
+public function getSchedules()
+{
+    $userId = Auth::id(); // ログインユーザーのIDを取得
+
+    // ToSchedule テーブルを利用して、関連するスケジュールと推しを取得
+        $schedules = ToSchedule::where('user_id', auth()->user()->id) // ログイン中のユーザーのIDに絞り込む
+    ->with(['schedule.favorite']) // スケジュールと推しの詳細をロード
+    ->get()
+    ->pluck('schedule'); 
+
 
     return response()->json($schedules);
 }
 
-public function registerSchedule(Request $request)
-{
-    // バリデーション
-    $validated = $request->validate([
-        'schedule_id' => 'required|exists:schedules,id',
-    ]);
-
-    // 現在のユーザーIDを取得
-    $userId = auth()->id();
-
-    // スケジュール情報を取得
-    $schedule = Schedule::find($validated['schedule_id']);
-
-    if (!$schedule) {
-        return response()->json([
-            'message' => '指定されたスケジュールが存在しません。',
-        ], 404);
-    }
-
-    // スケジュールからfavorite_idを取得
-    $favoriteId = $schedule->favorite_id;
-
-    // データの保存（favorite_idも一緒に保存）
-    $toSchedule = ToSchedule::create([
-        'user_id' => $userId,
-        'schedule_id' => $validated['schedule_id'],
-        'favorite_id' => $favoriteId, // favorite_idを保存
-        'delete_flag' => false,
-    ]);
-
-    // レスポンスを返す
-    return response()->json([
-        'message' => 'スケジュールが登録されました。',
-        'data' => $toSchedule,
-    ]);
-}
 }

@@ -168,3 +168,5 @@ Route::middleware(['web'])->group(function () {
     Route::get('/timeline/new-posts', [TimelineController::class, 'getNewPosts']);
 });
 Route::get('/api/schedules', [ScheduleController::class, 'getSchedules']);
+
+Route::middleware('auth:sanctum')->get('/schedules', [ScheduleController::class, 'fetchSchedules']);
