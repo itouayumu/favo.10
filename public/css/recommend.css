@@ -13,14 +13,16 @@ header{
     width: 100%;
     height: 12%;
     background-image: url('../img/frame.png');
+    position: relative;
 }
 .usericon1{
     height: 65px;
     width: 65px;
     object-fit:cover;
-    position: relative;
-    left: 23vw;
-    bottom: 6vw;
+    position: absolute;
+    right: 0;
+    top: 0;
+
     border-radius: 50%;
     display: block; /* インライン要素の隙間を防ぐ */
     overflow: hidden; /* 丸くトリミングされた画像のはみ出し防止 */
@@ -234,8 +236,8 @@ footer .schedule{
 }
 
 footer .profile img , footer .timeline img , footer .search img, footer .shop img{
-    height: 40px;
-    width: 40px;
+    height: 42px;
+    width: 42px;
 }
 
 footer .schedule img{
@@ -244,7 +246,7 @@ footer .schedule img{
 }
 
 footer .profile p, footer .timeline p, footer .search p, footer .shop p{
-    font-size: 7px;
+    font-size: 6.5px;
     text-align: center;
     margin: 3px 0px 0px 0px;
 }
