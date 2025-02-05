@@ -60,7 +60,7 @@ class FavoriteController extends Controller
             $favorite->image_4 = $path;
         }
         $favorite->save();
-        dd($favorite);
+
 
         return redirect()->route('recommends.create')->with('success', '推しを登録しました！');
     }
