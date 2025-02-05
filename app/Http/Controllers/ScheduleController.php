@@ -218,5 +218,40 @@ public function getSchedules()
     
     return response()->json($schedules);
 }
+// ScheduleController.php
+
+public function registerSchedule(Request $request)
+{
+    // バリデーション：スケジュールIDが送信されていることを確認
+    $request->validate([
+        'schedule_id' => 'required|integer|exists:schedules,id', // スケジュールIDが存在するかチェック
+    ]);
+
+    // スケジュールIDを取得
+    $scheduleId = $request->input('schedule_id');
+    
+    // ログイン中のユーザーを取得
+    $userId = auth()->id();
+
+    // スケジュール情報を取得
+    $schedule = Schedule::findOrFail($scheduleId);
+
+    // スケジュールに紐づく推しID（favorite_id）を取得
+    $favoriteId = $schedule->favorite_id;
+
+    // 中間テーブル（ToSchedule）にデータを保存
+    $toSchedule = ToSchedule::create([
+        'user_id' => $userId,
+        'schedule_id' => $scheduleId,
+        'favorite_id' => $favoriteId, // スケジュールに紐づくfavorite_idを保存
+        'delete_flag' => false,
+    ]);
+
+    // 成功時のレスポンス
+    return response()->json([
+        'message' => 'スケジュールが登録されました',
+        'status' => 'success',
+    ]);
+}
 
 }
