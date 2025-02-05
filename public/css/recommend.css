@@ -14,7 +14,17 @@ header{
     height: 12%;
     background-image: url('../img/frame.png');
 }
-
+.usericon1{
+    height: 65px;
+    width: 65px;
+    object-fit:cover;
+    position: relative;
+    left: 23vw;
+    bottom: 6vw;
+    border-radius: 50%;
+    display: block; /* インライン要素の隙間を防ぐ */
+    overflow: hidden; /* 丸くトリミングされた画像のはみ出し防止 */
+}
 header .rogo{
     height: 80px;
     width: 170px;
@@ -243,4 +253,31 @@ footer .schedule p{
     font-size: 7px;
     text-align: center;
     margin: 5px 0px 3px 0px;
+}
+.button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #52a3ff; /* ボタンの色 */
+    color: white; /* 文字色 */
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none; /* 下線を消す */
+    border-radius: 8px; /* 角を丸く */
+    transition: background-color 0.3s, transform 0.1s;
+    height: 24px;
+    position: relative;
+    left: 5vw;
+    top: 1vw;
+}
+
+.button:hover {
+    background-color: #0056b3; /* ホバー時の色変更 */
+}
+
+.button:active {
+    transform: scale(0.95); /* クリック時に少し縮む */
+}
+.parent {
+    display: flex;
 }

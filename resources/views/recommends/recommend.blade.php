@@ -11,12 +11,14 @@
 <body>
     <header>
         <img src="{{ asset('img/rogo.png') }}" alt="ロゴ" class="rogo">
+        <a href="/profile"><img src="{{ auth()->user()->icon_url }}" alt="ユーザーアイコン" class="usericon1"></a>
     </header>
 
     <div class="content">
+        <div class="parent">
         <h1 class="heading">おすすめの推し</h1>
-        <a href="{{ route('recommends.create') }}">推し登録</a>
-
+        <a href="{{ route('recommends.create') }}" class="button">推し登録</a>
+        </div>
         @if ($recommended)
         <div class="favos">
             <div class="favo_img">

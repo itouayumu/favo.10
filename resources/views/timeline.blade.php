@@ -250,6 +250,15 @@
     <script src="{{ asset('js/serch_favorite.js') }}"></script>
     <!-- 右下ボタン用のアイコン（Bootstrap Icons） -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    
+    document.addEventListener('click', function (event) {
+    const link = event.target.closest('.external-link'); // `.external-link` をクリックしたか確認
+    if (link) {
+        event.preventDefault(); // デフォルトの動作をキャンセル
+        const originalUrl = link.dataset.url; // `data-url` から元のリンクを取得
+        const confirmPageUrl = `/confirm?url=${encodeURIComponent(originalUrl)}`;
+        window.location.href = confirmPageUrl; // 確認ページへ遷移
+    }
+});
+
 </body>
 </html>

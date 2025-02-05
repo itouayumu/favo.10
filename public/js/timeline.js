@@ -1,6 +1,6 @@
 $(document).ready(function () {
     const csrfToken = $('meta[name="csrf-token"]').attr('content'); // CSRFトークンの取得
-
+     
     // 推し検索関連要素
     const favoriteSearchInput = $('#favorite-search');
     const favoriteList = $('#favorite-list');
@@ -493,6 +493,18 @@ $(document).ready(function() {
             });
         });
     });
+
+    document.addEventListener('click', function (event) {
+    // クリックされた要素が .external-link かどうかをチェック
+    const link = event.target.closest('.external-link');
+    if (link) {
+        event.preventDefault(); // デフォルトの遷移を防ぐ
+        const originalUrl = link.dataset.url; // 元のURLを取得
+        const confirmPageUrl = `/confirm?url=${encodeURIComponent(originalUrl)}`; // 確認ページのURLを生成
+        window.location.href = confirmPageUrl; // 確認ページにリダイレクト
+    }
+});
+
     
     document.addEventListener('DOMContentLoaded', function () {
         // リンクプレビュー対象を取得
@@ -585,7 +597,8 @@ $(document).ready(function() {
             }
     
             // 投稿内容のURLをリンクに変換
-            postContent = postContent.replace(urls[0], `<a href="${urls[0]}" target="_blank">${urls[0]}</a>`);
+            postContent = postContent.replace(urls[0], `<a href="${urls[0]}" class="external-link" data-url="${urls[0]}" target="_blank">${urls[0]}</a>`);
+
         }
     
         // 投稿HTMLを生成

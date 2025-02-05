@@ -25,9 +25,11 @@ header .rogo{
     width: 65px;
     object-fit:cover;
     position: relative;
-    left: 110px;
-    bottom: 5px;
+    left: 23vw;
+    bottom: 6vw;
     border-radius: 50%;
+    display: block; /* インライン要素の隙間を防ぐ */
+    overflow: hidden; /* 丸くトリミングされた画像のはみ出し防止 */
 }
 
 .container{
