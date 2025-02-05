@@ -51,36 +51,33 @@
             </div>
 
             <label for="image_1">アイコン画像</label><br>
-            <div class="preview">
-                <label for="image_1" class="upload-icon"></label>
-                <img id="imagePreview" class="image-preview" src="{{ asset('img/kkrn_icon_user.png') }}">
-                <input type="file" id="image_1" class="file-input" name="image_1" accept="image/*"><br><br>
-                @error('image')<p>{{ $message }}</p>@enderror
-            </div>
+<div class="preview">
+    <label for="image_1" class="upload-icon"></label>
+    <img id="imagePreview1" class="image-preview" src="{{ asset('img/kkrn_icon_user.png') }}">
+    <input type="file" id="image_1" class="file-input" name="image_1" accept="image/*"><br><br>
+</div>
 
-            <label for="image_2">紹介画像1</label><br>
-            <div class="preview">
-                <label for="image_2" class="upload-icon"></label>
-                <img id="imagePreview" class="image-preview" src="{{ asset('img/kkrn_icon_user.png') }}">
-                <input type="file" id="image_2" class="file-input" name="image_2" accept="image/*"><br><br>
-                @error('image')<p>{{ $message }}</p>@enderror
-            </div>
+<label for="image_2">紹介画像1</label><br>
+<div class="preview">
+    <label for="image_2" class="upload-icon"></label>
+    <img id="imagePreview2" class="image-preview" src="{{ asset('img/kkrn_icon_user.png') }}">
+    <input type="file" id="image_2" class="file-input" name="image_2" accept="image/*"><br><br>
+</div>
 
-            <label for="image_3">紹介画像2</label><br>
-            <div class="preview">
-                <label for="image_3" class="upload-icon"></label>
-                <img id="imagePreview" class="image-preview" src="{{ asset('img/kkrn_icon_user.png') }}">
-                <input type="file" id="image_3" class="file-input" name="image_3" accept="image/*"><br><br>
-                @error('image')<p>{{ $message }}</p>@enderror
-            </div>
+<label for="image_3">紹介画像2</label><br>
+<div class="preview">
+    <label for="image_3" class="upload-icon"></label>
+    <img id="imagePreview3" class="image-preview" src="{{ asset('img/kkrn_icon_user.png') }}">
+    <input type="file" id="image_3" class="file-input" name="image_3" accept="image/*"><br><br>
+</div>
 
-            <label for="image_4">紹介画像3</label><br>
-            <div class="preview">
-                <label for="image_4" class="upload-icon"></label>
-                <img id="imagePreview" class="image-preview" src="{{ asset('img/kkrn_icon_user.png') }}">
-                <input type="file" id="image_4" class="file-input" name="image_4" accept="image/*"><br><br>
-                @error('image')<p>{{ $message }}</p>@enderror
-            </div>
+<label for="image_4">紹介画像3</label><br>
+<div class="preview">
+    <label for="image_4" class="upload-icon"></label>
+    <img id="imagePreview4" class="image-preview" src="{{ asset('img/kkrn_icon_user.png') }}">
+    <input type="file" id="image_4" class="file-input" name="image_4" accept="image/*"><br><br>
+</div>
+
             <div class="submit-btn">
                 <button type="submit" class="btn btn-primary">登録</button>
             </div>

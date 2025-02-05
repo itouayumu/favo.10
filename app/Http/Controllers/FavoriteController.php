@@ -59,8 +59,8 @@ class FavoriteController extends Controller
             $path = $request->file('image_4')->store('images', 'public');
             $favorite->image_4 = $path;
         }
-        dd($favorite);
         $favorite->save();
+        dd($favorite);
 
         return redirect()->route('recommends.create')->with('success', '推しを登録しました！');
     }
