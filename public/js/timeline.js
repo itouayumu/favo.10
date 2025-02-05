@@ -388,9 +388,7 @@ document.querySelectorAll('.register-schedule').forEach(button => {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();  // エラーレスポンス内容を取得
-                console.error('エラーレスポンス:', errorData);  // エラーの詳細をコンソールに出力
-                throw new Error(errorData.message || 'スケジュール登録に失敗しました。');
+                throw new Error('スケジュール登録に失敗しました。');
             }
 
             const data = await response.json();
@@ -405,7 +403,6 @@ document.querySelectorAll('.register-schedule').forEach(button => {
         }
     });
 });
-
 $(document).ready(function() {
     const postForm = $('#postForm');
     const submitButton = $('#postModal button[type="submit"]');
