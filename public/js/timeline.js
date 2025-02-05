@@ -377,14 +377,16 @@ document.querySelectorAll('.register-schedule').forEach(button => {
     button.addEventListener('click', async () => {
         const scheduleId = button.dataset.scheduleId;
 
+        // フォームを動的に作成
+        const formData = new FormData();
+        formData.append('schedule_id', scheduleId);
+        formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+
         try {
+            // 非同期でフォームを送信
             const response = await fetch('/register-schedule', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                },
-                body: JSON.stringify({ schedule_id: scheduleId }),
+                body: formData,
             });
 
             if (!response.ok) {
@@ -403,6 +405,7 @@ document.querySelectorAll('.register-schedule').forEach(button => {
         }
     });
 });
+
 $(document).ready(function() {
     const postForm = $('#postForm');
     const submitButton = $('#postModal button[type="submit"]');
