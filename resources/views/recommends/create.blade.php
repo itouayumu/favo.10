@@ -54,7 +54,7 @@
             <div class="preview">
                 <label for="image_1" class="upload-icon"></label>
                 <img id="imagePreview" class="image-preview" src="{{ asset('img/kkrn_icon_user.png') }}">
-                <input type="file" id="image_1" class="file-input" name="image" accept="image/*"><br><br>
+                <input type="file" id="image_1" class="file-input" name="image_1" accept="image/*"><br><br>
                 @error('image')<p>{{ $message }}</p>@enderror
             </div>
 
@@ -62,7 +62,7 @@
             <div class="preview">
                 <label for="image_2" class="upload-icon"></label>
                 <img id="imagePreview" class="image-preview" src="{{ asset('img/kkrn_icon_user.png') }}">
-                <input type="file" id="image_2" class="file-input" name="image" accept="image/*"><br><br>
+                <input type="file" id="image_2" class="file-input" name="image_2" accept="image/*"><br><br>
                 @error('image')<p>{{ $message }}</p>@enderror
             </div>
 
@@ -70,7 +70,7 @@
             <div class="preview">
                 <label for="image_3" class="upload-icon"></label>
                 <img id="imagePreview" class="image-preview" src="{{ asset('img/kkrn_icon_user.png') }}">
-                <input type="file" id="image_3" class="file-input" name="image" accept="image/*"><br><br>
+                <input type="file" id="image_3" class="file-input" name="image_3" accept="image/*"><br><br>
                 @error('image')<p>{{ $message }}</p>@enderror
             </div>
 
@@ -78,7 +78,7 @@
             <div class="preview">
                 <label for="image_4" class="upload-icon"></label>
                 <img id="imagePreview" class="image-preview" src="{{ asset('img/kkrn_icon_user.png') }}">
-                <input type="file" id="image_4" class="file-input" name="image" accept="image/*"><br><br>
+                <input type="file" id="image_4" class="file-input" name="image_4" accept="image/*"><br><br>
                 @error('image')<p>{{ $message }}</p>@enderror
             </div>
             <div class="submit-btn">
