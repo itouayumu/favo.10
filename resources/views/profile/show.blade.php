@@ -43,8 +43,8 @@
             <p>タグはありません。</p>
         @endif
     </div>
-    <h3>新しいタグを作成</h3>
-        <form action="{{ route('tags.create') }}" method="POST">
+    <h3 class="heading">新しいタグを作成</h3>
+        <form action="{{ route('tags.create') }}" method="POST" class="tag-form">
             @csrf
             <div class="form-group">
                 <label for="tag-name">タグ名</label>
@@ -57,7 +57,9 @@
                     <option value="private">非公開</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">タグを作成</button>
+            <div class="create">
+                <button type="submit" class="c_btn">タグを作成</button>
+            </div>
         </form>
 
     <!-- Introduction Section -->
