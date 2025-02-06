@@ -50,7 +50,7 @@
             <!-- 次のおすすめボタン -->
             <div class="nex">
                 <a href="{{ route('nextRecommended') }}">
-                    <button>次</button>
+                    <button onclick="location.href='{{ route('nextRecommended') }}'">次</button>
                 </a>
             </div>
         </div>
