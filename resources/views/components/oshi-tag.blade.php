@@ -6,5 +6,5 @@
        data-favorite-id="{{ $favoriteId }}">
         {{ $tagName }}{{ $tagCount }}
     </a>
-    <span id="click-count-{{ $tagId }}">{{ $tagCount }}</span>
+    <span id="click-count-{{ $tagId }}"></span>
 </div>
