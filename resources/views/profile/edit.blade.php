@@ -73,6 +73,7 @@
         <h3>新しいタグを作成</h3>
         <form action="{{ route('tags.create') }}" method="POST">
             @csrf
+            <input type="hidden" name="user_id" value="{{ $user->id }}">
             <div class="form-group">
                 <label for="tag-name">タグ名</label>
                 <input type="text" id="tag-name" name="tag_name" class="form-control" required>

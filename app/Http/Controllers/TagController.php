@@ -48,36 +48,44 @@ class TagController extends Controller
         return response()->json(['success' => true, 'click_count' => $clickCount]);
     }
     
-    // タグの作成
     public function create(Request $request)
     {
         // バリデーション
         $request->validate([
             'tag_name' => 'required|string|max:255',
             'visibility' => 'required|in:public,private',
+            'user_id' => 'required|exists:users,id', // user_id の存在チェック
         ]);
-
-        $user = auth()->user();
-
-        // タグの作成
-        $tag = Tag::create([
-            'name' => $request->input('tag_name'),
-            'create_user' => $user->name,
-        ]);
-
-        // 公開/非公開フラグを設定
+    
+        // ユーザーの取得
+        $user = User::find($request->input('user_id'));
+    
+        if (!$user) {
+            return redirect()->back()->with('error', 'ユーザーが見つかりませんでした');
+        }
+    
+        // タグの取得または作成（同じタグ名があればそれを使用）
+        $tag = Tag::firstOrCreate(
+            ['name' => $request->input('tag_name')], // 検索条件
+            ['create_user' => $user->name]           // 作成時にのみ適用
+        );
+    
+        // 公開/非公開フラグ
         $visibility = $request->input('visibility') === 'public' ? 0 : 1;
-
-        // ユーザーとタグの関連付け
-        $user->tags()->attach($tag->id, [
-            'hidden_flag' => $visibility, 
-            'count' => 0, 
-            'delete_flag' => 0,
-        ]);
-
-        return redirect()->back()->with('success', 'タグが作成されました');
-
+    
+        // 既に関連付けられているかチェック
+        if (!$user->tags()->where('tag_id', $tag->id)->exists()) {
+            // ユーザーとタグを関連付け
+            $user->tags()->attach($tag->id, [
+                'hidden_flag' => $visibility, 
+                'count' => 0, 
+                'delete_flag' => 0,
+            ]);
+        }
+    
+        return redirect()->back()->with('success', 'タグが作成され、ユーザーに追加されました');
     }
+    
 
     // 公開/非公開の切り替え
     public function toggleVisibility(Request $request, $tagId)

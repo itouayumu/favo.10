@@ -47,6 +47,7 @@
         <form action="{{ route('tags.create') }}" method="POST" class="tag-form">
             @csrf
             <div class="form-group">
+            <input type="hidden" name="user_id" value="{{ $user->id }}">
                 <label for="tag-name">タグ名</label>
                 <input type="text" id="tag-name" name="tag_name" class="form-control" required>
             </div>
