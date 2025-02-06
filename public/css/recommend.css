@@ -158,6 +158,14 @@ header .rogo{
     justify-content: space-around;
 }
 
+.btn .reg{
+    z-index: 1;
+}
+
+.btn .nex{
+    z-index: 1;
+}
+
 .btn .reg button{
     height: 60px;
     width: 60px;
