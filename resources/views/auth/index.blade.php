@@ -12,10 +12,10 @@
         <form action="{{ route('login') }}" method="post">
             @csrf
             <label for="email">メールアドレス</label>
-            <input type="email" id="email" name="email" required>
+            <input type="email" id="email" name="email" >
 
             <label for="password">パスワード</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="password" name="password">
 
             <button type="submit">ログイン</button>
             <button type="button" onclick="window.location.href='/register'">新規登録</button>
