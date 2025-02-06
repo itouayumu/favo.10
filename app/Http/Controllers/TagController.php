@@ -58,24 +58,20 @@ class TagController extends Controller
         ]);
     
         // ユーザーの取得
-        $user = User::find($request->input('user_id'));
+        $user = User::findOrFail($request->input('user_id'));
     
-        if (!$user) {
-            return redirect()->back()->with('error', 'ユーザーが見つかりませんでした');
-        }
-    
-        // タグの取得または作成（同じタグ名があればそれを使用）
+        // タグの取得または作成
         $tag = Tag::firstOrCreate(
             ['name' => $request->input('tag_name')], // 検索条件
-            ['create_user' => $user->name]           // 作成時にのみ適用
+            ['create_user' => $user->name]           // 作成時のみ適用
         );
     
         // 公開/非公開フラグ
         $visibility = $request->input('visibility') === 'public' ? 0 : 1;
     
-        // 既に関連付けられているかチェック
-        if (!$user->tags()->where('tag_id', $tag->id)->exists()) {
-            // ユーザーとタグを関連付け
+        // ✅ 修正: `tags_id` を正しく指定
+        if (!$user->tags()->wherePivot('tags_id', $tag->id)->exists()) {
+            // ✅ ユーザーとタグを関連付け
             $user->tags()->attach($tag->id, [
                 'hidden_flag' => $visibility, 
                 'count' => 0, 
