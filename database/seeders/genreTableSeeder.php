@@ -33,5 +33,9 @@ class genreTableSeeder extends Seeder
             'genre_name' => 'VTuber'
         ];
         DB::table('genre')->insert($param);
+        $param =[
+            'genre_name' => 'ゲームキャラ'
+        ];
+        DB::table('genre')->insert($param);
     }
 }
