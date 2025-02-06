@@ -18,8 +18,15 @@
             @csrf
             @method('PUT')
 
-            <label>タイトル</label><br>
-            <input type="text" name="title" id="title" value="{{ $schedule->title }}" required><br>
+            <label for="title">タイトル</label><br> 
+    <select name="title" id="title"required value="{{ old('title') }}" class="custom-select">
+  <option value="">選択してください</option>
+  <option value="リアルライブ">リアルライブ</option>
+  <option value="リアルイベント">リアルイベント</option>
+  <option value="配信予定">配信予定</option>
+  <option value="ライブ配信">ライブ配信</option>
+  <option value="グッズ発売日">グッズ発売日</option>
+</select>
 
             <label>開始日</label><br>
             <input type="date" name="start_date" id="start_date" value="{{ $schedule->start_date }}" required><br>

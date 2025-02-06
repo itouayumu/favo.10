@@ -468,3 +468,17 @@ td strong {
     height: 200px;
     width: auto;
 }
+/* スマホのレスポンシブ対応 */
+@media (max-width: 600px) {
+    .modal-content{
+        display: block;
+    }
+    .modal {
+        width: 100%;
+        height: 55%;
+    }
+    .m_image{
+        position: relative;
+        left: 25%;
+    }
+}
