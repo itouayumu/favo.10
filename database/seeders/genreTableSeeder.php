@@ -37,5 +37,9 @@ class genreTableSeeder extends Seeder
             'genre_name' => 'ゲームキャラ'
         ];
         DB::table('genre')->insert($param);
+        $param =[
+            'genre_name' => 'ボーカロイド'
+        ];
+        DB::table('genre')->insert($param);
     }
 }
