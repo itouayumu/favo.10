@@ -26,7 +26,7 @@ class CreateFavoriteHistoryTable extends Migration
             $table->binary('image_4')->nullable();  // 画像4
             $table->binary('edited_by')->nullable();  // 更新者
             $table->timestamps();  // created_at, updated_at
-            $table->boolean('delete_flag')->default(true);  // 削除フラグ (デフォルト: 0)
+            $table->boolean('delete_flag')->default(false);  // 削除フラグ (デフォルト: 0)
 
             // インデックス（必要に応じて追加）
             $table->unique(['favorite_id', 'genre_id']);  // 推しIDとジャンルIDの組み合わせがユニーク

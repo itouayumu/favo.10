@@ -20,7 +20,7 @@ class CreateToFavoriteTable extends Migration
             $table->integer('sort_id')->nullable();  // ソートID
             $table->boolean('favorite_flag')->default(0);  // 推しフラグ (デフォルト: 0)
             $table->boolean('delete_flag')->default(0);  // 削除フラグ (デフォルト: 0)
-            $table->boolean('hidden_flag')->default(1);
+            $table->boolean('hidden_flag')->default(0);
             $table->timestamps();  // created_at, updated_at
 
             // インデックス（必要に応じて追加）
