@@ -5,6 +5,56 @@
 @endsection
 
 @section('content')
+<style>
+    .back-button {
+        position: relative;
+        top: 67%;
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    left: 75%;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+
+</style>
+<button onclick="history.back()" class="back-button">← 戻る</button>
+<button class="follow-btn" data-oshi-id="{{ $favorite->id }}">
+    フォローする
+</button>
+
+<script>
+    $(document).on('click', '.follow-btn', function() {
+        let button = $(this);
+        let oshiId = button.data('oshi-id');
+
+        $.ajax({
+            url: `/follow/toggle/${oshiId}`,
+            type: "POST",
+            data: { oshi_id: oshiId },
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if (response.success) {
+                    button.text('フォロー中').prop('disabled', true);
+                } else {
+                    alert('エラーが発生しました');
+                }
+            }
+        });
+    });
+</script>
+
     <div class="card">
             <div class="btn">
                 <button class="e_btn" onclick="location.href='{{ route('oshi.edit', $favorite->id) }}'">編集</button>

@@ -171,3 +171,7 @@ Route::get('/api/schedules', [ScheduleController::class, 'getSchedules']);
 
 Route::middleware('auth:sanctum')->get('/schedules', [ScheduleController::class, 'fetchSchedules']);
 
+Route::get('/favorites_s', [FavoriteController::class, 'index'])->name('favorites.index');
+Route::get('/favorites/search', [FavoriteController::class, 'search'])->name('favorites.search');
+Route::get('/favorites/create', [FavoriteController::class, 'create'])->name('favorites.create');
+Route::post('/follow/toggle/{oshiId}', [FavoriteController::class, 'toggleFollow'])->name('follow.toggle');
