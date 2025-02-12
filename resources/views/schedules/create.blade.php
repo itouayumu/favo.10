@@ -47,7 +47,7 @@
     <label for="thumbnail">サムネイル画像</label><br>
     <div class="preview">
         <label for="thumbnail" class="upload-icon"></label>
-        <img id="imagePreview" class="image-preview" src="">
+        <img id="imagePreview" class="image-preview" src="{{ asset('img/ib.png') }}">
         <input type="file" id="thumbnail" class="file-input" name="image" accept="image/*"><br><br>
         @error('image')<p>{{ $message }}</p>@enderror
     </div>

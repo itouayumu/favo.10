@@ -44,7 +44,7 @@
         <label for="fileInput">プロフィール画像</label>
             <div class="preview">
                 <label for="fileInput" class="upload-icon"></label>
-                <img id="imagePreview" class="image-preview" src="">
+                <img id="imagePreview" class="image-preview" src="{{ asset('img/kkrn_icon_user.png') }}">
                 <input type="file" name="image" class="file-input" id="fileInput" accept="image/*">
                 @error('image')<p>{{ $message }}</p>@enderror
             </div>
